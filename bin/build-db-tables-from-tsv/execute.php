@@ -95,7 +95,7 @@
                 $values = array($rowIndex);
                 foreach ($record as $colIndex => $value) {
                     $value = trim($value);
-                    $values[] = $value === '' ? 'NULL' : $pdo->quote($value);
+                    $values[] = $value === '' || $value === 'NULL' ? 'NULL' : $pdo->quote($value);
                 }
                 $pdo->exec(sprintf('INSERT INTO `%s` VALUES (%s)', $tableName, implode(', ', $values)));
             }
