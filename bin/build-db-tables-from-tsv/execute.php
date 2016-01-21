@@ -1,10 +1,10 @@
 <?php
     require_once __DIR__ . '/../../web/src/credentials.php';
-    $pdo = new PDO('mysql:host=172.17.42.1;port=32772;dbname=rksd;charset=utf8', 'rksd', 'nJkyj2pOsfUi', array(
+    $pdo = new PDO('mysql:host=127.0.0.1;port=13006;dbname=rksd;charset=utf8', 'rksd', 'nJkyj2pOsfUi', array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ));
     $pdo->exec('SET NAMES utf8');
-    $iterator = new DirectoryIterator('../../tsv/');
+    $iterator = new DirectoryIterator('../../files/');
     $iterator = new CallbackFilterIterator($iterator, function (SplFileInfo $item, $key, Iterator $iterator) {
         return $item->isFile() && $item->isReadable() && $item->getExtension() === 'tsv';
     });
