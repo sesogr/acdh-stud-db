@@ -103,7 +103,8 @@ EOD
         <select name="2068e07a[<?php echo uniqid() ?>]" id="2068e07a-1385-481a-a23a-8fb069b40254">
             <option value="name">Name</option>
             <option value="birth_date">Geburtsdatum</option>
-            <option value="birth_country_historic">Geburtsland</option>
+            <option value="birth_country_historic">Geburtsland (hist. Bez.)</option>
+            <option value="birth_country_today">Geburtsland (heutige Bez.)</option>
             <option value="religion">Religion</option>
             <option value="language">Sprache</option>
             <option value="gender">Geschlecht</option>
