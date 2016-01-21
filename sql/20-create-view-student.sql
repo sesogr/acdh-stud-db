@@ -8,6 +8,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`biography` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -22,6 +23,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`birth_date` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -35,7 +37,8 @@ CREATE VIEW `v_student_complete` AS
 			'birth_place' AS `property`,
 			`v`.`id`,
 			`birth_place` AS `value`,
-			`birth_country` AS `value2`,
+			`birth_country_historic` AS `value2`,
+			`birth_country_today` AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -50,6 +53,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`ethnicity` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -64,6 +68,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`father` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -78,6 +83,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`gender` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -92,6 +98,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`given_names` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -106,6 +113,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`graduation` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -120,6 +128,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`guardian` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -134,6 +143,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`language` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -148,6 +158,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`last_name` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -162,6 +173,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`last_school` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -176,6 +188,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`literature` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -190,6 +203,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`nationality` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -204,6 +218,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`religion` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -218,6 +233,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`remarks` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
@@ -232,6 +248,7 @@ CREATE VIEW `v_student_complete` AS
 			`v`.`id`,
 			`studying_address` AS `value`,
 			NULL AS `value2`,
+			NULL AS `value3`,
 			group_concat(DISTINCT `t`.`time` SEPARATOR '; ') AS `times`,
 			`year_min`,
 			`year_max`
