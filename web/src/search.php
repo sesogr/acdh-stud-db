@@ -50,7 +50,8 @@ EOD;
                 <th>Name</th>
                 <th>Geschlecht</th>
                 <th>Geb.</th>
-                <th>Geb.-Land</th>
+                <th>Geb.-Land (hist.)</th>
+                <th>Geb.-Land (heute)</th>
                 <th>Religion</th>
                 <th>Zeitraum</th>
                 <th>Detailansicht</th>
@@ -65,6 +66,7 @@ EOD;
                     <td><?php echo htmlspecialchars($student['gender']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_date']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_country_historic']) ?></td>
+                    <td><?php echo htmlspecialchars($student['birth_country_today']) ?></td>
                     <td><?php echo htmlspecialchars($student['religion']) ?></td>
                     <td><?php echo htmlspecialchars(
                             $student['year_min'] === null ? ''
