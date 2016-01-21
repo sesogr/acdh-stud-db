@@ -11,7 +11,12 @@
     $student = array();
     foreach ($listProperties as $property) {
         $student[$property['property']][] = array(
-            'value' => $property['value'] . ($property['value2'] ? '; ' . $property['value2'] : ''),
+            'value' => sprintf(
+                $property['value2'] ? '%s (hist.: %s / heute: %s)' : '%s',
+                $property['value'],
+                $property['value2'],
+                $property['value3']
+            ),
             'time' => $property['times']
         );
     }
