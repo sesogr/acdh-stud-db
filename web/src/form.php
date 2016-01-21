@@ -1,7 +1,18 @@
 <?php
     require_once __DIR__ . '/credentials.php';
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-    $listCountries = $pdo->query('SELECT DISTINCT `birth_country` FROM `student_birth_place_value` ORDER BY `birth_country`');
+    $listCountries = $pdo->query(
+    /** @lang MySQL */
+        <<<'EOD'
+SELECT DISTINCT `country`
+FROM (
+    SELECT DISTINCT `birth_country_historic` AS `country` FROM `student_birth_place_value`
+    UNION
+    SELECT DISTINCT `birth_country_today` AS `country` FROM `student_birth_place_value`
+) AS `temp`
+ORDER BY `country`
+EOD
+);
     $listLanguages = $pdo->query('SELECT DISTINCT `language` FROM `student_language_value` ORDER BY `language`');
     $listLecturers = $pdo->query('SELECT DISTINCT `lecturer` FROM `student_attendance` ORDER BY `lecturer`');
     $listNames = $pdo->query('SELECT DISTINCT `last_name` FROM `student_last_name_value` ORDER BY `last_name`');
@@ -92,7 +103,7 @@
         <select name="2068e07a[<?php echo uniqid() ?>]" id="2068e07a-1385-481a-a23a-8fb069b40254">
             <option value="name">Name</option>
             <option value="birth_date">Geburtsdatum</option>
-            <option value="birth_country">Geburtsland</option>
+            <option value="birth_country_historic">Geburtsland</option>
             <option value="religion">Religion</option>
             <option value="language">Sprache</option>
             <option value="gender">Geschlecht</option>

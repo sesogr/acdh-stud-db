@@ -12,8 +12,10 @@
     $params['lecturer'] = isset($_POST['f04509d6']) ? reset($_POST['f04509d6']) : '*';
     $sort = isset($_POST['2068e07a']) ? reset($_POST['2068e07a']) : 'name';
     $order = isset($_POST['e938f5ac']) && reset($_POST['e938f5ac']) === 'desc' ? 'desc' : 'asc';
-    $sort = $sort && in_array($sort, array('birth_date', 'birth_country', 'religion', 'language', 'gender')) ? $sort : "concat_ws(' ', last_name, given_names)";
-    $query = <<<'EOD'
+    $sort = $sort && in_array($sort, array('birth_date', 'birth_country_historic', 'birth_country_today', 'religion', 'language', 'gender')) ? $sort : "concat_ws(' ', last_name, given_names)";
+    $query =
+        /** @lang MySQL */
+        <<<'EOD'
 select *
 from student_identity i
 left JOIN student_last_name_value ln on ln.person_id = i.person_id
@@ -25,7 +27,7 @@ left JOIN student_language_value l on l.person_id = i.person_id
 left JOIN student_religion_value r on r.person_id = i.person_id
 left JOIN student_attendance a on a.person_id = i.person_id
 WHERE (:name = '*' OR :name = ln.last_name OR :name = concat_ws(' ', gn.given_names, ln.last_name) OR :name = concat_ws(', ', ln.last_name, gn.given_names))
-AND (:country = '*' OR :country = ifnull(bp.birth_country, ''))
+AND (:country = '*' OR :country = ifnull(bp.birth_country_historic, '') OR :country = ifnull(bp.birth_country_today, ''))
 AND (:language = '*' OR :language = ifnull(l.language, ''))
 AND (:religion = '*' OR :religion = ifnull(r.religion, ''))
 AND (:lecturer = '*' OR :lecturer = ifnull(a.lecturer, ''))
@@ -62,7 +64,7 @@ EOD;
                         ) ?></td>
                     <td><?php echo htmlspecialchars($student['gender']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_date']) ?></td>
-                    <td><?php echo htmlspecialchars($student['birth_country']) ?></td>
+                    <td><?php echo htmlspecialchars($student['birth_country_historic']) ?></td>
                     <td><?php echo htmlspecialchars($student['religion']) ?></td>
                     <td><?php echo htmlspecialchars(
                             $student['year_min'] === null ? ''
