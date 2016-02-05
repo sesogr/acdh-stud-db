@@ -1,6 +1,7 @@
 <?php
     require_once __DIR__ . '/credentials.php';
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+    $pdo->exec('SET NAMES utf8');
     $params['name'] = isset($_POST['ce133f40']) ? reset($_POST['ce133f40']) : '*';
     $params['country'] = isset($_POST['e95c7283']) ? reset($_POST['e95c7283']) : '*';
     $params['language'] = isset($_POST['8cd799d0']) ? reset($_POST['8cd799d0']) : '*';
