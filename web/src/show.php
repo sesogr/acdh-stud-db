@@ -78,12 +78,12 @@
     <tbody>
         <?php /** @var array $lecture */ foreach ($listLectures as $lecture): ?>
             <tr>
-                <td><?php echo $lecture['semester_abs'] ?></td>
-                <td><?php echo $lecture['semester_rel'] ?></td>
-                <td><?php echo $lecture['lecturer'] ?></td>
-                <td><?php echo $lecture['class'] ?></td>
-                <td><?php echo $lecture['class_extra'] ?></td>
-                <td><?php echo $lecture['remarks'] ?></td>
+                <td><?php echo htmlspecialchars($lecture['semester_abs']) ?></td>
+                <td><?php echo htmlspecialchars($lecture['semester_rel']) ?></td>
+                <td><?php echo htmlspecialchars($lecture['lecturer']) ?></td>
+                <td><?php echo htmlspecialchars($lecture['class']) ?></td>
+                <td><?php echo htmlspecialchars($lecture['class_extra']) ?></td>
+                <td><?php echo htmlspecialchars($lecture['remarks']) ?></td>
             </tr>
         <?php endforeach ?>
     </tbody>
