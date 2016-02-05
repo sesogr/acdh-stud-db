@@ -4,6 +4,7 @@
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     ));
+    $pdo->exec('SET NAMES utf8');
     $listProperties = $pdo->prepare('SELECT * FROM `v_student_complete` WHERE `person_id` = ?');
     $listLectures = $pdo->prepare('SELECT * FROM `student_attendance` WHERE `person_id` = ?');
     $listProperties->execute(array($_GET['id']));

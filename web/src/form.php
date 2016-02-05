@@ -1,6 +1,7 @@
 <?php
     require_once __DIR__ . '/credentials.php';
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+    $pdo->exec('SET NAMES utf8');
     $listCountries = $pdo->query(
     /** @lang MySQL */
         <<<'EOD'
