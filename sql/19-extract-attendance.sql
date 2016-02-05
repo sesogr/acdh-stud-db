@@ -10,7 +10,7 @@ CREATE TABLE `student_attendance` AS
 		`l`.`x_class_extra` `class_extra`,
 		`l`.`anmerkungen` `remarks`
 	FROM `student_lecture` `l`
-		JOIN `student_person` `p` ON p.student_id = l.student_id
+		JOIN `student_person` `p` ON p.student_id = l.student_id;
 
 ALTER TABLE `student_attendance`
 ADD COLUMN `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST,
