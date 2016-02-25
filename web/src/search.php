@@ -1,5 +1,7 @@
 <?php
     require_once __DIR__ . '/credentials.php';
+    $pageSize = 100;
+    $pageNo = 0;
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
     $pdo->exec('SET NAMES utf8');
     $params['name'] = isset($_POST['ce133f40']) ? reset($_POST['ce133f40']) : '*';
@@ -17,7 +19,7 @@
     $query =
         /** @lang MySQL */
         <<<'EOD'
-select *
+select sql_calc_found_rows *
 from student_identity i
 left JOIN student_last_name_value ln on ln.person_id = i.person_id
 left JOIN student_given_names_value gn on gn.person_id = i.person_id
@@ -36,12 +38,13 @@ AND (:semester = '*' OR :semester = ifnull(a.semester_abs, ''))
 AND (i.year_min between :begin and :end or i.year_max between :begin and :end or :includeNull and i.year_min is null)
 GROUP BY i.person_id
 ORDER BY %s %s
-limit 100
+limit %d offset %d
 EOD;
-    $listStudents = $pdo->prepare(sprintf($query, $sort, $order));
+    $listStudents = $pdo->prepare(sprintf($query, $sort, $order, $pageSize, $pageNo * $pageSize));
     $listStudents->setFetchMode(PDO::FETCH_ASSOC);
     $listStudents->execute($params);
-    $rowCount = $listStudents->rowCount();
+    $rowCount = $pdo->query(/** @lang MySQL */'select found_rows()')->fetchColumn(0) - 0;
+    $pageCount = ceil($rowCount / $pageSize);
 ?>
 <p>Ihre Suche lieferte <?php echo $rowCount ? $rowCount : 'keine' ?> Treffer.</p>
 <?php if ($rowCount): ?>
