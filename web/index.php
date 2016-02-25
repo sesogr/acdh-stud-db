@@ -23,7 +23,7 @@
             <section>
                 <h1>DEMOS — Suche Studenten Musikwissenschaft Wien</h1>
                 <?php
-                    if (isset($_POST['action']) && $_POST['action'] === 'search'):
+                    if (isset($_POST['action']) && $_POST['action'] === 'search' || !empty($_GET['token'])):
                         require_once __DIR__ . '/src/search.php';
                     elseif (isset($_GET['id'])):
                         require_once __DIR__ . '/src/show.php';
