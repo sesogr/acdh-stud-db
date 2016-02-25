@@ -4,15 +4,27 @@
     $pageNo = 0;
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
     $pdo->exec('SET NAMES utf8');
-    $params['name'] = isset($_POST['ce133f40']) ? reset($_POST['ce133f40']) : '*';
-    $params['country'] = isset($_POST['e95c7283']) ? reset($_POST['e95c7283']) : '*';
-    $params['language'] = isset($_POST['8cd799d0']) ? reset($_POST['8cd799d0']) : '*';
-    $params['religion'] = isset($_POST['10b19606']) ? reset($_POST['10b19606']) : '*';
-    $params['begin'] = isset($_POST['1b3abf22']) ? reset($_POST['1b3abf22']) : 0;
-    $params['end'] = isset($_POST['5807411e']) ? reset($_POST['5807411e']) : 9999;
-    $params['includeNull'] = isset($_POST['d0319d7c']) && reset($_POST['0ced7cdc']);
-    $params['semester'] = isset($_POST['0ced7cdc']) ? reset($_POST['0ced7cdc']) : '*';
-    $params['lecturer'] = isset($_POST['f04509d6']) ? reset($_POST['f04509d6']) : '*';
+    $params = array();
+    if (!empty($_GET['token'])) {
+        if ($compressed = base64_decode($_GET['token'], true)) {
+            if ($serialization = gzuncompress($compressed)) {
+                if ($data = unserialize($serialization)) {
+                    list($pageNo, $pageSize, $params) = $data;
+                }
+            }
+        }
+    }
+    if (empty($params)) {
+        $params['name'] = isset($_POST['ce133f40']) ? reset($_POST['ce133f40']) : '*';
+        $params['country'] = isset($_POST['e95c7283']) ? reset($_POST['e95c7283']) : '*';
+        $params['language'] = isset($_POST['8cd799d0']) ? reset($_POST['8cd799d0']) : '*';
+        $params['religion'] = isset($_POST['10b19606']) ? reset($_POST['10b19606']) : '*';
+        $params['begin'] = isset($_POST['1b3abf22']) ? reset($_POST['1b3abf22']) : 0;
+        $params['end'] = isset($_POST['5807411e']) ? reset($_POST['5807411e']) : 9999;
+        $params['includeNull'] = isset($_POST['d0319d7c']) && reset($_POST['0ced7cdc']);
+        $params['semester'] = isset($_POST['0ced7cdc']) ? reset($_POST['0ced7cdc']) : '*';
+        $params['lecturer'] = isset($_POST['f04509d6']) ? reset($_POST['f04509d6']) : '*';
+    }
     $sort = isset($_POST['2068e07a']) ? reset($_POST['2068e07a']) : 'name';
     $order = isset($_POST['e938f5ac']) && reset($_POST['e938f5ac']) === 'desc' ? 'desc' : 'asc';
     $sort = $sort && in_array($sort, array('birth_date', 'birth_country_historic', 'birth_country_today', 'religion', 'language', 'gender')) ? $sort : "concat_ws(' ', last_name, given_names)";
@@ -48,6 +60,17 @@ EOD;
 ?>
 <p>Ihre Suche lieferte <?php echo $rowCount ? $rowCount : 'keine' ?> Treffer.</p>
 <?php if ($rowCount): ?>
+    <p>Seite
+        <?php for ($i = 0; $i < $pageCount; $i++): ?>
+            <?php if ($i === $pageNo): ?>
+                <strong><?php echo $i + 1 ?></strong>
+            <?php else: ?>
+                <a href="?token=<?php
+                    echo urlencode(base64_encode(gzcompress(serialize(array($i, $pageSize, $params)))))
+                ?>"><?php echo $i + 1 ?></a>
+            <?php endif ?>
+        <?php endfor ?>
+    </p>
     <table>
         <thead>
             <tr>
