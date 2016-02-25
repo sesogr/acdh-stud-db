@@ -75,8 +75,8 @@ EOD;
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Geschlecht</th>
                 <th>Geb.</th>
+                <th>Geb.-Ort</th>
                 <th>Geb.-Land (hist.)</th>
                 <th>Geb.-Land (heute)</th>
                 <th>Religion</th>
@@ -90,8 +90,8 @@ EOD;
                     <td><?php echo htmlspecialchars(
                             implode(', ', array($student['last_name'], $student['given_names']))
                         ) ?></td>
-                    <td><?php echo htmlspecialchars($student['gender']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_date']) ?></td>
+                    <td><?php echo htmlspecialchars($student['birth_place']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_country_historic']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_country_today']) ?></td>
                     <td><?php echo htmlspecialchars($student['religion']) ?></td>
