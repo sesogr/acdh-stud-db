@@ -47,7 +47,7 @@ AND (:language = '*' OR :language = ifnull(l.language, ''))
 AND (:religion = '*' OR :religion = ifnull(r.religion, ''))
 AND (:lecturer = '*' OR :lecturer = ifnull(a.lecturer, ''))
 AND (:semester = '*' OR :semester = ifnull(a.semester_abs, ''))
-AND (i.year_min between :begin and :end or i.year_max between :begin and :end or :includeNull and i.year_min is null)
+AND (i.year_min <= :end and i.year_max >= :begin or :includeNull and i.year_min is null)
 GROUP BY i.person_id
 ORDER BY %s %s
 limit %d offset %d
