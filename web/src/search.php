@@ -31,7 +31,10 @@
     $query =
         /** @lang MySQL */
         <<<'EOD'
-select sql_calc_found_rows *
+select sql_calc_found_rows
+    *,
+    substr(a.semester_abs from 3 FOR 4) - 0 semester_begin,
+    if(a.semester_abs like 'W %%', 1, 0) + substr(a.semester_abs from 3 FOR 4) semester_end
 from student_identity i
 left JOIN student_last_name_value ln on ln.person_id = i.person_id
 left JOIN student_given_names_value gn on gn.person_id = i.person_id
@@ -49,6 +52,7 @@ AND (:lecturer = '*' OR :lecturer = ifnull(a.lecturer, ''))
 AND (:semester = '*' OR :semester = ifnull(a.semester_abs, ''))
 AND (i.year_min <= :end and i.year_max >= :begin or :includeNull and i.year_min is null)
 GROUP BY i.person_id
+HAVING (semester_begin <= :end and semester_end >= :begin or :includeNull and semester_begin is null)
 ORDER BY %s %s
 limit %d offset %d
 EOD;
