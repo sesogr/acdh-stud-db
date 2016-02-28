@@ -1,22 +1,40 @@
 <?php
     require_once __DIR__ . '/credentials.php';
+    $pageSize = 100;
+    $pageNo = 0;
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-    $params['name'] = isset($_POST['ce133f40']) ? reset($_POST['ce133f40']) : '*';
-    $params['country'] = isset($_POST['e95c7283']) ? reset($_POST['e95c7283']) : '*';
-    $params['language'] = isset($_POST['8cd799d0']) ? reset($_POST['8cd799d0']) : '*';
-    $params['religion'] = isset($_POST['10b19606']) ? reset($_POST['10b19606']) : '*';
-    $params['begin'] = isset($_POST['1b3abf22']) ? reset($_POST['1b3abf22']) : 0;
-    $params['end'] = isset($_POST['5807411e']) ? reset($_POST['5807411e']) : 9999;
-    $params['includeNull'] = isset($_POST['d0319d7c']) && reset($_POST['0ced7cdc']);
-    $params['semester'] = isset($_POST['0ced7cdc']) ? reset($_POST['0ced7cdc']) : '*';
-    $params['lecturer'] = isset($_POST['f04509d6']) ? reset($_POST['f04509d6']) : '*';
+    $pdo->exec('SET NAMES utf8');
+    $params = array();
+    if (!empty($_GET['token'])) {
+        if ($compressed = base64_decode($_GET['token'], true)) {
+            if ($serialization = gzuncompress($compressed)) {
+                if ($data = unserialize($serialization)) {
+                    list($pageNo, $pageSize, $params) = $data;
+                }
+            }
+        }
+    }
+    if (empty($params)) {
+        $params['name'] = isset($_POST['ce133f40']) ? reset($_POST['ce133f40']) : '*';
+        $params['country'] = isset($_POST['e95c7283']) ? reset($_POST['e95c7283']) : '*';
+        $params['language'] = isset($_POST['8cd799d0']) ? reset($_POST['8cd799d0']) : '*';
+        $params['religion'] = isset($_POST['10b19606']) ? reset($_POST['10b19606']) : '*';
+        $params['begin'] = isset($_POST['1b3abf22']) ? reset($_POST['1b3abf22']) : 0;
+        $params['end'] = isset($_POST['5807411e']) ? reset($_POST['5807411e']) : 9999;
+        $params['includeNull'] = isset($_POST['d0319d7c']) && reset($_POST['0ced7cdc']);
+        $params['semester'] = isset($_POST['0ced7cdc']) ? reset($_POST['0ced7cdc']) : '*';
+        $params['lecturer'] = isset($_POST['f04509d6']) ? reset($_POST['f04509d6']) : '*';
+    }
     $sort = isset($_POST['2068e07a']) ? reset($_POST['2068e07a']) : 'name';
     $order = isset($_POST['e938f5ac']) && reset($_POST['e938f5ac']) === 'desc' ? 'desc' : 'asc';
     $sort = $sort && in_array($sort, array('birth_date', 'birth_country_historic', 'birth_country_today', 'religion', 'language', 'gender')) ? $sort : "concat_ws(' ', last_name, given_names)";
     $query =
         /** @lang MySQL */
         <<<'EOD'
-select *
+select sql_calc_found_rows
+    *,
+    substr(a.semester_abs from 3 FOR 4) - 0 semester_begin,
+    if(a.semester_abs like 'W %%', 1, 0) + substr(a.semester_abs from 3 FOR 4) semester_end
 from student_identity i
 left JOIN student_last_name_value ln on ln.person_id = i.person_id
 left JOIN student_given_names_value gn on gn.person_id = i.person_id
@@ -32,24 +50,37 @@ AND (:language = '*' OR :language = ifnull(l.language, ''))
 AND (:religion = '*' OR :religion = ifnull(r.religion, ''))
 AND (:lecturer = '*' OR :lecturer = ifnull(a.lecturer, ''))
 AND (:semester = '*' OR :semester = ifnull(a.semester_abs, ''))
-AND (i.year_min between :begin and :end or i.year_max between :begin and :end or :includeNull and i.year_min is null)
+AND (i.year_min <= :end and i.year_max >= :begin or :includeNull and i.year_min is null)
 GROUP BY i.person_id
+HAVING (semester_begin <= :end and semester_end >= :begin or :includeNull and semester_begin is null)
 ORDER BY %s %s
-limit 100
+limit %d offset %d
 EOD;
-    $listStudents = $pdo->prepare(sprintf($query, $sort, $order));
+    $listStudents = $pdo->prepare(sprintf($query, $sort, $order, $pageSize, $pageNo * $pageSize));
     $listStudents->setFetchMode(PDO::FETCH_ASSOC);
     $listStudents->execute($params);
-    $rowCount = $listStudents->rowCount();
+    $rowCount = $pdo->query(/** @lang MySQL */'select found_rows()')->fetchColumn(0) - 0;
+    $pageCount = ceil($rowCount / $pageSize);
 ?>
 <p>Ihre Suche lieferte <?php echo $rowCount ? $rowCount : 'keine' ?> Treffer.</p>
 <?php if ($rowCount): ?>
+    <p>Seite
+        <?php for ($i = 0; $i < $pageCount; $i++): ?>
+            <?php if ($i === $pageNo): ?>
+                <strong><?php echo $i + 1 ?></strong>
+            <?php else: ?>
+                <a href="?token=<?php
+                    echo urlencode(base64_encode(gzcompress(serialize(array($i, $pageSize, $params)))))
+                ?>"><?php echo $i + 1 ?></a>
+            <?php endif ?>
+        <?php endfor ?>
+    </p>
     <table>
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Geschlecht</th>
                 <th>Geb.</th>
+                <th>Geb.-Ort</th>
                 <th>Geb.-Land (hist.)</th>
                 <th>Geb.-Land (heute)</th>
                 <th>Religion</th>
@@ -63,8 +94,8 @@ EOD;
                     <td><?php echo htmlspecialchars(
                             implode(', ', array($student['last_name'], $student['given_names']))
                         ) ?></td>
-                    <td><?php echo htmlspecialchars($student['gender']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_date']) ?></td>
+                    <td><?php echo htmlspecialchars($student['birth_place']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_country_historic']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_country_today']) ?></td>
                     <td><?php echo htmlspecialchars($student['religion']) ?></td>
