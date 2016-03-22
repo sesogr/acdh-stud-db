@@ -20,7 +20,7 @@ EOD
     $listReligions = $pdo->query('SELECT DISTINCT `religion` FROM `student_religion_value` ORDER BY `religion`');
     $listSemesters = $pdo->query('SELECT DISTINCT `semester_abs` FROM `student_attendance` ORDER BY substring(`semester_abs` FROM 3), substring_index(`semester_abs`, \' \', 1)');
     $loadYearRange = $pdo->query('SELECT min(`year_min`), max(`year_max`) FROM `student_identity`');
-    $loadYearRange2 = $pdo->query('SELECT min(substr(`semester_abs` FROM 3 FOR 4) - 0) `semester_begin`, max(if(`semester_abs` LIKE \'W %%\', 1, 0) + substr(`semester_abs` FROM 3 FOR 4)) `semester_end` FROM `student_attendance`');
+    $loadSemesterRange = $pdo->query('SELECT min(substr(`semester_abs` FROM 3 FOR 4) - 0) `semester_begin`, max(if(`semester_abs` LIKE \'W %%\', 1, 0) + substr(`semester_abs` FROM 3 FOR 4)) `semester_end` FROM `student_attendance`');
     $listCountries->setFetchMode(PDO::FETCH_COLUMN, 0);
     $listLanguages->setFetchMode(PDO::FETCH_COLUMN, 0);
     $listLecturers->setFetchMode(PDO::FETCH_COLUMN, 0);
@@ -28,7 +28,7 @@ EOD
     $listReligions->setFetchMode(PDO::FETCH_COLUMN, 0);
     $listSemesters->setFetchMode(PDO::FETCH_COLUMN, 0);
     list($minYear, $maxYear) = $loadYearRange->fetch(PDO::FETCH_NUM);
-    list($minYear2, $maxYear2) = $loadYearRange2->fetch(PDO::FETCH_NUM);
+    list($minYear2, $maxYear2) = $loadSemesterRange->fetch(PDO::FETCH_NUM);
     $minYear = min($minYear, $minYear2);
     $maxYear = max($maxYear, $maxYear2);
 ?>
