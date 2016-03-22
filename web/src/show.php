@@ -6,7 +6,7 @@
     ));
     $pdo->exec('SET NAMES utf8');
     $listProperties = $pdo->prepare('SELECT * FROM `v_student_complete` WHERE `person_id` = ?');
-    $listLectures = $pdo->prepare('SELECT * FROM `student_attendance` WHERE `person_id` = ?');
+    $listLectures = $pdo->prepare('SELECT * FROM `student_attendance` WHERE `person_id` = ? ORDER BY substr(`semester_abs` FROM 4), `lecturer`');
     $listProperties->execute(array($_GET['id']));
     $listLectures->execute(array($_GET['id']));
     $student = array();
