@@ -88,21 +88,19 @@ EOD
     <div>
         <label for="1b3abf22-fd48-4376-b9a3-499a92ec73af">Zeitraum von</label>
         <select name="1b3abf22[<?php echo uniqid() ?>]" id="1b3abf22-fd48-4376-b9a3-499a92ec73af">
-            <option selected="selected">S <?php printf('%04d', $minSemesterYear) ?></option>
-            <?php for ($year = $minSemesterYear + 1; $year < $maxSemesterYear; $year++): ?>
-                <option>W <?php printf('%04d/%02d', $year - 1, $year % 100) ?></option>
-                <option>S <?php printf('%04d', $year) ?></option>
+            <option selected="selected" value="<?php printf('%04d.0', $minSemesterYear) ?>">S <?php printf('%04d', $minSemesterYear) ?></option>
+            <?php for ($year = $minSemesterYear; $year < $maxSemesterYear; $year++): ?>
+                <option value="<?php printf('%04d.5', $year) ?>">W <?php printf('%04d/%02d', $year, ($year + 1) % 100) ?></option>
+                <option value="<?php printf('%04d.0', $year + 1) ?>">S <?php printf('%04d', $year + 1) ?></option>
             <?php endfor ?>
-            <option>W <?php printf('%04d/%02d', $year, ($year + 1) % 100) ?></option>
         </select>
         <label for="5807411e-d767-4f59-84be-d94f1f14b214">bis</label>
         <select name="5807411e[<?php echo uniqid() ?>]" id="5807411e-d767-4f59-84be-d94f1f14b214">
-            <option>S <?php printf('%04d', $minSemesterYear) ?></option>
-            <?php for ($year = $minSemesterYear + 1; $year < $maxSemesterYear; $year++): ?>
-                <option>W <?php printf('%04d/%02d', $year - 1, $year % 100) ?></option>
-                <option>S <?php printf('%04d', $year) ?></option>
+            <?php for ($year = $minSemesterYear; $year < $maxSemesterYear; $year++): ?>
+                <option value="<?php printf('%04d.0', $year) ?>">S <?php printf('%04d', $year) ?></option>
+                <option value="<?php printf('%04d.5', $year) ?>">W <?php printf('%04d/%02d', $year, ($year + 1) % 100) ?></option>
             <?php endfor ?>
-            <option selected="selected">W <?php printf('%04d/%02d', $year, ($year + 1) % 100) ?></option>
+            <option selected="selected" value="<?php printf('%04d.0', $maxSemesterYear) ?>">S <?php printf('%04d', $maxSemesterYear) ?></option>
         </select>
     </div>
     <div>
