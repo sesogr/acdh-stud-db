@@ -28,9 +28,9 @@ EOD
     $listReligions->setFetchMode(PDO::FETCH_COLUMN, 0);
     $listSemesters->setFetchMode(PDO::FETCH_COLUMN, 0);
     list($minYear, $maxYear) = $loadYearRange->fetch(PDO::FETCH_NUM);
-    list($minYear2, $maxYear2) = $loadSemesterRange->fetch(PDO::FETCH_NUM);
-    $minYear = min($minYear, $minYear2);
-    $maxYear = max($maxYear, $maxYear2);
+    list($minSemesterYear, $maxSemesterYear) = $loadSemesterRange->fetch(PDO::FETCH_NUM);
+    $minYear = min($minYear, $minSemesterYear);
+    $maxYear = max($maxYear, $maxSemesterYear);
 ?>
 <datalist id="07c18bfa-e763-45e7-af1d-360cdd70aaa5">
     <option value="*">— egal —</option>
