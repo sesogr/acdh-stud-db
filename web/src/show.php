@@ -10,7 +10,9 @@
     $listProperties->execute(array($_GET['id']));
     $listLectures->execute(array($_GET['id']));
     $student = array();
+    $hasTimes = false;
     foreach ($listProperties as $property) {
+        $hasTimes = $hasTimes || $property['times'];
         $student[$property['property']][] = array(
             'value' => sprintf(
                 $property['value2'] ? '%s (hist.: %s / heute: %s)' : '%s',
@@ -51,14 +53,18 @@
                             <th rowspan="<?php echo count($student[$field]) ?>"><?php echo htmlspecialchars($title) ?></th>
                         <?php endif ?>
                         <td><?php echo htmlspecialchars($value['value']) ?></td>
-                        <td><?php echo htmlspecialchars($value['time']) ?></td>
+                        <?php if ($hasTimes): ?>
+                            <td><?php echo htmlspecialchars($value['time']) ?></td>
+                        <?php endif ?>
                     </tr>
                 <?php endforeach ?>
             <?php else: ?>
                 <tr>
                     <th><?php echo htmlspecialchars($title) ?></th>
                     <td></td>
-                    <td></td>
+                    <?php if ($hasTimes): ?>
+                        <td></td>
+                    <?php endif ?>
                 </tr>
             <?php endif ?>
         <?php endforeach ?>
