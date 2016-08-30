@@ -130,3 +130,26 @@ EOD
         <button type="reset">Einschränkungen aufheben</button>
     </div>
 </form>
+<script type="text/javascript">/*<![CDATA[*/
+    var inputElements = [
+        document.getElementById('ce133f40-3b4c-47dd-ac6c-b4ce4458daeb'),
+        document.getElementById('e95c7283-8156-4303-b0e6-c4c853a3caab'),
+        document.getElementById('8cd799d0-968b-4212-b2a4-fb83c651601e'),
+        document.getElementById('10b19606-167c-45b9-984d-0b2ed848540e'),
+        document.getElementById('f04509d6-6967-440e-bdbe-03c6631e521d')
+    ];
+    inputElements.forEach(function (inputElement) {
+        var removeAsterisk = false;
+        inputElement.onkeydown = function () {
+            if (this.value == '*') {
+                removeAsterisk = true;
+            }
+        };
+        inputElement.onkeyup = function () {
+            if (removeAsterisk && this.value.length > 1) {
+                this.value = this.value.replace(/^\*|\*$/g, '');
+                removeAsterisk = false;
+            }
+        };
+    });
+/*]]>*/</script>
