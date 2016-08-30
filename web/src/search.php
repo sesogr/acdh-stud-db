@@ -19,10 +19,8 @@
         $params['country'] = isset($_POST['e95c7283']) ? reset($_POST['e95c7283']) : '*';
         $params['language'] = isset($_POST['8cd799d0']) ? reset($_POST['8cd799d0']) : '*';
         $params['religion'] = isset($_POST['10b19606']) ? reset($_POST['10b19606']) : '*';
-        $params['begin'] = isset($_POST['1b3abf22']) ? reset($_POST['1b3abf22']) : 0;
-        $params['end'] = isset($_POST['5807411e']) ? reset($_POST['5807411e']) : 9999;
-        $params['includeNull'] = isset($_POST['d0319d7c']) && reset($_POST['0ced7cdc']);
-        $params['semester'] = isset($_POST['0ced7cdc']) ? reset($_POST['0ced7cdc']) : '*';
+        $params['begin'] = isset($_POST['1b3abf22']) ? reset($_POST['1b3abf22']) : 0.0;
+        $params['end'] = isset($_POST['5807411e']) ? reset($_POST['5807411e']) : 9999.5;
         $params['lecturer'] = isset($_POST['f04509d6']) ? reset($_POST['f04509d6']) : '*';
     }
     $sort = isset($_POST['2068e07a']) ? reset($_POST['2068e07a']) : 'name';
@@ -32,9 +30,7 @@
         /** @lang MySQL */
         <<<'EOD'
 select sql_calc_found_rows
-    *,
-    substr(a.semester_abs from 3 FOR 4) - 0 semester_begin,
-    if(a.semester_abs like 'W %%', 1, 0) + substr(a.semester_abs from 3 FOR 4) semester_end
+    *
 from student_identity i
 left JOIN student_last_name_value ln on ln.person_id = i.person_id
 left JOIN student_given_names_value gn on gn.person_id = i.person_id
@@ -47,12 +43,10 @@ left JOIN student_attendance a on a.person_id = i.person_id
 WHERE (:name = '*' OR :name = ln.last_name OR :name = concat_ws(' ', gn.given_names, ln.last_name) OR :name = concat_ws(', ', ln.last_name, gn.given_names))
 AND (:country = '*' OR :country = ifnull(bp.birth_country_historic, '') OR :country = ifnull(bp.birth_country_today, ''))
 AND (:language = '*' OR :language = ifnull(l.language, ''))
-AND (:religion = '*' OR :religion = ifnull(r.religion, ''))
-AND (:lecturer = '*' OR :lecturer = ifnull(a.lecturer, ''))
-AND (:semester = '*' OR :semester = ifnull(a.semester_abs, ''))
-AND (i.year_min <= :end and i.year_max >= :begin or :includeNull and i.year_min is null)
+AND (:religion = '*' OR :religion = ifnull(r.religion, '') or r.religion like concat(:religion, '%%'))
+AND (:lecturer = '*' OR :lecturer = ifnull(a.lecturer, '') or a.lecturer like concat(:lecturer, '%%'))
+AND substr(a.semester_abs from 3 FOR 4) + if(a.semester_abs like 'W %%', 0.5, 0.0) BETWEEN :begin and :end
 GROUP BY i.person_id
-HAVING (semester_begin <= :end and semester_end >= :begin or :includeNull and semester_begin is null)
 ORDER BY %s %s
 limit %d offset %d
 EOD;
