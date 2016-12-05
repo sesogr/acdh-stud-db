@@ -4,3 +4,6 @@ ALTER TABLE `student_attendance`
 UPDATE `student_attendance`
 SET `faculty` = 'Phil. Fak.'
 WHERE `faculty` IS NULL;
+
+ALTER TABLE `student_attendance`
+	MODIFY `faculty` VARCHAR(255) NOT NULL;
