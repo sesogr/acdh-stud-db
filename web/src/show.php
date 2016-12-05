@@ -75,6 +75,7 @@
         <tr>
             <th>Semester</th>
             <th>ordinal</th>
+            <th>Fakultät</th>
             <th>Dozent</th>
             <th>Vorlesung</th>
             <th>Zusatz</th>
@@ -86,6 +87,7 @@
             <tr>
                 <td><?php echo htmlspecialchars($lecture['semester_abs']) ?></td>
                 <td><?php echo htmlspecialchars($lecture['semester_rel']) ?></td>
+                <td><?php echo htmlspecialchars($lecture['faculty']) ?></td>
                 <td><?php echo htmlspecialchars($lecture['lecturer']) ?></td>
                 <td><?php echo htmlspecialchars($lecture['class']) ?></td>
                 <td><?php echo htmlspecialchars($lecture['class_extra']) ?></td>
