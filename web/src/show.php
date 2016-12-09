@@ -22,7 +22,12 @@
                 $property['value2'],
                 $property['value3']
             ),
-            'time' => $property['times']
+            'time' => sprintf(
+                !$property['value3'] && $property['value2'] == 'true'
+                    ? '%s [Aus zusätzlichen Quellen ergänzt]'
+                    : '%s',
+                $property['times']
+            )
         );
     }
     $fields = array(
