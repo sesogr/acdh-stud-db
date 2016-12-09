@@ -15,7 +15,9 @@
         $hasTimes = $hasTimes || $property['times'];
         $student[$property['property']][] = array(
             'value' => sprintf(
-                $property['value2'] ? '%s (hist.: %s / heute: %s)' : '%s',
+                $property['value3']
+                    ? '%s (hist.: %s / heute: %s)'
+                    : '%s',
                 $property['value'],
                 $property['value2'],
                 $property['value3']
