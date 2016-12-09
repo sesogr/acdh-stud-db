@@ -15,7 +15,7 @@
         $hasTimes = $hasTimes || $property['times'];
         $student[$property['property']][] = array(
             'value' => sprintf(
-                $property['value3']
+                $property['property'] == 'birth_place'
                     ? '%s (hist.: %s / heute: %s)'
                     : '%s',
                 $property['value'],
@@ -23,7 +23,7 @@
                 $property['value3']
             ),
             'time' => sprintf(
-                !$property['value3'] && $property['value2'] == 'true'
+                in_array($property['property'], ['biography', 'birth_date']) && $property['value2'] == 'true'
                     ? '%s [Aus zusätzlichen Quellen ergänzt]'
                     : '%s',
                 $property['times']
