@@ -88,7 +88,9 @@ EOD;
                     <td><?php echo htmlspecialchars(
                             implode(', ', array($student['last_name'], $student['given_names']))
                         ) ?></td>
-                    <td><?php echo htmlspecialchars($student['birth_date']) ?></td>
+                    <td<?php echo $student['is_from_supplemental_data_source'] ? ' title="Aus zusätzlichen Quellen ergänzt"' : ''
+                        ?>><?php echo htmlspecialchars($student['birth_date'])
+                        ?></td>
                     <td><?php echo htmlspecialchars($student['birth_place']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_country_historic']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_country_today']) ?></td>
