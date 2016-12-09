@@ -77,7 +77,6 @@
             <th>ordinal</th>
             <th>Dozent</th>
             <th>Vorlesung</th>
-            <th>Zusatz</th>
             <th>Bemerkungen</th>
         </tr>
     </thead>
@@ -88,7 +87,6 @@
                 <td><?php echo htmlspecialchars($lecture['semester_rel']) ?></td>
                 <td><?php echo htmlspecialchars($lecture['lecturer']) ?></td>
                 <td><?php echo htmlspecialchars($lecture['class']) ?></td>
-                <td><?php echo htmlspecialchars($lecture['class_extra']) ?></td>
                 <td><?php echo htmlspecialchars($lecture['remarks']) ?></td>
             </tr>
         <?php endforeach ?>
