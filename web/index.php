@@ -16,6 +16,9 @@
             main section table { border-collapse: collapse; empty-cells: show; margin: 12px 0; }
             main section table th { vertical-align: top; text-align: left; padding: 3px; border: 1px #999 solid; }
             main section table td { padding: 1px 3px; border: 1px #999 dotted; }
+            main section table td[title] { quotes: '[' ']'; }
+            main section table td[title]:before { content: open-quote; color: #080; font-weight: bold; }
+            main section table td[title]:after { content: close-quote; color: #080; font-weight: bold; }
         </style>
     </head>
     <body>

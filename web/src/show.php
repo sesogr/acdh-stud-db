@@ -15,12 +15,19 @@
         $hasTimes = $hasTimes || $property['times'];
         $student[$property['property']][] = array(
             'value' => sprintf(
-                $property['value2'] ? '%s (hist.: %s / heute: %s)' : '%s',
+                $property['property'] == 'birth_place'
+                    ? '%s (hist.: %s / heute: %s)'
+                    : '%s',
                 $property['value'],
                 $property['value2'],
                 $property['value3']
             ),
-            'time' => $property['times']
+            'time' => sprintf(
+                in_array($property['property'], ['biography', 'birth_date']) && $property['value2'] == 'true'
+                    ? '%s [Aus zusätzlichen Quellen ergänzt]'
+                    : '%s',
+                $property['times']
+            )
         );
     }
     $fields = array(
@@ -78,7 +85,6 @@
             <th>Fakultät</th>
             <th>Dozent</th>
             <th>Vorlesung</th>
-            <th>Zusatz</th>
             <th>Bemerkungen</th>
         </tr>
     </thead>
@@ -90,7 +96,6 @@
                 <td><?php echo htmlspecialchars($lecture['faculty']) ?></td>
                 <td><?php echo htmlspecialchars($lecture['lecturer']) ?></td>
                 <td><?php echo htmlspecialchars($lecture['class']) ?></td>
-                <td><?php echo htmlspecialchars($lecture['class_extra']) ?></td>
                 <td><?php echo htmlspecialchars($lecture['remarks']) ?></td>
             </tr>
         <?php endforeach ?>
