@@ -40,7 +40,7 @@ left JOIN student_gender_value g on g.person_id = i.person_id
 left JOIN student_language_value l on l.person_id = i.person_id
 left JOIN student_religion_value r on r.person_id = i.person_id
 left JOIN student_attendance a on a.person_id = i.person_id
-WHERE (:name = '*' OR :name = ln.last_name OR :name = concat_ws(' ', gn.given_names, ln.last_name) OR :name = concat_ws(', ', ln.last_name, gn.given_names))
+WHERE (:name = '*' OR :name = ln.last_name OR concat_ws(' ', gn.given_names, ln.last_name) like concat('%%', :name, '%%'))
 AND (:country = '*' OR :country = ifnull(bp.birth_country_historic, '') OR :country = ifnull(bp.birth_country_today, ''))
 AND (:language = '*' OR :language = ifnull(l.language, ''))
 AND (:religion = '*' OR :religion = ifnull(r.religion, '') or r.religion like concat(:religion, '%%'))
