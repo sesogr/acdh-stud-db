@@ -3,8 +3,9 @@ DROP TABLE IF EXISTS `student_attendance`;
 CREATE TABLE `student_attendance` AS
 	SELECT
 		`person_id`,
-		ifnull(`l`.`x_semester`, `p`.`semester`) `semester_abs`,
+		ifnull(`l`.`x_semester`, ifnull(`p2`.`semester`, `p1`.`semester`)) `semester_abs`,
 		`semester_rel`,
+		ifnull(`p2`.`fakultaet`, 'Phil. Fak.') `faculty`,
 		`lecturer`,
 		`class`,
 		`remarks`
@@ -30,7 +31,8 @@ CREATE TABLE `student_attendance` AS
 				FROM `student_lecture_20161116`
 			)
 		) `l`
-	JOIN `student_person` `p` ON `p`.`student_id` = `l`.`person_id`;
+		LEFT JOIN `student_person` `p1` ON `p1`.`student_id` = `l`.`person_id`
+		LEFT JOIN `student_person_20161116` `p2` ON `p2`.`id` = `l`.`person_id`;
 
 ALTER TABLE `student_attendance`
 ADD COLUMN `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST,
