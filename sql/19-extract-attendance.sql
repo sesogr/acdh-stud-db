@@ -5,6 +5,7 @@ CREATE TABLE `student_attendance` AS
 		`person_id`,
 		ifnull(`l`.`x_semester`, ifnull(`p2`.`semester`, `p1`.`semester`)) `semester_abs`,
 		`semester_rel`,
+		ifnull(`p2`.`fakultaet`, 'Phil. Fak.') `faculty`,
 		`lecturer`,
 		`class`,
 		`remarks`
