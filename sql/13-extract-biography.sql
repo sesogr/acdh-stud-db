@@ -14,7 +14,7 @@ CREATE TABLE `student_biography_value` AS
 		SELECT DISTINCT
 			`id` AS `person_id`,
 			`angaben_zur_biografie` AS `biography`,
-			if(`angaben_zur_biografie_gruen` = '', '', 'true') AS `is_from_supplemental_data_source`
+			if(ifnull(`angaben_zur_biografie_gruen`, '') = '', '', 'true') AS `is_from_supplemental_data_source`
 		FROM `student_person_20161116`
 		WHERE `angaben_zur_biografie` IS NOT NULL
 	)

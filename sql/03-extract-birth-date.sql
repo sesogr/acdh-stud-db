@@ -18,7 +18,7 @@ CREATE TABLE `student_birth_date_value` AS
 			`geb_dat` AS `birth_date`,
 			`born_min` AS `born_on_or_after`,
 			`born_max` AS `born_on_or_before`,
-			if(geb_dat_gruen = '', '', 'true') AS `is_from_supplemental_data_source`
+			if(ifnull(geb_dat_gruen, '') = '', '', 'true') AS `is_from_supplemental_data_source`
 		FROM `student_person_20161116`
 		WHERE `geb_dat` IS NOT NULL
 	)
