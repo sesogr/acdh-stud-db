@@ -55,11 +55,11 @@ left JOIN student_gender_value g on g.person_id = i.person_id
 left JOIN student_language_value l on l.person_id = i.person_id
 left JOIN student_religion_value r on r.person_id = i.person_id
 left JOIN student_attendance a on a.person_id = i.person_id
-WHERE (:name = '*' OR :name = ln.last_name OR concat_ws(' ', gn.given_names, ln.last_name) like concat('%%', :name, '%%'))
+WHERE (:name = '*' OR :name = ln.ascii_last_name OR concat_ws(' ', gn.ascii_given_names, ln.ascii_last_name) like concat('%%', :name, '%%'))
 AND (:country = '*' OR :country = ifnull(bp.birth_country_historic, '') OR :country = ifnull(bp.birth_country_today, ''))
 AND (:language = '*' OR :language = ifnull(l.language, ''))
 AND (:religion = '*' OR :religion = ifnull(r.religion, '') or r.religion like concat(:religion, '%%'))
-AND (:lecturer = '*' OR :lecturer = ifnull(a.lecturer, '') or a.lecturer like concat(:lecturer, '%%'))
+AND (:lecturer = '*' OR :lecturer = ifnull(a.ascii_lecturer, '') or a.ascii_lecturer like concat(:lecturer, '%%'))
 AND substr(a.semester_abs from 3 FOR 4) + if(a.semester_abs like 'W %%', 0.5, 0.0) BETWEEN :begin and :end
 GROUP BY i.person_id
 ORDER BY %s %s
