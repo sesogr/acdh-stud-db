@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS `student_birth_date_time`;
 DROP TABLE IF EXISTS `student_birth_date_value`;
 
-CREATE TABLE `student_birth_date_value` AS
+CREATE TABLE `student_birth_date_value` DEFAULT CHARSET utf8 AS
 	(
 		SELECT DISTINCT
 			`merged_id` AS `person_id`,
@@ -29,7 +29,7 @@ MODIFY `is_from_supplemental_data_source` SET ('true') NOT NULL DEFAULT '',
 ADD COLUMN `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST,
 ADD INDEX (`person_id`);
 
-CREATE TABLE `student_birth_date_time` AS
+CREATE TABLE `student_birth_date_time` DEFAULT CHARSET utf8 AS
 	SELECT
 		`v`.`id` AS `value_id`,
 		`semester` AS `time`,

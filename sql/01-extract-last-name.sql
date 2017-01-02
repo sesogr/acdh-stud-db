@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS `student_last_name_time`;
 DROP TABLE IF EXISTS `student_last_name_value`;
 
-CREATE TABLE `student_last_name_value` AS
+CREATE TABLE `student_last_name_value` DEFAULT CHARSET utf8 AS
 	(
 		SELECT DISTINCT
 			`merged_id` AS `person_id`,
@@ -22,7 +22,7 @@ ALTER TABLE `student_last_name_value`
 ADD COLUMN `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST,
 ADD INDEX (`person_id`);
 
-CREATE TABLE `student_last_name_time` AS
+CREATE TABLE `student_last_name_time` DEFAULT CHARSET utf8 AS
 	SELECT
 		`v`.`id` AS `value_id`,
 		`semester` AS `time`,
