@@ -5,16 +5,14 @@ CREATE TABLE `student_given_names_value` AS
 	(
 		SELECT DISTINCT
 			`merged_id` AS `person_id`,
-			substring(`name` FROM 2 + char_length(substring_index(`name`, ' ', 1))) AS `given_names`,
-			NULL AS `ascii_given_names`
+			substring(`name` FROM 2 + char_length(substring_index(`name`, ' ', 1))) AS `given_names`
 		FROM `student_person`
 		WHERE `name` IS NOT NULL
 	)
 	UNION (
 		SELECT DISTINCT
 			`id` AS `person_id`,
-			substring(`name` FROM 2 + char_length(substring_index(`name`, ' ', 1))) AS `given_names`,
-			NULL AS `ascii_given_names`
+			substring(`name` FROM 2 + char_length(substring_index(`name`, ' ', 1))) AS `given_names`
 		FROM `student_person_20161116`
 		WHERE `name` IS NOT NULL
 	)
