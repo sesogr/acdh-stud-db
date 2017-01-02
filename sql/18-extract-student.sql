@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `student_identity`;
 
-CREATE TABLE `student_identity` AS
+CREATE TABLE `student_identity` DEFAULT CHARSET utf8 AS
 	SELECT
 		`person_id`,
 		min(`year_min`) AS `year_min`,
