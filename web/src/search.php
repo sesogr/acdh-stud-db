@@ -1,5 +1,6 @@
 <?php
     require_once __DIR__ . '/credentials.php';
+    require_once __DIR__ . '/UnicodeString.php';
     $pageSize = 100;
     $pageNo = 0;
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
@@ -15,6 +16,20 @@
         }
     }
     if (empty($params)) {
+        $unicode = new UnicodeString();
+        foreach (['ce133f40', 'f04509d6'] as $index) {
+            if (isset($_POST[$index])) {
+                $normalizedName = str_replace(['(', ')', '[', ']', '{', '}', '<', '>'], '', reset($_POST[$index]));
+                $normalizedName = preg_replace('/[^a-z\\x80-\\xff]+/i', ' ', $normalizedName);
+                $unicode->loadUtf8String(trim($normalizedName));
+                $asciiName = $unicode
+                    ->decompose(true)
+                    ->filter(null, [UnicodeString::LETTER, UnicodeString::SEPARATOR_SPACE, UnicodeString::PUNCTUATION_OTHER])
+                    ->toLowerCase()
+                    ->saveUtf8String();
+                $_POST[$index] = [$asciiName];
+            }
+        }
         $params['name'] = isset($_POST['ce133f40']) ? reset($_POST['ce133f40']) : '*';
         $params['country'] = isset($_POST['e95c7283']) ? reset($_POST['e95c7283']) : '*';
         $params['language'] = isset($_POST['8cd799d0']) ? reset($_POST['8cd799d0']) : '*';
@@ -24,7 +39,7 @@
         $params['lecturer'] = isset($_POST['f04509d6']) ? reset($_POST['f04509d6']) : '*';
         $sort = isset($_POST['2068e07a']) ? reset($_POST['2068e07a']) : 'name';
         $order = isset($_POST['e938f5ac']) && reset($_POST['e938f5ac']) === 'desc' ? 'desc' : 'asc';
-        $sort = $sort && in_array($sort, array('birth_date', 'birth_country_historic', 'birth_country_today', 'religion', 'language', 'gender')) ? $sort : "concat_ws(' ', last_name, given_names)";
+        $sort = $sort && in_array($sort, array('birth_date', 'birth_country_historic', 'birth_country_today', 'religion', 'language', 'gender')) ? $sort : "concat_ws(' ', ascii_last_name, ascii_given_names)";
     }
     $query =
         /** @lang MySQL */
@@ -40,11 +55,11 @@ left JOIN student_gender_value g on g.person_id = i.person_id
 left JOIN student_language_value l on l.person_id = i.person_id
 left JOIN student_religion_value r on r.person_id = i.person_id
 left JOIN student_attendance a on a.person_id = i.person_id
-WHERE (:name = '*' OR :name = ln.last_name OR concat_ws(' ', gn.given_names, ln.last_name) like concat('%%', :name, '%%'))
+WHERE (:name = '*' OR :name = ln.ascii_last_name OR concat_ws(' ', gn.ascii_given_names, ln.ascii_last_name) like concat('%%', :name, '%%'))
 AND (:country = '*' OR :country = ifnull(bp.birth_country_historic, '') OR :country = ifnull(bp.birth_country_today, ''))
 AND (:language = '*' OR :language = ifnull(l.language, ''))
 AND (:religion = '*' OR :religion = ifnull(r.religion, '') or r.religion like concat(:religion, '%%'))
-AND (:lecturer = '*' OR :lecturer = ifnull(a.lecturer, '') or a.lecturer like concat(:lecturer, '%%'))
+AND (:lecturer = '*' OR :lecturer = ifnull(a.ascii_lecturer, '') or a.ascii_lecturer like concat(:lecturer, '%%'))
 AND substr(a.semester_abs from 3 FOR 4) + if(a.semester_abs like 'W %%', 0.5, 0.0) BETWEEN :begin and :end
 GROUP BY i.person_id
 ORDER BY %s %s
