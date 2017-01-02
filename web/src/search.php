@@ -9,7 +9,7 @@
         if ($compressed = base64_decode($_GET['token'], true)) {
             if ($serialization = gzuncompress($compressed)) {
                 if ($data = unserialize($serialization)) {
-                    list($pageNo, $pageSize, $params) = $data;
+                    list($pageNo, $pageSize, $params, $sort, $order) = $data;
                 }
             }
         }
@@ -22,10 +22,10 @@
         $params['begin'] = isset($_POST['1b3abf22']) ? reset($_POST['1b3abf22']) : 0.0;
         $params['end'] = isset($_POST['5807411e']) ? reset($_POST['5807411e']) : 9999.5;
         $params['lecturer'] = isset($_POST['f04509d6']) ? reset($_POST['f04509d6']) : '*';
+        $sort = isset($_POST['2068e07a']) ? reset($_POST['2068e07a']) : 'name';
+        $order = isset($_POST['e938f5ac']) && reset($_POST['e938f5ac']) === 'desc' ? 'desc' : 'asc';
+        $sort = $sort && in_array($sort, array('birth_date', 'birth_country_historic', 'birth_country_today', 'religion', 'language', 'gender')) ? $sort : "concat_ws(' ', last_name, given_names)";
     }
-    $sort = isset($_POST['2068e07a']) ? reset($_POST['2068e07a']) : 'name';
-    $order = isset($_POST['e938f5ac']) && reset($_POST['e938f5ac']) === 'desc' ? 'desc' : 'asc';
-    $sort = $sort && in_array($sort, array('birth_date', 'birth_country_historic', 'birth_country_today', 'religion', 'language', 'gender')) ? $sort : "concat_ws(' ', last_name, given_names)";
     $query =
         /** @lang MySQL */
         <<<'EOD'
@@ -64,7 +64,7 @@ EOD;
                 <strong><?php echo $i + 1 ?></strong>
             <?php else: ?>
                 <a href="?token=<?php
-                    echo urlencode(base64_encode(gzcompress(serialize(array($i, $pageSize, $params)))))
+                    echo urlencode(base64_encode(gzcompress(serialize(array($i, $pageSize, $params, $sort, $order)))))
                 ?>"><?php echo $i + 1 ?></a>
             <?php endif ?>
         <?php endfor ?>
