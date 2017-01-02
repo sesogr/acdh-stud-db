@@ -11,9 +11,9 @@
     $listLastNames->setFetchMode(PDO::FETCH_COLUMN, 0);
     $listGivenNames->setFetchMode(PDO::FETCH_COLUMN, 0);
     $listLecturers->setFetchMode(PDO::FETCH_COLUMN, 0);
-    $templateLastName = "UPDATE `student_last_name_value` SET `ascii_last_name` = nullif('%s', '') WHERE `last_name` = '%s'\n";
-    $templateGivenNames = "UPDATE `student_given_names_value` SET `ascii_given_names` = nullif('%s', '') WHERE `given_names` = '%s'\n";
-    $templateLecturer = "UPDATE `student_attendance` SET `ascii_lecturer` = nullif('%s', '') WHERE `lecturer` = '%s'\n";
+    $templateLastName = "UPDATE `student_last_name_value` SET `ascii_last_name` = nullif(%s, '') WHERE `last_name` = %s;\n";
+    $templateGivenNames = "UPDATE `student_given_names_value` SET `ascii_given_names` = nullif(%s, '') WHERE `given_names` = %s;\n";
+    $templateLecturer = "UPDATE `student_attendance` SET `ascii_lecturer` = nullif(%s, '') WHERE `lecturer` = %s;\n";
 //    $updateLastName = $pdo->prepare("UPDATE `student_last_name_value` SET `ascii_last_name` = nullif(:ascii_name, '') WHERE `last_name` = :name");
 //    $updateGivenNames = $pdo->prepare("UPDATE `student_given_names_value` SET `ascii_given_names` = nullif(:ascii_name, '') WHERE `given_names` = :name");
 //    $updateLecturer = $pdo->prepare("UPDATE `student_attendance` SET `ascii_lecturer` = nullif(:ascii_name, '') WHERE `lecturer` = :name");
@@ -29,7 +29,7 @@
             ->toLowerCase()
             ->saveUtf8String();
 //        $updateLastName->execute(['name' => $name, 'ascii_name' => $asciiName]);
-        printf($templateLastName, $asciiName, $name);
+        printf($templateLastName, $pdo->quote($asciiName), $pdo->quote($name));
     }
     foreach ($listGivenNames as $name) {
         $normalizedName = str_replace(['(', ')', '[', ']', '{', '}', '<', '>'], '', $name);
@@ -41,7 +41,7 @@
             ->toLowerCase()
             ->saveUtf8String();
 //        $updateGivenNames->execute(['name' => $name, 'ascii_name' => $asciiName]);
-        printf($templateGivenNames, $asciiName, $name);
+        printf($templateGivenNames, $pdo->quote($asciiName), $pdo->quote($name));
     }
     foreach ($listLecturers as $name) {
         $normalizedName = str_replace(['(', ')', '[', ']', '{', '}', '<', '>'], '', $name);
@@ -53,5 +53,5 @@
             ->toLowerCase()
             ->saveUtf8String();
 //        $updateLecturer->execute(['name' => $name, 'ascii_name' => $asciiName]);
-        printf($templateLecturer, $asciiName, $name);
+        printf($templateLecturer, $pdo->quote($asciiName), $pdo->quote($name));
     }
