@@ -1,5 +1,6 @@
 <?php
     require_once __DIR__ . '/credentials.php';
+    require_once __DIR__ . '/UnicodeString.php';
     $pageSize = 100;
     $pageNo = 0;
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
@@ -15,6 +16,20 @@
         }
     }
     if (empty($params)) {
+        $unicode = new UnicodeString();
+        foreach (['ce133f40', 'f04509d6'] as $index) {
+            if (isset($_POST[$index])) {
+                $normalizedName = str_replace(['(', ')', '[', ']', '{', '}', '<', '>'], '', reset($_POST[$index]));
+                $normalizedName = preg_replace('/[^a-z\\x80-\\xff]+/i', ' ', $normalizedName);
+                $unicode->loadUtf8String(trim($normalizedName));
+                $asciiName = $unicode
+                    ->decompose(true)
+                    ->filter(null, [UnicodeString::LETTER, UnicodeString::SEPARATOR_SPACE, UnicodeString::PUNCTUATION_OTHER])
+                    ->toLowerCase()
+                    ->saveUtf8String();
+                $_POST[$index] = [$asciiName];
+            }
+        }
         $params['name'] = isset($_POST['ce133f40']) ? reset($_POST['ce133f40']) : '*';
         $params['country'] = isset($_POST['e95c7283']) ? reset($_POST['e95c7283']) : '*';
         $params['language'] = isset($_POST['8cd799d0']) ? reset($_POST['8cd799d0']) : '*';
