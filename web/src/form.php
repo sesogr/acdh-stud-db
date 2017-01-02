@@ -15,8 +15,8 @@ ORDER BY `country`
 EOD
 );
     $listLanguages = $pdo->query('SELECT DISTINCT `language` FROM `student_language_value` ORDER BY `language`');
-    $listLecturers = $pdo->query('SELECT DISTINCT `lecturer` FROM `student_attendance` ORDER BY `lecturer`');
-    $listNames = $pdo->query('SELECT DISTINCT `last_name` FROM `student_last_name_value` ORDER BY `last_name`');
+    $listLecturers = $pdo->query('SELECT DISTINCT `lecturer` FROM `student_attendance` ORDER BY `ascii_lecturer`');
+    $listNames = $pdo->query('SELECT DISTINCT `last_name` FROM `student_last_name_value` ORDER BY `ascii_last_name`');
     $listReligions = $pdo->query('SELECT DISTINCT `religion` FROM `student_religion_value` ORDER BY `religion`');
     $listSemesters = $pdo->query('SELECT DISTINCT `semester_abs` FROM `student_attendance` ORDER BY substring(`semester_abs` FROM 3), substring_index(`semester_abs`, \' \', 1)');
     $loadYearRange = $pdo->query('SELECT min(`year_min`), max(`year_max`) FROM `student_identity`');
