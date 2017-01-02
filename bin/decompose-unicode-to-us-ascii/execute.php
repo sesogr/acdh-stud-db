@@ -18,14 +18,13 @@
 //    $updateGivenNames = $pdo->prepare("UPDATE `student_given_names_value` SET `ascii_given_names` = nullif(:ascii_name, '') WHERE `given_names` = :name");
 //    $updateLecturer = $pdo->prepare("UPDATE `student_attendance` SET `ascii_lecturer` = nullif(:ascii_name, '') WHERE `lecturer` = :name");
     $unicodeString = new UnicodeString();
-    $unicodeSpace = new UnicodeString(0x20);
     foreach ($listLastNames as $name) {
         $normalizedName = str_replace(['(', ')', '[', ']', '{', '}', '<', '>'], '', $name);
         $normalizedName = preg_replace('/[^a-z\\x80-\\xff]+/i', ' ', $normalizedName);
         $unicodeString->loadUtf8String(trim($normalizedName));
         $asciiName = $unicodeString
             ->decompose(true)
-            ->filter(null, [UnicodeString::LETTER])
+            ->filter(null, [UnicodeString::LETTER, UnicodeString::SEPARATOR_SPACE])
             ->toLowerCase()
             ->saveUtf8String();
 //        $updateLastName->execute(['name' => $name, 'ascii_name' => $asciiName]);
@@ -37,7 +36,7 @@
         $unicodeString->loadUtf8String(trim($normalizedName));
         $asciiName = $unicodeString
             ->decompose(true)
-            ->filter($unicodeSpace, [UnicodeString::LETTER])
+            ->filter(null, [UnicodeString::LETTER, UnicodeString::SEPARATOR_SPACE])
             ->toLowerCase()
             ->saveUtf8String();
 //        $updateGivenNames->execute(['name' => $name, 'ascii_name' => $asciiName]);
@@ -49,7 +48,7 @@
         $unicodeString->loadUtf8String(trim($normalizedName));
         $asciiName = $unicodeString
             ->decompose(true)
-            ->filter($unicodeSpace, [UnicodeString::LETTER, UnicodeString::PUNCTUATION_OTHER])
+            ->filter(null, [UnicodeString::LETTER, UnicodeString::SEPARATOR_SPACE, UnicodeString::PUNCTUATION_OTHER])
             ->toLowerCase()
             ->saveUtf8String();
 //        $updateLecturer->execute(['name' => $name, 'ascii_name' => $asciiName]);
