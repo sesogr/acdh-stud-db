@@ -114,10 +114,17 @@
 		public function decompose ($pIsZealous = false) {
 			$contents = array();
 			foreach ($this->contents as $cp) {
-				if ($cp >= 0x80 && ($char = $this->findChar($cp))
-					&& $char->CharacterDecompositionMapping
-				) {
-					foreach (explode(" ", $char->CharacterDecompositionMapping) as $cp) {
+				$mapping = null;
+				if ($cp >= 0x80 && ($char = $this->findChar($cp))) {
+					if ($char->CharacterDecompositionMapping) {
+						$mapping = $char->CharacterDecompositionMapping;
+					} else if ($pIsZealous && preg_match('/^LATIN (CAPITAL|SMALL) LETTER (\w) WITH STROKE$/', $char->CharacterName, $matches)) {
+						$matches = array_map($matches[1] == 'SMALL' ? 'strtolower' : 'strtoupper', $matches);
+						$mapping = sprintf('%04x %s', ord($matches[2]), substr($char->Unicode10Name, -6) == ' SLASH' ? '0337' : '0335');
+					}
+				}
+				if ($mapping) {
+					foreach (explode(" ", $mapping) as $cp) {
 						if (strlen($cp) == 4 && hexdec($cp) > 0) {
 							$contents[] = hexdec($cp);
 						}
