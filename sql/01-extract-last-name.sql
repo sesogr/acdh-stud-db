@@ -5,14 +5,16 @@ CREATE TABLE `student_last_name_value` AS
 	(
 		SELECT DISTINCT
 			`merged_id` AS `person_id`,
-			substring_index(`name`, ' ', 1) AS `last_name`
+			substring_index(`name`, ' ', 1) AS `last_name`,
+			NULL AS `ascii_last_name`
 		FROM `student_person`
 		WHERE `name` IS NOT NULL
 	)
 	UNION (
 		SELECT DISTINCT
 			`id` AS `person_id`,
-			substring_index(`name`, ' ', 1) AS `last_name`
+			substring_index(`name`, ' ', 1) AS `last_name`,
+			NULL AS `ascii_last_name`
 		FROM `student_person_20161116`
 		WHERE `name` IS NOT NULL
 	)
