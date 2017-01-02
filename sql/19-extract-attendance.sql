@@ -17,8 +17,7 @@ CREATE TABLE `student_attendance` AS
 					`x_semester_extra` `semester_rel`,
 					`x_lecturer` `lecturer`,
 					`x_class` `class`,
-					concat_ws(';', nullif(`x_class_extra`, ''), nullif(`anmerkungen`, '')) `remarks`,
-					NULL `ascii_lecturer`
+					concat_ws(';', nullif(`x_class_extra`, ''), nullif(`anmerkungen`, '')) `remarks`
 				FROM `student_lecture`
 			)
 			UNION (
@@ -28,8 +27,7 @@ CREATE TABLE `student_attendance` AS
 					`semester` `semester_rel`,
 					`dozent` `lecturer`,
 					`vorlesung` `class`,
-					`anmerkung` `remarks`,
-					NULL `ascii_lecturer`
+					`anmerkung` `remarks`
 				FROM `student_lecture_20161116`
 			)
 		) `l`
