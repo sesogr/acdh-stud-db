@@ -8,7 +8,8 @@ CREATE TABLE `student_attendance` AS
 		ifnull(`p2`.`fakultaet`, 'Phil. Fak.') `faculty`,
 		`lecturer`,
 		`class`,
-		`remarks`
+		`remarks`,
+		lower(`lecturer`) `ascii_lecturer`
 	FROM (
 			(
 				SELECT DISTINCT
@@ -17,8 +18,7 @@ CREATE TABLE `student_attendance` AS
 					`x_semester_extra` `semester_rel`,
 					`x_lecturer` `lecturer`,
 					`x_class` `class`,
-					concat_ws(';', nullif(`x_class_extra`, ''), nullif(`anmerkungen`, '')) `remarks`,
-					lower(`x_lecturer`) `ascii_lecturer`
+					concat_ws(';', nullif(`x_class_extra`, ''), nullif(`anmerkungen`, '')) `remarks`
 				FROM `student_lecture`
 			)
 			UNION (
@@ -28,8 +28,7 @@ CREATE TABLE `student_attendance` AS
 					`semester` `semester_rel`,
 					`dozent` `lecturer`,
 					`vorlesung` `class`,
-					`anmerkung` `remarks`,
-					lower(`dozent`) `ascii_lecturer`
+					`anmerkung` `remarks`
 				FROM `student_lecture_20161116`
 			)
 		) `l`
