@@ -15,8 +15,8 @@ ORDER BY `country`
 EOD
 );
     $listLanguages = $pdo->query('SELECT DISTINCT `language` FROM `student_language_value` ORDER BY `language`');
-    $listLecturers = $pdo->query('SELECT DISTINCT `lecturer` FROM `student_attendance` ORDER BY `lecturer`');
-    $listNames = $pdo->query('SELECT DISTINCT `last_name` FROM `student_last_name_value` ORDER BY `last_name`');
+    $listLecturers = $pdo->query('SELECT DISTINCT `lecturer` FROM `student_attendance` ORDER BY `ascii_lecturer`');
+    $listNames = $pdo->query('SELECT DISTINCT `last_name` FROM `student_last_name_value` ORDER BY `ascii_last_name`');
     $listReligions = $pdo->query('SELECT DISTINCT `religion` FROM `student_religion_value` ORDER BY `religion`');
     $listSemesters = $pdo->query('SELECT DISTINCT `semester_abs` FROM `student_attendance` ORDER BY substring(`semester_abs` FROM 3), substring_index(`semester_abs`, \' \', 1)');
     $loadYearRange = $pdo->query('SELECT min(`year_min`), max(`year_max`) FROM `student_identity`');
@@ -130,3 +130,26 @@ EOD
         <button type="reset">Einschränkungen aufheben</button>
     </div>
 </form>
+<script type="text/javascript">/*<![CDATA[*/
+    var inputElements = [
+        document.getElementById('ce133f40-3b4c-47dd-ac6c-b4ce4458daeb'),
+        document.getElementById('e95c7283-8156-4303-b0e6-c4c853a3caab'),
+        document.getElementById('8cd799d0-968b-4212-b2a4-fb83c651601e'),
+        document.getElementById('10b19606-167c-45b9-984d-0b2ed848540e'),
+        document.getElementById('f04509d6-6967-440e-bdbe-03c6631e521d')
+    ];
+    inputElements.forEach(function (inputElement) {
+        var removeAsterisk = false;
+        inputElement.onkeydown = function () {
+            if (this.value == '*') {
+                removeAsterisk = true;
+            }
+        };
+        inputElement.onkeyup = function () {
+            if (removeAsterisk && this.value.length > 1) {
+                this.value = this.value.replace(/^\*|\*$/g, '');
+                removeAsterisk = false;
+            }
+        };
+    });
+/*]]>*/</script>
