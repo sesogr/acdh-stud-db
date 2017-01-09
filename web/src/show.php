@@ -14,7 +14,7 @@
     foreach ($listProperties as $property) {
         $hasTimes = $hasTimes
             || $property['times']
-            || in_array($property['property'], ['biography', 'birth_date']) && $property['value2'] == 'true';
+            || in_array($property['property'], array('biography', 'birth_date')) && $property['value2'] == 'true';
         $student[$property['property']][] = array(
             'value' => sprintf(
                 $property['property'] == 'birth_place'
@@ -25,7 +25,7 @@
                 $property['value3']
             ),
             'time' => sprintf(
-                in_array($property['property'], ['biography', 'birth_date']) && $property['value2'] == 'true'
+                in_array($property['property'], array('biography', 'birth_date')) && $property['value2'] == 'true'
                     ? '[Aus zusätzlichen Quellen ergänzt]'
                     : '%s',
                 $property['times']

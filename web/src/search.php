@@ -17,17 +17,17 @@
     }
     if (empty($params)) {
         $unicode = new UnicodeString();
-        foreach (['ce133f40', 'f04509d6'] as $index) {
+        foreach (array('ce133f40', 'f04509d6') as $index) {
             if (isset($_POST[$index])) {
-                $normalizedName = str_replace(['(', ')', '[', ']', '{', '}', '<', '>'], '', reset($_POST[$index]));
+                $normalizedName = str_replace(array('(', ')', '[', ']', '{', '}', '<', '>'), '', reset($_POST[$index]));
                 $normalizedName = preg_replace('/[^a-z\\x80-\\xff]+/i', ' ', $normalizedName);
                 $unicode->loadUtf8String(trim($normalizedName));
                 $asciiName = $unicode
                     ->decompose(true)
-                    ->filter(null, [UnicodeString::LETTER, UnicodeString::SEPARATOR_SPACE, UnicodeString::PUNCTUATION_OTHER])
+                    ->filter(null, array(UnicodeString::LETTER, UnicodeString::SEPARATOR_SPACE, UnicodeString::PUNCTUATION_OTHER))
                     ->toLowerCase()
                     ->saveUtf8String();
-                $_POST[$index] = [$asciiName];
+                $_POST[$index] = array($asciiName);
             }
         }
         $params['name'] = isset($_POST['ce133f40']) ? reset($_POST['ce133f40']) : '*';
