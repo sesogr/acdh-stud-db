@@ -19,6 +19,7 @@
             | SplFileObject::READ_CSV
             | SplFileObject::SKIP_EMPTY
         );
+        printf("Loading input file %s\n", $fileInfo->getFilename());
         loadSqlTableFromCsvIterator($file->getBasename('.tsv'), $file, $pdo, 1000);
     }
 ?>
@@ -123,10 +124,12 @@
                     $insert->execute($values);
                     $values = array();
                     $currentRowCount = 0;
+                    printf("    Number of records processed: %d\n", $rowIndex);
                 }
             }
         }
         if ($currentRowCount) {
             $pdo->prepare(createSqlInsertStatement($tableName, $fieldCount, $currentRowCount))->execute($values);
+            printf("    Number of records processed: %d\n", $rowIndex);
         }
     }
