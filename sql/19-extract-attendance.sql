@@ -13,6 +13,7 @@ CREATE TABLE `student_attendance` DEFAULT CHARSET utf8 AS
 			(
 				SELECT DISTINCT
 					`merged_id` AS `person_id`,
+					`student_id`,
 					`x_semester`,
 					`x_semester_extra` `semester_rel`,
 					`x_lecturer` `lecturer`,
@@ -23,6 +24,7 @@ CREATE TABLE `student_attendance` DEFAULT CHARSET utf8 AS
 			UNION (
 				SELECT DISTINCT
 					`merged` AS `person_id`,
+					`id` as `student_id`,
 					`ws_ss`,
 					`semester` `semester_rel`,
 					`dozent` `lecturer`,
