@@ -50,6 +50,21 @@
     }
 
     /**
+     * @param string $tableName
+     * @param int $fieldCount
+     * @return string
+     */
+    function createSqlInsertStatement($tableName, $fieldCount, $rowCount = 1)
+    {
+        $valuePlaceholders = sprintf('(?%s)', str_repeat(', ?', $fieldCount));
+        return sprintf(
+            'INSERT INTO `%s` VALUES %s',
+            $tableName,
+            implode(', ', array_fill(0, $rowCount, $valuePlaceholders))
+        );
+    }
+
+    /**
      * @param string $fieldName
      * @param int $colIndex
      * @return string
