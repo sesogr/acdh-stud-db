@@ -19,7 +19,7 @@
             | SplFileObject::READ_CSV
             | SplFileObject::SKIP_EMPTY
         );
-        loadSqlTableFromCsvIterator($file->getBasename('.tsv'), $file, $pdo);
+        loadSqlTableFromCsvIterator($file->getBasename('.tsv'), $file, $pdo, 1000);
     }
 ?>
 <?php
@@ -85,8 +85,9 @@
      * @param string $rawTableName
      * @param Iterator $csvIterator
      * @param PDO $pdo
+     * @param int $insertChunkSize
      */
-    function loadSqlTableFromCsvIterator($rawTableName, Iterator $csvIterator, PDO $pdo)
+    function loadSqlTableFromCsvIterator($rawTableName, Iterator $csvIterator, PDO $pdo, $insertChunkSize)
     {
         $fields = array();
         $lengths = array();
@@ -105,14 +106,27 @@
         $tableName = createSqlIdentifier($rawTableName);
         $pdo->exec(sprintf('DROP TABLE IF EXISTS `%s`', $tableName));
         $pdo->exec(createSqlCreateTableStatement($tableName, $fields, $lengths));
+        $fieldCount = count($fields);
+        $insert = $pdo->prepare(createSqlInsertStatement($tableName, $fieldCount, $insertChunkSize));
+        $rowIndex = 0;
+        $values = array();
+        $currentRowCount = 0;
         foreach ($csvIterator as $rowIndex => $record) {
             if ($rowIndex > 0) {
-                $values = array($rowIndex);
+                $values[] = $rowIndex; // add _id
                 foreach ($record as $colIndex => $value) {
                     $value = trim($value);
-                    $values[] = $value === '' || $value === 'NULL' ? 'NULL' : $pdo->quote($value);
+                    $values[] = $value === '' || $value === 'NULL' ? null : $value;
                 }
-                $pdo->exec(sprintf('INSERT INTO `%s` VALUES (%s)', $tableName, implode(', ', $values)));
+                $currentRowCount++;
+                if ($rowIndex % $insertChunkSize == 0) {
+                    $insert->execute($values);
+                    $values = array();
+                    $currentRowCount = 0;
+                }
             }
+        }
+        if ($currentRowCount) {
+            $pdo->prepare(createSqlInsertStatement($tableName, $fieldCount, $currentRowCount))->execute($values);
         }
     }
