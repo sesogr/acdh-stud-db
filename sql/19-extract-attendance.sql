@@ -33,8 +33,8 @@ CREATE TABLE `student_attendance` DEFAULT CHARSET utf8 AS
 				FROM `student_lecture_20161116`
 			)
 		) `l`
-		LEFT JOIN `student_person` `p1` ON `p1`.`student_id` = `l`.`person_id`
-		LEFT JOIN `student_person_20161116` `p2` ON `p2`.`id` = `l`.`person_id`;
+		LEFT JOIN `student_person` `p1` ON `p1`.`student_id` = `l`.`student_id`
+		LEFT JOIN `student_person_20161116` `p2` ON `p2`.`lfd_nr` = `l`.`student_id`;
 
 ALTER TABLE `student_attendance`
 ADD COLUMN `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST,
