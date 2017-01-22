@@ -14,6 +14,7 @@ CREATE TABLE `student_attendance` DEFAULT CHARSET utf8 AS
 				 SELECT DISTINCT
 					 `merged_id` AS `person_id`,
 					 `student_id`,
+					 null `seq_no`,
 					 `x_semester`,
 					 `x_semester_extra` `semester_rel`,
 					 `x_lecturer` `lecturer`,
@@ -24,7 +25,8 @@ CREATE TABLE `student_attendance` DEFAULT CHARSET utf8 AS
 			 UNION (
 				 SELECT DISTINCT
 					 `merged` AS `person_id`,
-					 `id` as `student_id`,
+					 null `student_id`,
+					 `id` `seq_no`,
 					 `ws_ss`,
 					 `semester` `semester_rel`,
 					 `dozent` `lecturer`,
@@ -34,7 +36,7 @@ CREATE TABLE `student_attendance` DEFAULT CHARSET utf8 AS
 			 )
 		 ) `l`
 		LEFT JOIN `student_person` `p1` ON `p1`.`student_id` = `l`.`student_id`
-		LEFT JOIN `student_person_20161116` `p2` ON `p2`.`lfd_nr` = `l`.`student_id`
+		LEFT JOIN `student_person_20161116` `p2` ON `p2`.`lfd_nr` = `l`.`seq_no`
 		LEFT JOIN `student_person_20161116` `p3` ON `p3`.`id` = `l`.`person_id`;
 
 ALTER TABLE `student_attendance`
