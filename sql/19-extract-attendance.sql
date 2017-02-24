@@ -19,7 +19,8 @@ CREATE TABLE `student_attendance` DEFAULT CHARSET utf8 AS
 					`x_semester_extra` `semester_rel`,
 					`x_lecturer` `lecturer`,
 					`x_class` `class`,
-					concat_ws(';', nullif(`x_class_extra`, ''), nullif(`anmerkungen`, '')) `remarks`
+					concat_ws(';', nullif(`x_class_extra`, ''), nullif(`anmerkungen`, '')) `remarks`,
+					'Phil. Fak.' `faculty`
 				FROM `student_lecture`
 			)
 			UNION (
@@ -31,7 +32,8 @@ CREATE TABLE `student_attendance` DEFAULT CHARSET utf8 AS
 					`semester` `semester_rel`,
 					`dozent` `lecturer`,
 					`vorlesung` `class`,
-					`anmerkung` `remarks`
+					`anmerkung` `remarks`,
+					null
 				FROM `student_lecture_20161116`
 			)
 		) `l`
