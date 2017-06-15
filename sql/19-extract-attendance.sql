@@ -37,9 +37,14 @@ CREATE TABLE `student_attendance` DEFAULT CHARSET utf8 AS
 				FROM `student_lecture_20161116`
 			)
 		) `l`
-		LEFT JOIN `student_person` `p1` ON `l`.`seq_no` IS NULL # restrict matches to first lecture table only
-			AND (`p1`.`merged_id` IN (`l`.`person_id`, `l`.`student_id`)
-			OR `p1`.`student_id` IN (`l`.`person_id`, `l`.`student_id`))
+		LEFT JOIN `student_person` `p1`
+			ON `l`.`seq_no` IS NULL # restrict matches to first lecture table only
+			AND ( # do not use IN; otherwise any null matches will be included as well
+				`p1`.`merged_id` = `l`.`person_id`
+				OR `p1`.`merged_id` = `l`.`student_id`
+				OR `p1`.`student_id` = `l`.`person_id`
+				OR `p1`.`student_id` = `l`.`student_id`
+			)
 		LEFT JOIN `student_person_20161116` `p2` ON `p2`.`lfd_nr` = `l`.`seq_no`
 		LEFT JOIN `student_person_20161116` `p3` ON `p3`.`id` = `l`.`person_id`;
 
