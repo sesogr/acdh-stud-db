@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `student_attendance`;
 
 CREATE TABLE `student_attendance` DEFAULT CHARSET utf8 AS
 	SELECT
-		`person_id`,
+		ifnull(p1.merged_id, ifnull(p2.id, p3.id)) `person_id`,
 		ifnull(`l`.`x_semester`, if(`l`.`student_id` IS NULL, ifnull(`p2`.`semester`, `p3`.`semester`), `p1`.`semester`)) `semester_abs`,
 		`semester_rel`,
 		ifnull(`l`.`faculty`, ifnull(`p2`.`fakultaet`, `p3`.`fakultaet`)) `faculty`,
