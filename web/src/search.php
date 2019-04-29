@@ -20,7 +20,7 @@
         foreach (array('ce133f40', 'f04509d6') as $index) {
             if (isset($_POST[$index])) {
                 $normalizedName = str_replace(array('(', ')', '[', ']', '{', '}', '<', '>'), '', reset($_POST[$index]));
-                $normalizedName = preg_replace('/[^a-z\\x80-\\xff]+/i', ' ', $normalizedName);
+                $normalizedName = preg_replace('/[^,a-z\\x80-\\xff]+/i', ' ', $normalizedName);
                 $unicode->loadUtf8String(trim($normalizedName));
                 $asciiName = $unicode
                     ->decompose(true)
