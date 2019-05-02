@@ -45,9 +45,6 @@
 		private $contents = array();
 		private $pointer = 0;
 
-		/**
-		 * @param int $pCodepoint1, ...
-		 */
 		public function __construct () {
 			if (!self::$map) {
 				self::$map = unserialize(gzuncompress(base64_decode(self::$packedMap)));
@@ -124,9 +121,9 @@
 					}
 				}
 				if ($mapping) {
-					foreach (explode(" ", $mapping) as $cp) {
-						if (strlen($cp) == 4 && hexdec($cp) > 0) {
-							$contents[] = hexdec($cp);
+					foreach (explode(" ", $mapping) as $cp2) {
+						if (strlen($cp2) == 4 && hexdec($cp2) > 0) {
+							$contents[] = hexdec($cp2);
 						}
 					}
 				}
@@ -515,4 +512,3 @@
 			}
 		}
 	}
-?>
