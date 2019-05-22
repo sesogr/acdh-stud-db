@@ -1,9 +1,12 @@
 <?php declare(strict_types=1);
+use rekdagyothub\TsvReader;
+
+require_once __DIR__ . '/../../lib/TsvReader.php';
 require_once __DIR__ . '/../../web/src/credentials.php';
 require_once __DIR__ . '/../../web/src/UnicodeString.php';
 $pdo = openDbConnection('mysql:host=127.0.0.1;port=13006;dbname=rksd;charset=utf8', 'rksd', 'nJkyj2pOsfUi');
-$studentRecords = iterateTsvFile(__DIR__ . '/../../files/final_student_person_Jus_1897_1927_mit_ID-1.color-columns.tsv');
-$lectureRecords = iterateTsvFile(__DIR__ . '/../../files/final_student_lecture_Jus_1897_1927_mit_ID-1.tsv');
+$studentRecords = new TsvReader(__DIR__ . '/../../files/final_student_person_Jus_1897_1927_mit_ID-1.color-columns.tsv');
+$lectureRecords = new TsvReader(__DIR__ . '/../../files/final_student_lecture_Jus_1897_1927_mit_ID-1.tsv');
 foreach ($studentRecords as $index => $record) {
     if ($index > 0) {
         processPersonRecord($record, $index, $pdo);
@@ -62,19 +65,6 @@ EOD
     if ($errors) {
         throw new RuntimeException("Same or similar records exist in the following tables: " . implode(', ', $errors));
     }
-}
-
-function iterateTsvFile($fileName)
-{
-    $csvReader = new SplFileObject($fileName);
-    $csvReader->setCsvControl("\t", '"', '"');
-    $csvReader->setFlags(
-        SplFileObject::DROP_NEW_LINE
-        | SplFileObject::READ_AHEAD
-        | SplFileObject::READ_CSV
-        | SplFileObject::SKIP_EMPTY
-    );
-    return $csvReader;
 }
 
 function openDbConnection($dsn, $username, $passwd)
