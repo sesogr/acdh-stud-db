@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 require_once __DIR__ . '/../../web/src/credentials.php';
 require_once __DIR__ . '/../../web/src/UnicodeString.php';
 $pdo = openDbConnection('mysql:host=127.0.0.1;port=13006;dbname=rksd;charset=utf8', 'rksd', 'nJkyj2pOsfUi');
@@ -23,13 +23,13 @@ function decomposeUnicode($input)
             preg_replace(
                 '/[^a-z\\x80-\\xff]+/i',
                 ' ',
-                str_replace(array('(', ')', '[', ']', '{', '}', '<', '>'), '', $input)
+                str_replace(['(', ')', '[', ']', '{', '}', '<', '>'], '', $input)
             )
         )
     );
     return $unicodeString
         ->decompose(true)
-        ->filter(null, array(UnicodeString::LETTER, UnicodeString::SEPARATOR_SPACE))
+        ->filter(null, [UnicodeString::LETTER, UnicodeString::SEPARATOR_SPACE])
         ->toLowerCase()
         ->saveUtf8String();
 }
@@ -40,7 +40,7 @@ function guardExistingPersonRecords($id, $semester, PDO $pdo)
         ' ',
         'biography birth_date birth_place ethnicity father gender given_names graduation guardian language last_name last_school literature nationality religion remarks studying_address'
     );
-    $errors = array();
+    $errors = [];
     foreach ($tables as $table) {
         $statement = $pdo->prepare(
             sprintf(
@@ -54,7 +54,7 @@ EOD
                 $table
             )
         );
-        $statement->execute(array($id, $semester));
+        $statement->execute([$id, $semester]);
         foreach ($statement as $row) {
             $errors[] = $table;
         }
@@ -83,10 +83,10 @@ function openDbConnection($dsn, $username, $passwd)
         $dsn,
         $username,
         $passwd,
-        array(
+        [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-        )
+        ]
     );
     $pdo->exec('SET NAMES utf8');
     return $pdo;
@@ -103,7 +103,7 @@ function processLectureRecord(array $record, $index, PDO $pdo)
         $vorlesung,
         $anmerkung
         ) = $record;
-    print_r(array($dozent, decomposeUnicode($dozent)));
+    print_r([$dozent, decomposeUnicode($dozent)]);
 }
 
 function processPersonRecord(array $record, $index, PDO $pdo)
