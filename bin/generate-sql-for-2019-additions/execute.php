@@ -59,8 +59,9 @@ EOD
             $errors[] = $table;
         }
     }
-    throw new RuntimeException("Same or similar records exist in the following tables: " . implode(', ', $errors));
-    // print_r(array($lastName, $givenNames, decomposeUnicode($lastName), decomposeUnicode($givenNames)));
+    if ($errors) {
+        throw new RuntimeException("Same or similar records exist in the following tables: " . implode(', ', $errors));
+    }
 }
 
 function iterateTsvFile($fileName)
