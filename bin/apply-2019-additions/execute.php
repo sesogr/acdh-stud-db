@@ -6,14 +6,14 @@ $studentRecords = iterateTsvFile(__DIR__ . '/../../files/final_student_person_Ju
 $lectureRecords = iterateTsvFile(__DIR__ . '/../../files/final_student_lecture_Jus_1897_1927_mit_ID-1.tsv');
 foreach ($studentRecords as $index => $record) {
     if ($index > 0) {
-        processPersonRecord($record, $index);
+        processPersonRecord($record, $index, $pdo);
     }
 }
-foreach ($lectureRecords as $index => $record) {
-    if ($index > 0) {
-        processLectureRecord($record, $index);
-    }
-}
+// foreach ($lectureRecords as $index => $record) {
+//     if ($index > 0) {
+//         processLectureRecord($record, $index, $pdo);
+//     }
+// }
 //
 function decomposeUnicode($input)
 {
@@ -33,6 +33,36 @@ function decomposeUnicode($input)
         ->toLowerCase()
         ->saveUtf8String();
 }
+
+function guardExistingPersonRecords($id, $semester, PDO $pdo)
+{
+    $tables = explode(
+        ' ',
+        'biography birth_date birth_place ethnicity father gender given_names graduation guardian language last_name last_school literature nationality religion remarks studying_address'
+    );
+    $errors = array();
+    foreach ($tables as $table) {
+        $statement = $pdo->prepare(
+            sprintf(
+                <<<'EOD'
+select *
+from student_%s_time t
+    join student_%1$s_value v on t.value_id = v.id
+where v.person_id = ? and time = ?
+EOD
+                ,
+                $table
+            )
+        );
+        $statement->execute(array($id, $semester));
+        foreach ($statement as $row) {
+            $errors[] = $table;
+        }
+    }
+    throw new RuntimeException("Same or similar records exist in the following tables: " . implode(', ', $errors));
+    // print_r(array($lastName, $givenNames, decomposeUnicode($lastName), decomposeUnicode($givenNames)));
+}
+
 function iterateTsvFile($fileName)
 {
     $csvReader = new SplFileObject($fileName);
@@ -45,13 +75,23 @@ function iterateTsvFile($fileName)
     );
     return $csvReader;
 }
+
 function openDbConnection($dsn, $username, $passwd)
 {
-    $pdo = new PDO($dsn, $username, $passwd, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+    $pdo = new PDO(
+        $dsn,
+        $username,
+        $passwd,
+        array(
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+        )
+    );
     $pdo->exec('SET NAMES utf8');
     return $pdo;
 }
-function processLectureRecord(array $record, $index)
+
+function processLectureRecord(array $record, $index, PDO $pdo)
 {
     list(
         $merged,
@@ -64,7 +104,8 @@ function processLectureRecord(array $record, $index)
         ) = $record;
     print_r(array($dozent, decomposeUnicode($dozent)));
 }
-function processPersonRecord(array $record, $index)
+
+function processPersonRecord(array $record, $index, PDO $pdo)
 {
     list(
         $id,
@@ -105,5 +146,5 @@ function processPersonRecord(array $record, $index)
     } else {
         list($lastName, $givenNames) = explode(' ', $name, 2);
     }
-    print_r(array($lastName, $givenNames, decomposeUnicode($lastName), decomposeUnicode($givenNames)));
+    guardExistingPersonRecords($id, $semester, $pdo);
 }
