@@ -25,6 +25,7 @@ class ImmutablePdo extends PDO
             ]
         );
         $this->sqlFile = $sqlFile;
+        file_put_contents($sqlFile, '');
     }
 
     public function prepare($statement, $driver_options = null)
