@@ -32,7 +32,6 @@ class ImmutablePdo extends PDO
         if ($this->isReadonlyStatement($statement)) {
             return parent::prepare($statement);
         } else {
-            file_put_contents($this->sqlFile, $this->terminateStatements($statement), FILE_APPEND);
             return new ImmutablePdoStatement($this, $statement);
         }
     }
@@ -79,7 +78,7 @@ class ImmutablePdo extends PDO
 
     private function isReadonlyStatement(string $statement): bool
     {
-        return boolval(preg_match('<^(select|show)\\s+>i', $statement));
+        return boolval(preg_match('<^(select|show|set\\s+names)\\s+>i', $statement));
     }
 
     private function terminateStatements(string $statement): string
