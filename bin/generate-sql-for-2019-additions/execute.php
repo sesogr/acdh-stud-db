@@ -1,10 +1,17 @@
 <?php declare(strict_types=1);
+use rekdagyothub\ImmutablePdo;
 use rekdagyothub\TsvReader;
 
+require_once __DIR__ . '/../../lib/ImmutablePdo.php';
+require_once __DIR__ . '/../../lib/ImmutablePdoStatement.php';
 require_once __DIR__ . '/../../lib/TsvReader.php';
 require_once __DIR__ . '/../../web/src/credentials.php';
 require_once __DIR__ . '/../../web/src/UnicodeString.php';
-$pdo = openDbConnection('mysql:host=127.0.0.1;port=13006;dbname=rksd;charset=utf8', 'rksd', 'nJkyj2pOsfUi');
+$sqlFile = __DIR__ . '/output.sql';
+$dsn = 'mysql:host=127.0.0.1;port=13006;dbname=rksd;charset=utf8';
+$dbUsername = 'rksd';
+$dbPassword = 'nJkyj2pOsfUi';
+$pdo = openDbConnection($dsn, $dbUsername, $dbPassword, $sqlFile);
 $studentRecords = new TsvReader(__DIR__ . '/../../files/final_student_person_Jus_1897_1927_mit_ID-1.color-columns.tsv');
 $lectureRecords = new TsvReader(__DIR__ . '/../../files/final_student_lecture_Jus_1897_1927_mit_ID-1.tsv');
 foreach ($studentRecords as $index => $record) {
@@ -37,7 +44,7 @@ function decomposeUnicode($input)
         ->saveUtf8String();
 }
 
-function guardExistingPersonRecords($id, $semester, PDO $pdo)
+function guardPersonRecordIsNew($id, $semester, PDO $pdo)
 {
     $tables = explode(
         ' ',
@@ -67,18 +74,10 @@ EOD
     }
 }
 
-function openDbConnection($dsn, $username, $passwd)
+function openDbConnection($dsn, $username, $passwd, $sqlFile)
 {
-    $pdo = new PDO(
-        $dsn,
-        $username,
-        $passwd,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-        ]
-    );
-    $pdo->exec('SET NAMES utf8');
+    $pdo = new ImmutablePdo($dsn, $username, $passwd, $sqlFile);
+    $pdo->exec('SET NAMES utf8mb4');
     return $pdo;
 }
 
@@ -137,5 +136,11 @@ function processPersonRecord(array $record, $index, PDO $pdo)
     } else {
         list($lastName, $givenNames) = explode(' ', $name, 2);
     }
-    guardExistingPersonRecords($id, $semester, $pdo);
+    guardPersonRecordIsNew($id, $semester, $pdo);
+    $biography = trim($angabenZurBiografie . '; ' . $hinweiseZurBiografie, '; ') ?: null;
+    if ($biography) {
+        $pdo
+            ->prepare('insert into student_biography_value (person_id, biography, is_from_supplemental_data_source) values (?, ?, ?)')
+            ->execute([$id, $biography, $isBiographyFromSupplementalSources]);
+    }
 }
