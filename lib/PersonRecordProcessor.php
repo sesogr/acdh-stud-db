@@ -110,7 +110,7 @@ class PersonRecordProcessor extends RecordProcessor
             $yearMin,
             $yearMax,
             trim($angabenZurBiografie . '; ' . $hinweiseZurBiografie, '; ') ?: null,
-            $isBiographyFromSupplementalSources
+            $isBiographyFromSupplementalSources || $isCommentFromSupplementalSources
         );
         $this->birthDateExtractor->extract(
             $id,
@@ -121,6 +121,108 @@ class PersonRecordProcessor extends RecordProcessor
             $bornMin,
             $bornMax,
             $isDobFromSupplementalSources
+        );
+        $this->birthPlaceExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $geburtsort,
+            $geburtslandHistorisch,
+            $geburtslandHeute
+        );
+        $this->ethnicityExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $volkszugehoerigkeit
+        );
+        $this->fatherExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $nameStandUWohnortDVaters
+        );
+        $this->genderExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $geschlecht
+        );
+        $this->givenNamesExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $givenNames,
+            $this->decomposeUnicode($givenNames)
+        );
+        $this->guardianExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $vormund
+        );
+        $this->languageExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $muttersprache
+        );
+        $this->lastNameExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $lastName,
+            $this->decomposeUnicode($lastName)
+        );
+        $this->lastSchoolExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $zuletztBesuchteLehranstaltGrundlageFuerImmatriculation
+        );
+        $this->literatureExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $literaturhinweise
+        );
+        $this->nationalityExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $staatsbuergerschaft
+        );
+        $this->religionExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $religion
+        );
+        $this->remarksExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $anmerkung
+        );
+        $this->studyingAddressExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $adresseStudent
         );
     }
 
