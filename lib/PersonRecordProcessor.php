@@ -6,13 +6,20 @@ use RuntimeException;
 class PersonRecordProcessor extends RecordProcessor
 {
     /** @var ImmutablePdoStatement */
+    private $insertBioTimeStatement;
+    /** @var ImmutablePdoStatement */
     private $insertBioValueStatement;
 
     public function __construct(ImmutablePdo $pdo)
     {
         parent::__construct($pdo);
         $this->insertBioValueStatement = $this->pdo->prepare(
-            'insert into student_biography_value (person_id, biography, is_from_supplemental_data_source) values (?, ?, ?)'
+            'insert into student_biography_value '
+            . '(id, person_id, biography, is_from_supplemental_data_source) values (?, ?, ?, ?)'
+        );
+        $this->insertBioTimeStatement = $this->pdo->prepare(
+            'insert into student_biography_time '
+            . '(value_id, time, year_min, year_max) values (?, ?, ?, ?)'
         );
     }
 
@@ -60,7 +67,9 @@ class PersonRecordProcessor extends RecordProcessor
         $this->guardPersonRecordIsNew($id, $semester);
         $biography = trim($angabenZurBiografie . '; ' . $hinweiseZurBiografie, '; ') ?: null;
         if ($biography) {
-            $this->insertBioValueStatement->execute([$id, $biography, $isBiographyFromSupplementalSources]);
+            $bioValueId = $this->pdo->nextAutoId('student_biography_value', 'id');
+            $this->insertBioValueStatement->execute([$bioValueId, $id, $biography, $isBiographyFromSupplementalSources]);
+            $this->insertBioTimeStatement->execute([$bioValueId, $semester, $yearMin, $yearMax]);
         }
     }
 
