@@ -7,23 +7,59 @@ class PersonRecordProcessor extends RecordProcessor
 {
     /** @var PersonalTraitExtractor */
     private $biographyExtractor;
-    /** @var ImmutablePdoStatement */
-    private $insertBioTimeStatement;
-    /** @var ImmutablePdoStatement */
-    private $insertBioValueStatement;
+    /** @var PersonalTraitExtractor */
+    private $birthDateExtractor;
+    /** @var PersonalTraitExtractor */
+    private $birthPlaceExtractor;
+    /** @var PersonalTraitExtractor */
+    private $ethnicityExtractor;
+    /** @var PersonalTraitExtractor */
+    private $fatherExtractor;
+    /** @var PersonalTraitExtractor */
+    private $genderExtractor;
+    /** @var PersonalTraitExtractor */
+    private $givenNamesExtractor;
+    /** @var PersonalTraitExtractor */
+    private $graduationExtractor;
+    /** @var PersonalTraitExtractor */
+    private $guardianExtractor;
+    /** @var PersonalTraitExtractor */
+    private $languageExtractor;
+    /** @var PersonalTraitExtractor */
+    private $lastNameExtractor;
+    /** @var PersonalTraitExtractor */
+    private $lastSchoolExtractor;
+    /** @var PersonalTraitExtractor */
+    private $literatureExtractor;
+    /** @var PersonalTraitExtractor */
+    private $nationalityExtractor;
+    /** @var PersonalTraitExtractor */
+    private $religionExtractor;
+    /** @var PersonalTraitExtractor */
+    private $remarksExtractor;
+    /** @var PersonalTraitExtractor */
+    private $studyingAddressExtractor;
 
     public function __construct(ImmutablePdo $pdo)
     {
         parent::__construct($pdo);
         $this->biographyExtractor = new PersonalTraitExtractor($this->pdo, 'biography', ['biography', 'is_from_supplemental_data_source']);
-        $this->insertBioValueStatement = $this->pdo->prepare(
-            'insert into student_biography_value '
-            . '(id, person_id, biography, is_from_supplemental_data_source) values (?, ?, ?, ?)'
-        );
-        $this->insertBioTimeStatement = $this->pdo->prepare(
-            'insert into student_biography_time '
-            . '(value_id, time, year_min, year_max) values (?, ?, ?, ?)'
-        );
+        $this->birthDateExtractor = new PersonalTraitExtractor($this->pdo, 'birth_date', ['birth_date', 'born_on_or_after', 'born_on_or_before', 'is_from_supplemental_data_source']);
+        $this->birthPlaceExtractor = new PersonalTraitExtractor($this->pdo, 'birth_place', ['birth_place', 'birth_country_historic', 'birth_country_today']);
+        $this->ethnicityExtractor = new PersonalTraitExtractor($this->pdo, 'ethnicity', ['ethnicity']);
+        $this->fatherExtractor = new PersonalTraitExtractor($this->pdo, 'father', ['father']);
+        $this->genderExtractor = new PersonalTraitExtractor($this->pdo, 'gender', ['gender']);
+        $this->givenNamesExtractor = new PersonalTraitExtractor($this->pdo, 'given_names', ['given_names', 'ascii_given_names']);
+        $this->graduationExtractor = new PersonalTraitExtractor($this->pdo, 'graduation', ['graduation']);
+        $this->guardianExtractor = new PersonalTraitExtractor($this->pdo, 'guardian', ['guardian']);
+        $this->languageExtractor = new PersonalTraitExtractor($this->pdo, 'language', ['language']);
+        $this->lastNameExtractor = new PersonalTraitExtractor($this->pdo, 'last_name', ['last_name', 'ascii_last_name']);
+        $this->lastSchoolExtractor = new PersonalTraitExtractor($this->pdo, 'last_school', ['last_school']);
+        $this->literatureExtractor = new PersonalTraitExtractor($this->pdo, 'literature', ['literature']);
+        $this->nationalityExtractor = new PersonalTraitExtractor($this->pdo, 'nationality', ['nationality']);
+        $this->religionExtractor = new PersonalTraitExtractor($this->pdo, 'religion', ['religion']);
+        $this->remarksExtractor = new PersonalTraitExtractor($this->pdo, 'remarks', ['remarks']);
+        $this->studyingAddressExtractor = new PersonalTraitExtractor($this->pdo, 'studying_address', ['studying_address']);
     }
 
     public function processRecord(array $record, $index)
@@ -76,6 +112,16 @@ class PersonRecordProcessor extends RecordProcessor
             trim($angabenZurBiografie . '; ' . $hinweiseZurBiografie, '; ') ?: null,
             $isBiographyFromSupplementalSources
         );
+        $this->birthDateExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            $gebDat,
+            $bornMin,
+            $bornMax,
+            $isDobFromSupplementalSources
+        );
     }
 
     protected function guardPersonRecordIsNew($id, $semester)
@@ -105,16 +151,6 @@ EOD
         }
         if ($errors) {
             throw new RuntimeException("Same or similar records exist in the following tables: " . implode(', ', $errors));
-        }
-    }
-
-    private function extractBiography($id, $semester, $yearMin, $yearMax, $angabenZurBiografie, $hinweiseZurBiografie, $isBiographyFromSupplementalSources): void
-    {
-        $biography = trim($angabenZurBiografie . '; ' . $hinweiseZurBiografie, '; ') ?: null;
-        if ($biography) {
-            $bioValueId = $this->pdo->nextAutoId('student_biography_value', 'id');
-            $this->insertBioValueStatement->execute([$bioValueId, $id, $biography, $isBiographyFromSupplementalSources]);
-            $this->insertBioTimeStatement->execute([$bioValueId, $semester, $yearMin, $yearMax]);
         }
     }
 }
