@@ -5,6 +5,8 @@ use RuntimeException;
 
 class PersonRecordProcessor extends RecordProcessor
 {
+    /** @var PersonalTraitExtractor */
+    private $biographyExtractor;
     /** @var ImmutablePdoStatement */
     private $insertBioTimeStatement;
     /** @var ImmutablePdoStatement */
@@ -13,6 +15,7 @@ class PersonRecordProcessor extends RecordProcessor
     public function __construct(ImmutablePdo $pdo)
     {
         parent::__construct($pdo);
+        $this->biographyExtractor = new PersonalTraitExtractor($this->pdo, 'biography', ['biography', 'is_from_supplemental_data_source']);
         $this->insertBioValueStatement = $this->pdo->prepare(
             'insert into student_biography_value '
             . '(id, person_id, biography, is_from_supplemental_data_source) values (?, ?, ?, ?)'
@@ -65,12 +68,14 @@ class PersonRecordProcessor extends RecordProcessor
             list($lastName, $givenNames) = explode(' ', $name, 2);
         }
         $this->guardPersonRecordIsNew($id, $semester);
-        $biography = trim($angabenZurBiografie . '; ' . $hinweiseZurBiografie, '; ') ?: null;
-        if ($biography) {
-            $bioValueId = $this->pdo->nextAutoId('student_biography_value', 'id');
-            $this->insertBioValueStatement->execute([$bioValueId, $id, $biography, $isBiographyFromSupplementalSources]);
-            $this->insertBioTimeStatement->execute([$bioValueId, $semester, $yearMin, $yearMax]);
-        }
+        $this->biographyExtractor->extract(
+            $id,
+            $semester,
+            $yearMin,
+            $yearMax,
+            trim($angabenZurBiografie . '; ' . $hinweiseZurBiografie, '; ') ?: null,
+            $isBiographyFromSupplementalSources
+        );
     }
 
     protected function guardPersonRecordIsNew($id, $semester)
@@ -100,6 +105,16 @@ EOD
         }
         if ($errors) {
             throw new RuntimeException("Same or similar records exist in the following tables: " . implode(', ', $errors));
+        }
+    }
+
+    private function extractBiography($id, $semester, $yearMin, $yearMax, $angabenZurBiografie, $hinweiseZurBiografie, $isBiographyFromSupplementalSources): void
+    {
+        $biography = trim($angabenZurBiografie . '; ' . $hinweiseZurBiografie, '; ') ?: null;
+        if ($biography) {
+            $bioValueId = $this->pdo->nextAutoId('student_biography_value', 'id');
+            $this->insertBioValueStatement->execute([$bioValueId, $id, $biography, $isBiographyFromSupplementalSources]);
+            $this->insertBioTimeStatement->execute([$bioValueId, $semester, $yearMin, $yearMax]);
         }
     }
 }

@@ -7,6 +7,7 @@ use rekdagyothub\TsvReader;
 require_once __DIR__ . '/../../lib/ImmutablePdo.php';
 require_once __DIR__ . '/../../lib/ImmutablePdoStatement.php';
 require_once __DIR__ . '/../../lib/TsvReader.php';
+require_once __DIR__ . '/../../lib/PersonalTraitExtractor.php';
 require_once __DIR__ . '/../../lib/RecordProcessor.php';
 require_once __DIR__ . '/../../lib/LectureRecordProcessor.php';
 require_once __DIR__ . '/../../lib/PersonRecordProcessor.php';
