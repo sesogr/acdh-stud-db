@@ -80,10 +80,10 @@ class ImmutablePdo extends PDO
         }
     }
 
-    public function query($statement, $mode = PDO::ATTR_DEFAULT_FETCH_MODE, $arg3 = null, array $ctorargs = [])
+    public function query($statement, ...$args)
     {
         if ($this->isReadonlyStatement($statement)) {
-            return parent::query($statement, $mode, $arg3, $ctorargs);
+            return parent::query($statement, ...$args);
         } else {
             file_put_contents($this->sqlFile, $this->terminateStatements($statement), FILE_APPEND);
             return false;

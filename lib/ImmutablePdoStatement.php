@@ -26,7 +26,7 @@ class ImmutablePdoStatement extends PDOStatement
         foreach ($input_parameters as $key => $value) {
             $statement = preg_replace(
                 is_numeric($key) ? '<\\?>' : '<\\Q' . $key . '\\E>',
-                $this->pdo->quote($value),
+                $this->pdo->quote(strval($value)),
                 $statement,
                 1
             );
