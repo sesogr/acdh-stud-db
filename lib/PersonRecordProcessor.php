@@ -60,8 +60,7 @@ class PersonRecordProcessor extends RecordProcessor
         $this->guardPersonRecordIsNew($id, $semester);
         $biography = trim($angabenZurBiografie . '; ' . $hinweiseZurBiografie, '; ') ?: null;
         if ($biography) {
-            $this->insertBioValueStatement
-                ->execute([$id, $biography, $isBiographyFromSupplementalSources]);
+            $this->insertBioValueStatement->execute([$id, $biography, $isBiographyFromSupplementalSources]);
         }
     }
 

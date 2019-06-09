@@ -11,6 +11,7 @@ use RuntimeException;
  */
 class ImmutablePdo extends PDO
 {
+    private $autoIds = [];
     private $sqlFile;
 
     public function __construct($dsn, $username, $passwd, $sqlFile)
@@ -28,15 +29,6 @@ class ImmutablePdo extends PDO
         file_put_contents($sqlFile, '');
     }
 
-    public function prepare($statement, $driver_options = null)
-    {
-        if ($this->isReadonlyStatement($statement)) {
-            return parent::prepare($statement);
-        } else {
-            return new ImmutablePdoStatement($this, $statement);
-        }
-    }
-
     public function beginTransaction()
     {
         throw new RuntimeException('Transactions are not supported by this instance');
@@ -45,16 +37,6 @@ class ImmutablePdo extends PDO
     public function commit()
     {
         throw new RuntimeException('Transactions are not supported by this instance');
-    }
-
-    public function rollBack()
-    {
-        throw new RuntimeException('Transactions are not supported by this instance');
-    }
-
-    public function inTransaction()
-    {
-        return false;
     }
 
     public function exec($statement)
@@ -67,6 +49,37 @@ class ImmutablePdo extends PDO
         }
     }
 
+    public function inTransaction()
+    {
+        return false;
+    }
+
+    public function nextAutoId(string $tableName, string $columnName = null): int
+    {
+        if (!isset($this->autoIds[$tableName])) {
+            if (!$columnName) {
+                $statement = $this->query(sprintf("show indexes from `%s` where key_name = 'primary'", $tableName));
+                foreach ($statement as $result) {
+                    $columnName = $result->Column_name;
+                }
+            }
+            $statement = $this->query(sprintf('select max(`%s`) as `id` from `%s`', $columnName, $tableName));
+            foreach ($statement as $result) {
+                $this->autoIds[$tableName] = $result->id;
+            }
+        }
+        return ++$this->autoIds[$tableName];
+    }
+
+    public function prepare($statement, $driver_options = null)
+    {
+        if ($this->isReadonlyStatement($statement)) {
+            return parent::prepare($statement);
+        } else {
+            return new ImmutablePdoStatement($this, $statement);
+        }
+    }
+
     public function query($statement, $mode = PDO::ATTR_DEFAULT_FETCH_MODE, $arg3 = null, array $ctorargs = [])
     {
         if ($this->isReadonlyStatement($statement)) {
@@ -75,6 +88,11 @@ class ImmutablePdo extends PDO
             file_put_contents($this->sqlFile, $this->terminateStatements($statement), FILE_APPEND);
             return false;
         }
+    }
+
+    public function rollBack()
+    {
+        throw new RuntimeException('Transactions are not supported by this instance');
     }
 
     private function isReadonlyStatement(string $statement): bool
