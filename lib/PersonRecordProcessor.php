@@ -13,6 +13,8 @@ class PersonRecordProcessor extends RecordProcessor
     private $birthPlaceExtractor;
     /** @var PersonalTraitExtractor */
     private $ethnicityExtractor;
+    /** @var string[] */
+    private $facultyMap = [];
     /** @var PersonalTraitExtractor */
     private $fatherExtractor;
     /** @var PersonalTraitExtractor */
@@ -67,6 +69,11 @@ class PersonRecordProcessor extends RecordProcessor
         $this->studyingAddressExtractor = new PersonalTraitExtractor($this->pdo, 'studying_address', ['studying_address']);
     }
 
+    public function getFacultyForPersonId(int $id): ?string
+    {
+        return $this->facultyMap[$id] ?? null;
+    }
+
     public function processRecord(array $record, $index)
     {
         list(
@@ -102,13 +109,14 @@ class PersonRecordProcessor extends RecordProcessor
             $anmerkung,
             $volkszugehoerigkeit
             ) = $record;
+        $this->guardPersonRecordIsNew($id, $semester);
+        $this->facultyMap[$id] = $fakultaet;
         if (preg_match('<^([a-z\\x80-\\xff]+)\\s*(\\[[^\\]]+\\])\\s+(\\S+)$>i', $name, $matches)) {
             $lastName = $matches[1] . ' ' . $matches[2];
             $givenNames = $matches[3];
         } else {
             list($lastName, $givenNames) = explode(' ', $name, 2);
         }
-        $this->guardPersonRecordIsNew($id, $semester);
         if (!$isExistingId) {
             $this->insertIdentityStatement->execute([$id, $yearMin, $yearMax]);
         }
