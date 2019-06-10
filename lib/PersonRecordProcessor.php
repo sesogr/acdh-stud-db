@@ -23,6 +23,8 @@ class PersonRecordProcessor extends RecordProcessor
     private $graduationExtractor;
     /** @var PersonalTraitExtractor */
     private $guardianExtractor;
+    /** @var ImmutablePdoStatement */
+    private $insertIdentityStatement;
     /** @var PersonalTraitExtractor */
     private $languageExtractor;
     /** @var PersonalTraitExtractor */
@@ -43,6 +45,9 @@ class PersonRecordProcessor extends RecordProcessor
     public function __construct(ImmutablePdo $pdo)
     {
         parent::__construct($pdo);
+        $this->insertIdentityStatement = $this->pdo->prepare(
+            'insert into student_identity (person_id, year_min, year_max) values (?, ?, ?)'
+        );
         $this->biographyExtractor = new PersonalTraitExtractor($this->pdo, 'biography', ['biography', 'is_from_supplemental_data_source']);
         $this->birthDateExtractor = new PersonalTraitExtractor($this->pdo, 'birth_date', ['birth_date', 'born_on_or_after', 'born_on_or_before', 'is_from_supplemental_data_source']);
         $this->birthPlaceExtractor = new PersonalTraitExtractor($this->pdo, 'birth_place', ['birth_place', 'birth_country_historic', 'birth_country_today']);
@@ -104,6 +109,9 @@ class PersonRecordProcessor extends RecordProcessor
             list($lastName, $givenNames) = explode(' ', $name, 2);
         }
         $this->guardPersonRecordIsNew($id, $semester);
+        if (!$isExistingId) {
+            $this->insertIdentityStatement->execute([$id, $yearMin, $yearMax]);
+        }
         $this->biographyExtractor->extract(
             $id,
             $semester,
