@@ -1,7 +1,9 @@
+alter table student_attendance modify class varchar(255) default null null,  modify faculty varchar(255) default null null;
 alter table student_biography_time modify time varchar(255) default null null;
 alter table student_birth_date_time modify time varchar(255) default null null;
 alter table student_birth_place_time modify time varchar(255) default null null;
 alter table student_ethnicity_time modify time varchar(255) default null null;
+alter table student_ethnicity_value modify ethnicity varchar(255) default null null;
 alter table student_father_time modify time varchar(255) default null null;
 alter table student_gender_time modify time varchar(255) default null null;
 alter table student_given_names_time modify time varchar(255) default null null;
