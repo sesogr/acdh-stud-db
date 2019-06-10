@@ -3,7 +3,7 @@ namespace rekdagyothub;
 
 use RuntimeException;
 
-class PersonRecordProcessor extends RecordProcessor
+class PersonRecordProcessor extends RecordProcessor implements FacultyMap
 {
     /** @var PersonalTraitExtractor */
     private $biographyExtractor;
