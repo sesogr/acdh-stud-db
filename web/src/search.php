@@ -50,7 +50,7 @@ from student_identity i
 left JOIN student_last_name_value ln on ln.person_id = i.person_id
 left JOIN student_given_names_value gn on gn.person_id = i.person_id
 left JOIN student_birth_place_value bp on bp.person_id = i.person_id
-left JOIN student_birth_date_value bd on bd.person_id = i.person_id
+left JOIN v_most_precise_birth_date bd on bd.person_id = i.person_id
 left JOIN student_gender_value g on g.person_id = i.person_id
 left JOIN student_language_value l on l.person_id = i.person_id
 left JOIN student_religion_value r on r.person_id = i.person_id
@@ -92,8 +92,6 @@ EOD;
                 <th>Geb.-Ort</th>
                 <th>Geb.-Land (hist.)</th>
                 <th>Geb.-Land (heute)</th>
-                <th>Religion</th>
-                <th>Zeitraum</th>
                 <th>Detailansicht</th>
             </tr>
         </thead>
@@ -109,12 +107,6 @@ EOD;
                     <td><?php echo htmlspecialchars($student['birth_place']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_country_historic']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_country_today']) ?></td>
-                    <td><?php echo htmlspecialchars($student['religion']) ?></td>
-                    <td><?php echo htmlspecialchars(
-                            $student['year_min'] === null ? ''
-                                : ($student['year_min'] == $student['year_max'] ? $student['year_min']
-                                : sprintf('%d..%d', $student['year_min'], $student['year_max']))
-                        ) ?></td>
                     <td><a href="?id=<?php echo htmlspecialchars($student['person_id']) ?>">anzeigen</a></td>
                 </tr>
             <?php endforeach ?>
