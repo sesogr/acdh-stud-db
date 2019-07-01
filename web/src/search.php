@@ -92,8 +92,6 @@ EOD;
                 <th>Geb.-Ort</th>
                 <th>Geb.-Land (hist.)</th>
                 <th>Geb.-Land (heute)</th>
-                <th>Religion</th>
-                <th>Zeitraum</th>
                 <th>Detailansicht</th>
             </tr>
         </thead>
@@ -109,12 +107,6 @@ EOD;
                     <td><?php echo htmlspecialchars($student['birth_place']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_country_historic']) ?></td>
                     <td><?php echo htmlspecialchars($student['birth_country_today']) ?></td>
-                    <td><?php echo htmlspecialchars($student['religion']) ?></td>
-                    <td><?php echo htmlspecialchars(
-                            $student['year_min'] === null ? ''
-                                : ($student['year_min'] == $student['year_max'] ? $student['year_min']
-                                : sprintf('%d..%d', $student['year_min'], $student['year_max']))
-                        ) ?></td>
                     <td><a href="?id=<?php echo htmlspecialchars($student['person_id']) ?>">anzeigen</a></td>
                 </tr>
             <?php endforeach ?>
