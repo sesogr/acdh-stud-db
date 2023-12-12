@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./web:/var/www/html
+    ports:
+      - "13080:80"
+    working_dir: /var/www/html
+    command: php -S 0.0.0.0:80 -t /var/www/html
+
+  mariadb:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: hW3e4iNuFDqs
+      MYSQL_DATABASE: rksd
+      MYSQL_USER: rksd
+      MYSQL_PASSWORD: nJkyj2pOsfUi
+    ports:
+      - "13006:3306"
