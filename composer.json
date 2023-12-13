@@ -1,0 +1,11 @@
+{
+  "name": "sesogr/acdh-stud-db",
+  "description": "Student Database of the DEMOS project for the Austrian Centre for Digital Humanities and Cultural Heritage within the Austrian Academy of Sciences",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "rekdagyothub\\": "lib/"
+    }
+  }
+}
