@@ -31,7 +31,7 @@ class XlsxReader
                         $headers,
                         array_map(fn($cell) => $cell[0], $record)
                     ),
-                    '::doubtful' => array_filter($headers, fn($i) => $record[$i][1], ARRAY_FILTER_USE_KEY),
+                    '::marked' => array_filter($headers, fn($i) => $record[$i][1], ARRAY_FILTER_USE_KEY),
                 ];
             } else {
                 $headers = array_map(fn($field) => $field[0], $record);
