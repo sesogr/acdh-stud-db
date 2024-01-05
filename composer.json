@@ -9,6 +9,7 @@
     }
   },
   "require": {
-    "shuchkin/simplexlsx": "^1.0.19"
+    "shuchkin/simplexlsx": "^1.0.19",
+    "ext-json": "*"
   }
 }
