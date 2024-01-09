@@ -38,9 +38,14 @@ foreach ($attendanceRecords as $record) {
         }
     }
 }
-foreach ([$personValues, $attendanceValues] as $values) {
+foreach ([$personValues, $attendanceValues] as $i => $values) {
     foreach ($values as $k => $v) {
+        sort($v);
         if ($k === '::marked') continue;
+        file_put_contents(
+            sprintf('%s/data/%s-%s.txt', __DIR__, $i ? 'attendance' : 'person', $k),
+            implode(PHP_EOL, $v)
+        );
         if (count($v) < 20) {
             printf(
                 "%20s: %s",
