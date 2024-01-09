@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <title>DEMOS — Suche Studenten Musikwissenschaft Wien</title>
-        <style type="text/css">
+        <style>
             body { font-family: sans-serif; font-size: 10px; }
             main section datalist, main section datalist option { display: none; }
             main section form>div { display: table-row; }
@@ -19,6 +19,7 @@
             main section table td[title] { quotes: '[' ']'; }
             main section table td[title]:before { content: open-quote; color: #080; font-weight: bold; }
             main section table td[title]:after { content: close-quote; color: #080; font-weight: bold; }
+            main section table td .illegible { background: #999 url(noise.gif); color: transparent; }
         </style>
     </head>
     <body>
