@@ -7,11 +7,14 @@ function levRel($a, $b)
     return 6 * levenshtein($a, $b) / (strlen($a) + strlen($b) ?: 1);
 }
 
-$personRecords = XlsxReader::iterateRecords(__DIR__ . '/../../files/2023/Studierende Muwi WS 1927 28 Personen_MWA_5.10._ (4).xlsx');
+$personRecords = XlsxReader::iterateRecords(
+    __DIR__ . '/../../files/2023/Studierende Muwi WS 1927 28 Personen_MWA_5.10._ (4).xlsx'
+);
 $nameClusters = [];
 foreach ($personRecords as $record) {
     if ($record['X-serial-number']) {
-        $nameClusters[trim(preg_replace('/\\PL+/u', ' ', strval($record['name'])))][] = $record;
+        $normalisedName = trim(preg_replace('/\\PL+/u', ' ', strval($record['name'])));
+        $nameClusters[$normalisedName][] = $record;
     }
 }
 $names = array_keys($nameClusters);
