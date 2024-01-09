@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <title>DEMOS — Suche Studenten Musikwissenschaft Wien</title>
         <style>
-            body { font-family: sans-serif; font-size: 10px /*max(2vmin, 1vmax)*/; }
+            body { font-family: sans-serif; font-size: 10px /*max(1.6vmin, 1vmax)*/; }
             main section datalist, main section datalist option { display: none; }
             main section form>div { display: table-row; }
             main section form>div>* { display: table-cell; }
