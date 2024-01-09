@@ -19,7 +19,7 @@
             main section table td[title] { quotes: '[' ']'; }
             main section table td[title]:before { content: open-quote; color: #080; font-weight: bold; }
             main section table td[title]:after { content: close-quote; color: #080; font-weight: bold; }
-            main section table td .illegible { background: url(noise.gif) 48% 101% no-repeat; color: transparent; }
+            main section table td .illegible { background: url(noise.gif) center 133% no-repeat; color: transparent; background-size: cover; }
         </style>
     </head>
     <body>
