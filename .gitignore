@@ -1,3 +1,4 @@
 .idea
 vendor/
 doc/@bills
+/bin/generate-sql-for-2023-additions/data/
