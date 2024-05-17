@@ -1,10 +1,6 @@
 <?php
     require_once __DIR__ . '/credentials.php';
-    function out ($string, $markIllegible = false) {
-        echo $markIllegible
-            ? preg_replace('/x{2,}/i', '<span title="unleserlich" class="illegible">###</span>', htmlspecialchars($string))
-            : htmlspecialchars($string);
-    }
+    require_once __DIR__ . '/out.php';
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC

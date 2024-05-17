@@ -1,11 +1,7 @@
 <?php
     require_once __DIR__ . '/credentials.php';
     require_once __DIR__ . '/UnicodeString.php';
-    function out ($string, $markIllegible = false) {
-        echo $markIllegible
-            ? preg_replace('/x{2,}/i', '<span title="unleserlich" class="illegible">###</span>', htmlspecialchars($string))
-            : htmlspecialchars($string);
-    }
+    require_once __DIR__ . '/out.php';
     $pageSize = 100;
     $pageNo = 0;
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
