@@ -20,30 +20,37 @@ function is_number(string $string)
 
 $personValues = [];
 $attendanceValues = [];
-$personRecords = XlsxReader::iterateRecords(__DIR__ . '/../../files/2023/Studierende Muwi WS 1927 28 Personen_MWA_5.10._ (4).xlsx');
-$attendanceRecords = XlsxReader::iterateRecords(__DIR__ . '/../../files/2023/Studierende Muwi WS 1927 28 Vorlesungen_MWA_27.02.22 (1).xlsx');
-foreach ($personRecords as $record) {
-    foreach ($record as $k => $v) {
-        if ($k === '::marked') continue;
-        if (empty($v)) continue;
-        if (!isset($personValues[$k]) || !in_array($v, $personValues[$k])) {
-            $personValues[$k][] = $v;
+$personRecords = new TsvReader(__DIR__ . '/../../files/final_student_person_Jus_1897_1927_mit_ID-1.color-columns.tsv');
+$attendanceRecords = new TsvReader(__DIR__ . '/../../files/final_student_lecture_Jus_1897_1927_mit_ID-1.tsv');
+foreach ($personRecords as $index => $record) {
+    if ($index === 0) {
+        $headers = $record;
+    } else {
+        foreach ($record as $i => $v) {
+            $k = $headers[$i];
+            if (empty($v)) continue;
+            if (!isset($personValues[$k]) || !in_array($v, $personValues[$k])) {
+                $personValues[$k][] = $v;
+            }
         }
     }
 }
-foreach ($attendanceRecords as $record) {
-    foreach ($record as $k => $v) {
-        if ($k === '::marked') continue;
-        if (empty($v)) continue;
-        if (!isset($attendanceValues[$k]) || !in_array($v, $attendanceValues[$k])) {
-            $attendanceValues[$k][] = $v;
+foreach ($attendanceRecords as $index => $record) {
+    if ($index === 0) {
+        $headers = $record;
+    } else {
+        foreach ($record as $i => $v) {
+            $k = $headers[$i];
+            if (empty($v)) continue;
+            if (!isset($attendanceValues[$k]) || !in_array($v, $attendanceValues[$k])) {
+                $attendanceValues[$k][] = $v;
+            }
         }
     }
 }
 foreach ([$personValues, $attendanceValues] as $i => $values) {
     foreach ($values as $k => $v) {
         sort($v);
-        if ($k === '::marked') continue;
         file_put_contents(
             sprintf('%s/data/%s-%s.txt', __DIR__, $i ? 'attendance' : 'person', rawurlencode($k)),
             implode(PHP_EOL, $v)
