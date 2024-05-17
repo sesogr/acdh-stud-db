@@ -60,6 +60,7 @@ foreach ($personRecords as $record) {
     );
 }
 foreach ($attendanceRecords as $record) {
+    if (!$record['X-person-number']) continue;
     $lectureProcessor->processRecord(
         $record['X-person-number'],
         null,
