@@ -2,7 +2,7 @@
     require_once __DIR__ . '/credentials.php';
     function out ($string, $markIllegible = false) {
         echo $markIllegible
-            ? preg_replace('/(\\[[^\\]]+])/i', '<span class="illegible">\\1</span>', htmlspecialchars($string))
+            ? preg_replace('/x{2,}/i', '<span title="unleserlich" class="illegible">###</span>', htmlspecialchars($string))
             : htmlspecialchars($string);
     }
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(
@@ -32,7 +32,8 @@
             'time' => sprintf(
                 in_array($property['property'], array('biography', 'birth_date')) && $property['value2'] == 'true'
                     ? '[Aus zusätzlichen Quellen ergänzt]'
-                    : '%s',
+                    : '%s%s',
+                $property['is_doubtful'] ? '[ungewiss] ' : '',
                 $property['times']
             ),
             'doubtful' => !!$property['is_doubtful']

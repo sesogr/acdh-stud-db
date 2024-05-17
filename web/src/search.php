@@ -1,6 +1,11 @@
 <?php
     require_once __DIR__ . '/credentials.php';
     require_once __DIR__ . '/UnicodeString.php';
+    function out ($string, $markIllegible = false) {
+        echo $markIllegible
+            ? preg_replace('/x{2,}/i', '<span title="unleserlich" class="illegible">###</span>', htmlspecialchars($string))
+            : htmlspecialchars($string);
+    }
     $pageSize = 100;
     $pageNo = 0;
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
@@ -45,7 +50,20 @@
         /** @lang MySQL */
         <<<'EOD'
 select sql_calc_found_rows
-    *
+    i.person_id,
+    last_name,
+    ln.is_doubtful as name_doubtful,
+    given_names,
+    birth_place,
+    birth_country_historic,
+    birth_country_today,
+    bp.is_doubtful as birth_place_doubtful,
+    birth_date,
+    is_from_supplemental_data_source,
+    bd.is_doubtful as birth_date_doubtful,
+    gender,
+    language,
+    religion
 from student_identity i
 left JOIN student_last_name_value ln on ln.person_id = i.person_id
 left JOIN student_given_names_value gn on gn.person_id = i.person_id
@@ -98,16 +116,17 @@ EOD;
         <tbody>
             <?php /** @var array $student */ foreach ($listStudents as $student): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars(
-                            implode(', ', array($student['last_name'], $student['given_names']))
+                    <td><?php out(
+                            implode(', ', array($student['last_name'], $student['given_names'])),
+                            $student['name_doubtful']
                         ) ?></td>
                     <td<?php echo $student['is_from_supplemental_data_source'] ? ' title="Aus zusätzlichen Quellen ergänzt"' : ''
-                        ?>><?php echo htmlspecialchars($student['birth_date'])
+                        ?>><?php out($student['birth_date'], $student['birth_date_doubtful'])
                         ?></td>
-                    <td><?php echo htmlspecialchars($student['birth_place']) ?></td>
-                    <td><?php echo htmlspecialchars($student['birth_country_historic']) ?></td>
-                    <td><?php echo htmlspecialchars($student['birth_country_today']) ?></td>
-                    <td><a href="?id=<?php echo htmlspecialchars($student['person_id']) ?>">anzeigen</a></td>
+                    <td><?php out($student['birth_place'], $student['birth_place_doubtful']) ?></td>
+                    <td><?php out($student['birth_country_historic'], $student['birth_place_doubtful']) ?></td>
+                    <td><?php out($student['birth_country_today'], $student['birth_place_doubtful']) ?></td>
+                    <td><a href="?id=<?php out($student['person_id']) ?>">anzeigen</a></td>
                 </tr>
             <?php endforeach ?>
         </tbody>
