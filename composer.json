@@ -10,6 +10,7 @@
   },
   "require": {
     "shuchkin/simplexlsx": "^1.0.19",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-pdo": "*"
   }
 }
