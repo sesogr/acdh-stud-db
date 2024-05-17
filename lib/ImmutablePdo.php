@@ -26,7 +26,23 @@ class ImmutablePdo extends PDO
             ]
         );
         $this->sqlFile = $sqlFile;
-        file_put_contents($sqlFile, '');
+        file_put_contents($sqlFile, <<<'EOF'
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+
+EOF
+);
+    }
+    public function __destruct()
+    {
+        file_put_contents($this->sqlFile, <<<'EOF'
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+
+EOF
+            ,
+            FILE_APPEND
+        );
     }
 
     public function beginTransaction()
