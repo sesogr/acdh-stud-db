@@ -14,7 +14,7 @@ abstract class RecordProcessor
         $this->pdo->exec('SET NAMES utf8mb4');
     }
 
-    abstract public function processRecord(array $record, $index);
+    abstract public function processRecord();
 
     protected function decomposeUnicode($input)
     {

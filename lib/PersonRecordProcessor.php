@@ -22,8 +22,6 @@ class PersonRecordProcessor extends RecordProcessor implements FacultyMap
     /** @var PersonalTraitExtractor */
     private $givenNamesExtractor;
     /** @var PersonalTraitExtractor */
-    private $graduationExtractor;
-    /** @var PersonalTraitExtractor */
     private $guardianExtractor;
     /** @var ImmutablePdoStatement */
     private $insertIdentityStatement;
@@ -57,7 +55,6 @@ class PersonRecordProcessor extends RecordProcessor implements FacultyMap
         $this->fatherExtractor = new PersonalTraitExtractor($this->pdo, 'father', ['father']);
         $this->genderExtractor = new PersonalTraitExtractor($this->pdo, 'gender', ['gender']);
         $this->givenNamesExtractor = new PersonalTraitExtractor($this->pdo, 'given_names', ['given_names', 'ascii_given_names']);
-        $this->graduationExtractor = new PersonalTraitExtractor($this->pdo, 'graduation', ['graduation']);
         $this->guardianExtractor = new PersonalTraitExtractor($this->pdo, 'guardian', ['guardian']);
         $this->languageExtractor = new PersonalTraitExtractor($this->pdo, 'language', ['language']);
         $this->lastNameExtractor = new PersonalTraitExtractor($this->pdo, 'last_name', ['last_name', 'ascii_last_name']);
@@ -74,48 +71,43 @@ class PersonRecordProcessor extends RecordProcessor implements FacultyMap
         return $this->facultyMap[$id] ?? null;
     }
 
-    public function processRecord(array $record, $index)
+    public function processRecord($id = null,
+                                  $isExistingId = null,
+                                  $semester = null,
+                                  $fakultaet = null,
+                                  $yearMin = null,
+                                  $yearMax = null,
+                                  $name = null,
+                                  $gebDat = null,
+                                  $isDobFromSupplementalSources = null,
+                                  $bornMin = null,
+                                  $bornMax = null,
+                                  $staatsbuergerschaft = null,
+                                  $geburtsort = null,
+                                  $geburtslandHistorisch = null,
+                                  $geburtslandHeute = null,
+                                  $muttersprache = null,
+                                  $religion = null,
+                                  $adresseStudent = null,
+                                  $geschlecht = null,
+                                  $nameStandUWohnortDVaters = null,
+                                  $vormund = null,
+                                  $zuletztBesuchteLehranstaltGrundlageFuerImmatriculation = null,
+                                  $angabenZurBiografie = null,
+                                  $isBiographyFromSupplementalSources = null,
+                                  $hinweiseZurBiografie = null,
+                                  $isCommentFromSupplementalSources = null,
+                                  $literaturhinweise = null,
+                                  $anmerkung = null,
+                                  $volkszugehoerigkeit = null): void
     {
-        list(
-            $id,
-            $isExistingId,
-            $lfdNr,
-            $semester,
-            $fakultaet,
-            $yearMin,
-            $yearMax,
-            $name,
-            $jahreAlt,
-            $gebDat,
-            $isDobFromSupplementalSources,
-            $bornMin,
-            $bornMax,
-            $staatsbuergerschaft,
-            $geburtsort,
-            $geburtslandHistorisch,
-            $geburtslandHeute,
-            $muttersprache,
-            $religion,
-            $adresseStudent,
-            $geschlecht,
-            $nameStandUWohnortDVaters,
-            $vormund,
-            $zuletztBesuchteLehranstaltGrundlageFuerImmatriculation,
-            $angabenZurBiografie,
-            $isBiographyFromSupplementalSources,
-            $hinweiseZurBiografie,
-            $isCommentFromSupplementalSources,
-            $literaturhinweise,
-            $anmerkung,
-            $volkszugehoerigkeit
-            ) = $record;
         $this->guardPersonRecordIsNew($id, $semester);
         $this->facultyMap[$id] = $fakultaet;
-        if (preg_match('<^([a-z\\x80-\\xff]+)\\s*(\\[[^\\]]+\\])\\s+(\\S+)$>i', $name, $matches)) {
+        if (preg_match('<^([a-z\\x80-\\xff]+)\\s*(\\[[^\\]]+])\\s+(\\S+)$>i', $name, $matches)) {
             $lastName = $matches[1] . ' ' . $matches[2];
             $givenNames = $matches[3];
         } else {
-            list($lastName, $givenNames) = explode(' ', $name, 2);
+            [$lastName, $givenNames] = explode(' ', $name, 2);
         }
         if (!$isExistingId) {
             $this->insertIdentityStatement->execute([$id, $yearMin, $yearMax]);

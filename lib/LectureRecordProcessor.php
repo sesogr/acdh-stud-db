@@ -19,17 +19,13 @@ class LectureRecordProcessor extends RecordProcessor
         );
     }
 
-    public function processRecord(array $record, $index)
+    public function processRecord($merged = null,
+                                  $wsSs = null,
+                                  $semester = null,
+                                  $dozent = null,
+                                  $vorlesung = null,
+                                  $anmerkung = null): void
     {
-        list(
-            $merged,
-            $id,
-            $wsSs,
-            $semester,
-            $dozent,
-            $vorlesung,
-            $anmerkung
-            ) = $record;
         $faculty = $this->facultyMap->getFacultyForPersonId(intval($merged));
         $this->insertStatement->execute(
             [$merged, $wsSs, $semester, $faculty, $dozent, $vorlesung, $anmerkung, $this->decomposeUnicode($dozent)]
