@@ -283,3 +283,14 @@ UNION (
              LEFT JOIN `student_studying_address_time` `t` ON `t`.`value_id` = `v`.`id`
     GROUP BY `v`.`id`
 );
+
+drop view if exists v_most_precise_birth_date;
+create view v_most_precise_birth_date as
+select most_precise.*
+from student_birth_date_value most_precise
+         left join student_birth_date_value more_precise
+                   on more_precise.person_id = most_precise.person_id
+                       and more_precise.born_on_or_after > most_precise.born_on_or_after
+                       and more_precise.born_on_or_before < most_precise.born_on_or_before
+where more_precise.person_id is null
+order by most_precise.person_id;
