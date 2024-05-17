@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d34409a4432adae30fe7093bae150fa9",
+    "content-hash": "56fc110834fdd29b7e2c1b5bb809d241",
     "packages": [
         {
             "name": "shuchkin/simplexlsx",
-            "version": "1.0.19",
+            "version": "1.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shuchkin/simplexlsx.git",
-                "reference": "978e4bc2c377d4f1e83ad681705d0327a3725ef4"
+                "reference": "cd4f7f74d4605e618da05a7bddd839f2f624d87f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shuchkin/simplexlsx/zipball/978e4bc2c377d4f1e83ad681705d0327a3725ef4",
-                "reference": "978e4bc2c377d4f1e83ad681705d0327a3725ef4",
+                "url": "https://api.github.com/repos/shuchkin/simplexlsx/zipball/cd4f7f74d4605e618da05a7bddd839f2f624d87f",
+                "reference": "cd4f7f74d4605e618da05a7bddd839f2f624d87f",
                 "shasum": ""
             },
             "require": {
@@ -51,13 +51,14 @@
                 "excel",
                 "parser",
                 "php",
+                "reader",
                 "xlsx"
             ],
             "support": {
                 "issues": "https://github.com/shuchkin/simplexlsx/issues",
-                "source": "https://github.com/shuchkin/simplexlsx/tree/1.0.19"
+                "source": "https://github.com/shuchkin/simplexlsx/tree/1.1.10"
             },
-            "time": "2023-02-03T20:26:49+00:00"
+            "time": "2024-04-26T19:26:21+00:00"
         }
     ],
     "packages-dev": [],
@@ -66,7 +67,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-json": "*"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }
