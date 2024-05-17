@@ -2,3 +2,5 @@
 vendor/
 doc/@bills
 /bin/generate-sql-for-2023-additions/data/
+bin/*/data
+!bin/*/data/.gitkeep
