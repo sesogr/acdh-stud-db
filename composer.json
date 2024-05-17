@@ -11,6 +11,7 @@
   "require": {
     "shuchkin/simplexlsx": "^1.0.19",
     "ext-json": "*",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "ext-zlib": "*"
   }
 }
