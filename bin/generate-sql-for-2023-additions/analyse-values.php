@@ -45,7 +45,7 @@ foreach ([$personValues, $attendanceValues] as $i => $values) {
         sort($v);
         if ($k === '::marked') continue;
         file_put_contents(
-            sprintf('%s/data/%s-%s.txt', __DIR__, $i ? 'attendance' : 'person', rawurlencode($k)),
+            sprintf('%s/data/%s-%s.txt', __DIR__, $i ? 'attendance' : 'person', rawurlencode(strval($k))),
             implode(PHP_EOL, $v)
         );
         if (count($v) < 20) {
