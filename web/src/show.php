@@ -1,5 +1,10 @@
 <?php
     require_once __DIR__ . '/credentials.php';
+    function out ($string, $markIllegible = false) {
+        echo $markIllegible
+            ? preg_replace('/(\\[[^\\]]+])/i', '<span class="illegible">\\1</span>', htmlspecialchars($string))
+            : htmlspecialchars($string);
+    }
     $pdo = new PDO(MARIA_DSN, MARIA_USER, MARIA_PASS, array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
@@ -29,7 +34,8 @@
                     ? '[Aus zusätzlichen Quellen ergänzt]'
                     : '%s',
                 $property['times']
-            )
+            ),
+            'doubtful' => !!$property['is_doubtful']
         );
     }
     $fields = array(
@@ -59,17 +65,17 @@
                 <?php foreach ($student[$field] as $index => $value): ?>
                     <tr>
                         <?php if ($index === 0): ?>
-                            <th rowspan="<?php echo count($student[$field]) ?>"><?php echo htmlspecialchars($title) ?></th>
+                            <th rowspan="<?php echo count($student[$field]) ?>"><?php out($title) ?></th>
                         <?php endif ?>
-                        <td><?php echo htmlspecialchars($value['value']) ?></td>
+                        <td><?php out($value['value'], $value['doubtful']) ?></td>
                         <?php if ($hasTimes): ?>
-                            <td><?php echo htmlspecialchars($value['time']) ?></td>
+                            <td><?php out($value['time']) ?></td>
                         <?php endif ?>
                     </tr>
                 <?php endforeach ?>
             <?php else: ?>
                 <tr>
-                    <th><?php echo htmlspecialchars($title) ?></th>
+                    <th><?php out($title) ?></th>
                     <td></td>
                     <?php if ($hasTimes): ?>
                         <td></td>
@@ -93,12 +99,12 @@
     <tbody>
         <?php /** @var array $lecture */ foreach ($listLectures as $lecture): ?>
             <tr>
-                <td><?php echo htmlspecialchars($lecture['semester_abs']) ?></td>
-                <td><?php echo htmlspecialchars($lecture['semester_rel']) ?></td>
-                <td><?php echo htmlspecialchars($lecture['faculty']) ?></td>
-                <td><?php echo htmlspecialchars($lecture['lecturer']) ?></td>
-                <td><?php echo htmlspecialchars($lecture['class']) ?></td>
-                <td><?php echo htmlspecialchars($lecture['remarks']) ?></td>
+                <td><?php out($lecture['semester_abs']) ?></td>
+                <td><?php out($lecture['semester_rel']) ?></td>
+                <td><?php out($lecture['faculty']) ?></td>
+                <td><?php out($lecture['lecturer']) ?></td>
+                <td><?php out($lecture['class']) ?></td>
+                <td><?php out($lecture['remarks']) ?></td>
             </tr>
         <?php endforeach ?>
     </tbody>
