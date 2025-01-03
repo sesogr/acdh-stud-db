@@ -6,7 +6,7 @@ import {
   loadBatchOfPropertyRecords,
   writeComparisonBatch,
 } from "./database";
-
+import fs from 'node:fs';
 const credentials = {
   host: "localhost",
   port: 13006,
@@ -16,6 +16,8 @@ const credentials = {
   password: "nJkyj2pOsfUi",
 };
 const BATCH_SIZE = 1024;
+
+
 createConnection(credentials).then((connection) =>
   getHighestAvailableIds(connection)
     .then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
@@ -27,5 +29,5 @@ createConnection(credentials).then((connection) =>
     .then(reducePropertyRecordsToPeople)
     .then(computeStats)
     .then((comparisons) => writeComparisonBatch(connection, comparisons))
-    .then(() => connection.end()),
+    .then(() => connection.end()).catch((message) => console.error(message)),
 );
