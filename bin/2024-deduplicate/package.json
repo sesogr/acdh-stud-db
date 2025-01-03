@@ -1,0 +1,25 @@
+{
+  "name": "2024-deduplicate",
+  "version": "1.0.0",
+  "main": "main.ts",
+  "scripts": {
+    "build-and-run": "tsc && node main.js",
+    "test": "tsc && node test.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/node": "^22.5.5",
+    "eslint-config-prettier": "^9.1.0",
+    "mariadb": "^3.3.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.10.0",
+    "eslint": "^9.10.0",
+    "globals": "^15.9.0",
+    "typescript-eslint": "^8.5.0"
+  }
+}
