@@ -1,0 +1,73 @@
+import { createConnection } from "mariadb";
+import { Property } from "./types";
+import { splitIntoWords } from "./process";
+
+const dump = <A>(data: A): A => {
+  console.log(
+    JSON.stringify(
+      data,
+      (k, v) => (typeof v === "bigint" ? +v.toString() : v),
+      2,
+    ),
+  );
+  return data;
+};
+const credentials = {
+  host: "localhost",
+  port: 13006,
+  database: "rksd",
+  charset: "utf8",
+  user: "rksd",
+  password: "nJkyj2pOsfUi",
+};
+
+createConnection(credentials).then((connection) =>
+  connection
+    .query({
+      rowsAsArray: true,
+      sql:
+        // TODO value, value2 and value3 are all lumped together
+        "select distinct property, value v from v_student_complete where property in ('biography', 'birth_place', 'ethnicity', 'father', 'given_names', 'graduation', 'guardian', 'last_name', 'last_school', 'studying_address') and value is not null and value != '' " +
+        "union select distinct property, value2 v from v_student_complete where property in ('biography', 'birth_place', 'ethnicity', 'father', 'given_names', 'graduation', 'guardian', 'last_name', 'last_school', 'studying_address') and value2 is not null and value2 != '' " +
+        "union select distinct property, value3 v from v_student_complete where property in ('biography', 'birth_place', 'ethnicity', 'father', 'given_names', 'graduation', 'guardian', 'last_name', 'last_school', 'studying_address') and value3 is not null and value3 != ''",
+    })
+    .then(dump)
+    .then((results) =>
+      results.reduce(
+        (a: Record<Property, string[]>, [p, v]: [Property, string]) => ({
+          ...a,
+          [p]: [...(a[p] ?? []), ...splitIntoWords(v)],
+        }),
+        {} as Record<Property, string[]>,
+      ),
+    )
+    .then((results: Record<Property, string[]>) =>
+      Object.fromEntries(
+        Object.entries(results).map(
+          ([property, values]: [string, string[]]) => [
+            property,
+            values
+              .filter((v, i, a) => i === a.indexOf(v))
+              .map(
+                (word) =>
+                  [word, values.filter((w) => w === word).length] as [
+                    string,
+                    number,
+                  ],
+              )
+              .sort(([, cA], [, cB]) => cA - cB),
+          ],
+        ),
+      ),
+    )
+    .then((results) =>
+      Object.fromEntries(
+        Object.entries(results).map(([property, value]) => [
+          property,
+          Object.fromEntries(value.slice(0, 3)),
+        ]),
+      ),
+    )
+    .then(dump)
+    .then(() => connection.end()),
+);
