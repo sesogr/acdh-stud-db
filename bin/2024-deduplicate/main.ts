@@ -6,7 +6,10 @@ import {
   loadBatchOfPropertyRecords,
   writeComparisonBatch,
 } from "./database";
+
 import fs from 'node:fs';
+import fsPromises from 'node:fs/promises';
+
 const credentials = {
   host: "localhost",
   port: 13006,
@@ -18,6 +21,34 @@ const credentials = {
 const BATCH_SIZE = 1024;
 
 
+
+createConnection(credentials).then((connection) =>
+  getBatchesFromFile().then((ids) => {
+    console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
+    return ids;
+  })
+  .then((ids) => loadBatchOfPropertyRecords(connection, ids))
+  .then(reducePropertyRecordsToPeople)
+  .then(computeStats)
+  .then((comparisons) => writeComparisonBatch(connection, comparisons))
+  .then(() => connection.end()).catch((message) => console.error(message)));
+
+type GetBatchesFromFile = () => Promise<number[]>;
+export const getBatchesFromFile: GetBatchesFromFile = () =>
+  fsPromises.readFile("ids.json","ascii")
+    .then((file) => {
+    let fileArray = file.split("\n");
+    let stringids = fileArray[1].substring(1,fileArray[1].length - 1).split(",");
+    fsPromises.writeFile("ids.json","")
+    fsPromises.writeFile("ids.json",fileArray[0])
+    for (let i = 2;fileArray.length-1;i++){
+      fsPromises.writeFile("ids.json",fileArray[0])
+    }
+    let ids:number[] = []
+    stringids.forEach((id) => ids.push(parseInt(id)))
+    return ids;
+    }).then()
+/*
 createConnection(credentials).then((connection) =>
   getHighestAvailableIds(connection)
     .then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
@@ -31,3 +62,4 @@ createConnection(credentials).then((connection) =>
     .then((comparisons) => writeComparisonBatch(connection, comparisons))
     .then(() => connection.end()).catch((message) => console.error(message)),
 );
+*/

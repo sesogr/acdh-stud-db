@@ -25,28 +25,34 @@ createConnection(credentials).then((connection) =>
       fs.writeFileSync("ids.json",JSON.stringify(ids) + "\n", { flag: 'a+' });      
       return ids;
     })
+    .then(() =>
+      loopinggetnextavaialbleIds(connection)
+        )
     .then(() => connection.end()).catch((message) => console.error(message)));
 
 
-createConnection(credentials).then((connection) =>
-  getnextavailableIds()
-    .then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
-    .then((ids) => {
-      console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
-      fs.writeFileSync("ids.json",JSON.stringify(ids) + "\n", { flag: 'a+' });      
-      return ids;
-    })
-    .then(() => connection.end()).catch((message) => console.error(message)));
 
 
+
+async function loopinggetnextavaialbleIds(connection:Connection) {
+  let index = 0;
+  while (true) {
+      await getnextavailableIds().then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
+      .then((ids) => {
+        console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
+        fs.writeFileSync("ids.json",JSON.stringify(ids) + "\n", { flag: 'a+' });      
+        return ids;
+      })
+  }
+}
+    
 type GetNextAvailableIds = () => Promise<[number, number, number]>;
 const getnextavailableIds:GetNextAvailableIds = () => 
-  fsPromises.readFile("ids.json","utf-8").then((file) => {
+  fsPromises.readFile("ids.json","ascii").then((file) => {
     const filebyLines = file.split("\n");
-    const lastline = filebyLines[filebyLines.length -1]
+    const lastline = filebyLines[filebyLines.length -2]
     let length = lastline.length;
     let line = lastline.substring(1,length - 1).split(",")
-    
     return [[filebyLines[0]],[line[0],line[line.length - 1]]];
   }).then(
     ([[end], [low, high]]) =>
@@ -128,3 +134,19 @@ const getHighestAvailableIds: GetHighestAvailableIds = (connection) =>
           number,
         ],
     );
+
+
+
+
+const jobQueue = <I, T, O>(
+  collection: I[],
+  job: (i: I) => Promise<T>,
+  combine: (t: T, i: I) => O,
+): Promise<O[]> =>
+  collection.reduce(
+    (accu: Promise<Awaited<O[]>>, item: I) =>
+      accu.then((others) =>
+        job(item).then((result) => [...(others as O[]), combine(result, item)]),
+      ) as Promise<O[]>,
+    Promise.resolve([] as O[]),
+  ) as Promise<O[]>;
