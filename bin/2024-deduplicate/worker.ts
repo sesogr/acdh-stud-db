@@ -8,10 +8,9 @@ import {
 } from "./database";
 
 
-let [ids,] = workerData;
-let connection:Connection = workerData[1];
-loadBatchOfPropertyRecords(connection, ids)
+let [ids,connection] = workerData;
+//let connection:Connection = workerData[1];
+() => loadBatchOfPropertyRecords(connection, ids)
   .then(reducePropertyRecordsToPeople)
   .then(computeStats)
   .then((comparisons) => writeComparisonBatch(connection, comparisons))
-  .then(() => connection.end()).catch((message) => console.error(message));

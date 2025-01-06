@@ -16,7 +16,7 @@ function runService(workerData: [number[],connection:Connection]) {
     }) 
 } 
   
-export function run(workerData:number[],connection:Connection) { 
-    const result = runService([workerData, connection]); 
+export async function run(workerData:number[],connection:Connection) { 
+    const result = await runService([workerData, connection]); 
     console.log(result); 
 } 

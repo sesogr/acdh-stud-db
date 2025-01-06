@@ -58,8 +58,7 @@ const findBatchIds: FindBatchIds = (
   if(!fs.existsSync("max.json")){
     fs.writeFileSync("max.json", max + "")
   }
-  return connection
-    .query(
+  return connection.query(
       {
         rowsAsArray: true,
         bigIntAsNumber: true,
@@ -113,7 +112,7 @@ const getHighestAvailableIds: GetHighestAvailableIds = (connection) =>
           number,
         ],
     );
-    
+
 const jobQueue = <I, T, O>(
   collection: I[],
   job: (i: I) => Promise<T>,
