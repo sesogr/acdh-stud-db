@@ -6,9 +6,17 @@ import {
   loadBatchOfPropertyRecords,
   writeComparisonBatch,
 } from "./database";
+import { run } from "./mainWorker"
+import { get4batches } from "./createbatches";
 
+get4batches();
+
+/*
 import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
+
+
+
 
 const credentials = {
   host: "localhost",
