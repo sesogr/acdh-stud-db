@@ -1,49 +1,70 @@
-import { createConnection, Connection } from "mariadb";
+import { createConnection, Connection , PoolConnection, Pool} from "mariadb";
 import fs from 'node:fs';
-import { run } from "./mainWorker";
-const credentials = {
-  host: "localhost",
-  port: 13006,
-  database: "rksd",
-  charset: "utf8",
-  user: "rksd",
-  password: "nJkyj2pOsfUi",
-};
+import fsPromises from 'node:fs/promises'
+
 const BATCH_SIZE = 10;
-export function get4batches(){
-  createConnection(credentials).then((connection) =>
+
+export async function get4batches(pool:Pool){
+  const connection = await getConnectionFromPool(pool)
   getHighestAvailableIds(connection)
     .then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
     .then((ids) => {
       console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
-      run(ids, connection);
+      fs.writeFileSync("ids.json",JSON.stringify(ids) + "\n", { flag: 'a+' });
       return ids;
     })
-    .then((ids) =>
-      loopinggetnextavaialbleIds(connection,ids)
+    .then(() =>
+      loopinggetnextavaialbleIds(connection)
     )
-    .then(() => connection.end()).catch((message) => console.error(message)));
+    .then(() => connection.end());
 }
 
+const getConnectionFromPool = (pool: Pool): Promise<PoolConnection> => {
+  return new Promise((resolve, reject) => {
+    pool.getConnection();
+  });
+};  
 
 
-
-async function loopinggetnextavaialbleIds(connection:Connection,lastids:number[]) {
-  let max = parseInt(fs.readFileSync("max.json","ascii"));
-  for (let i = 0; i < 3; i++) {
-      await getnextavailableIds(lastids,max).then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
+async function loopinggetnextavaialbleIds(connection:Connection) {
+  for (let i = 0; i < 4; i++) {
+      await getnextavailableIds().then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
       .then((ids) => {
         console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
-        run(ids,connection);
+        fs.writeFileSync("ids.json",JSON.stringify(ids) + "\n", { flag: 'a+' });      
         return ids;
       })
   }
 }
+
+
+type GetNextAvailableIds = () => Promise<[number, number, number]>;
+const getnextavailableIds:GetNextAvailableIds = () => 
+  fsPromises.readFile("ids.json","ascii").then((file) => {
+    const filebyLines = file.split("\n");
+    const lastline = filebyLines[filebyLines.length -2]
+    let length = lastline.length;
+    let line = lastline.substring(1,length - 1).split(",")
+    return [[filebyLines[0]],[line[0],line[line.length - 1]]];
+  }).then(
+    ([[end], [low, high]]) =>
+      [low || 0, high || 0, end || 0].map((n) => +n) as [
+        number,
+        number,
+        number,
+      ],
+  );
+
+
+
+
+/*
 function getnextavailableIds(lastids:number[],max:number){
   return new Promise<[number,number,number]>(() => {
+
     return [lastids[0],lastids[lastids.length-1],max]
   })
-}
+}*/
 type FindBatchIds = (
   connection: Connection,
   highestAvailableIds: [number, number, number],
@@ -55,8 +76,8 @@ const findBatchIds: FindBatchIds = (
   maxSize,
 ) => {
   const [left, right, max] = highestAvailableIds;
-  if(!fs.existsSync("max.json")){
-    fs.writeFileSync("max.json", max + "")
+  if(!fs.existsSync("ids.json")){
+    fs.writeFileSync("ids.json", max + "")
   }
   return connection.query(
       {

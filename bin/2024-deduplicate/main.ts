@@ -1,15 +1,33 @@
-import { createConnection } from "mariadb";
+import mariadb from "mariadb";
 import { computeStats, reducePropertyRecordsToPeople } from "./process";
-import {
-  findBatchIds,
-  getHighestAvailableIds,
-  loadBatchOfPropertyRecords,
-  writeComparisonBatch,
-} from "./database";
-import { run } from "./mainWorker"
 import { get4batches } from "./createbatches";
+import { Worker } from 'worker_threads'; 
+import { resolve } from "node:dns";
+import fs from "node:fs"
 
-get4batches();
+const pool = mariadb.createPool({
+  host: "localhost",
+  port: 13006,
+  database: "rksd",
+  charset: "utf8",
+  user: "rksd",
+  password: "nJkyj2pOsfUi",
+  connectionLimit: 10,
+});
+console.log(pool);
+get4batches(pool)
+/*
+const idfile = fs.readFileSync("ids.json","ascii").split("\n")
+let workers:Worker[] = [];
+for (let i = 1; i < 5; i++) {
+  let ids = idfile[i].substring(1,idfile[i].length - 1)
+  let workerData = [ids,pool];
+  const worker = new Worker( 
+    './worker.js', { workerData }); 
+  worker.on('message', resolve); 
+  workers.push(worker);
+}
+workers.forEach((worker) => worker.postMessage("start"))
 
 /*
 import fs from 'node:fs';
