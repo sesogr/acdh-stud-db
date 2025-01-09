@@ -1,10 +1,9 @@
-import mariadb from "mariadb";
+import { createConnection } from "mariadb";
 import { computeStats, reducePropertyRecordsToPeople } from "./process";
-import { getbatches as getbatches } from "./createbatches";
-import { Worker } from 'worker_threads'; 
-import { resolve } from "node:dns";
+import { getbatches } from "./createbatches";
 import fs from "node:fs"
 import { run } from "./mainWorker";
+import { getHighestAvailableIds, findBatchIds, loadBatchOfPropertyRecords, writeComparisonBatch } from "./database";
 const path = "ids.json";
 const workerpath = './worker.js'
 const credentials = {
@@ -18,6 +17,7 @@ const credentials = {
 if (fs.existsSync(path)){
   fs.rmSync(path, {force:true});
 }
+//function to read the json file to create as many workers as needed
 function createworker(){
   let idfile = fs.readFileSync(path,"ascii").split("\n");
   for (let i = 1; i < idfile.length-1; i++) {
@@ -29,62 +29,15 @@ function createworker(){
     run(ids,credentials,workerpath)
   }
 }
-getbatches(credentials,4).then(() => createworker());
-/*
-const idfile = fs.readFileSync(path,"ascii").split("\n")
 
-/*
+//get (4, 10 id) batches and then create workers
+getbatches(credentials,4,10).then(() => createworker());
 
 
-/*
-import fs from 'node:fs';
-import fsPromises from 'node:fs/promises';
-
-
-
-
-const credentials = {
-  host: "localhost",
-  port: 13006,
-  database: "rksd",
-  charset: "utf8",
-  user: "rksd",
-  password: "nJkyj2pOsfUi",
-};
-const BATCH_SIZE = 1024;
-
-
-
-createConnection(credentials).then((connection) =>
-  getBatchesFromFile().then((ids) => {
-    console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
-    return ids;
-  })
-  .then((ids) => loadBatchOfPropertyRecords(connection, ids))
-  .then(reducePropertyRecordsToPeople)
-  .then(computeStats)
-  .then((comparisons) => writeComparisonBatch(connection, comparisons))
-  .then(() => connection.end()).catch((message) => console.error(message)));
-
-type GetBatchesFromFile = () => Promise<number[]>;
-export const getBatchesFromFile: GetBatchesFromFile = () =>
-  fsPromises.readFile(path,"ascii")
-    .then((file) => {
-    let fileArray = file.split("\n");
-    let stringids = fileArray[1].substring(1,fileArray[1].length - 1).split(",");
-    fsPromises.writeFile(path,"")
-    fsPromises.writeFile(path,fileArray[0])
-    for (let i = 2;fileArray.length-1;i++){
-      fsPromises.writeFile(path,fileArray[0])
-    }
-    let ids:number[] = []
-    stringids.forEach((id) => ids.push(parseInt(id)))
-    return ids;
-    }).then()
-/*
+/* original
 createConnection(credentials).then((connection) =>
   getHighestAvailableIds(connection)
-    .then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
+    .then((limits) => findBatchIds(connection, limits, 10))
     .then((ids) => {
       console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
       return ids;

@@ -55,13 +55,6 @@ const getnextavailableIds:GetNextAvailableIds = () =>
 
 
 
-/*
-function getnextavailableIds(lastids:number[],max:number){
-  return new Promise<[number,number,number]>(() => {
-
-    return [lastids[0],lastids[lastids.length-1],max]
-  })
-}*/
 type FindBatchIds = (
   connection: Connection,
   highestAvailableIds: [number, number, number],
