@@ -4,19 +4,24 @@ import fsPromises from 'node:fs/promises'
 
 const BATCH_SIZE = 10;
 
-export function get4batches(pool:Pool){
-  pool.getConnection().then((connection) => getHighestAvailableIds(connection)
+export function get4batches(credentials:{}){
+  return new Promise<string>(
+  (resolve, reject) => createConnection(credentials).then((connection) => getHighestAvailableIds(connection)
     .then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
     .then((ids) => {
       console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
       fs.writeFileSync("ids.json",JSON.stringify(ids) + "\n", { flag: 'a+' });
       return ids;
     })
-    .then(() => {
+    .then(() =>
       loopinggetnextavaialbleIds(connection)
-      connection.release()
-      }
-    ))}
+    )
+    .then(() => {
+      connection.end()
+      resolve("success")
+    })))
+
+}
 
 
 

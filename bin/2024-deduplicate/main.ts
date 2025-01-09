@@ -5,31 +5,28 @@ import { Worker } from 'worker_threads';
 import { resolve } from "node:dns";
 import fs from "node:fs"
 const path = "ids.json";
-const pool = mariadb.createPool({
+const credentials = {
   host: "localhost",
   port: 13006,
   database: "rksd",
   charset: "utf8",
   user: "rksd",
   password: "nJkyj2pOsfUi",
-  connectionLimit: 10,
-});
+};
 if (fs.existsSync(path)){
-    let idfile = fs.readFileSync(path,"ascii").split("\n");
-    let workers:Worker[] = [];
-  for (let i = 1; i < idfile.length-1; i++) {
-    let ids = idfile[i].substring(1,idfile[i].length -1)
-    let workerData = [ids,pool];
-    const worker = new Worker( 
-      './worker.js', { workerData }); 
-    worker.on('message', resolve); 
-    workers.push(worker);
-  }
-  workers.forEach((worker) => worker.postMessage({start:"start"}))
   fs.rmSync(path, {force:true});
 }
-
-get4batches(pool)
+function createworker(){
+  console.log("test");
+  let idfile = fs.readFileSync(path,"ascii").split("\n");
+  for (let i = 1; i < idfile.length-1; i++) {
+    const ids = idfile[i].substring(1,idfile[i].length -1)
+    const workerData = [ids,credentials];
+    const worker = new Worker( 
+      './worker.js', { workerData });
+  }
+}
+get4batches(credentials).then(() => createworker());
 /*
 const idfile = fs.readFileSync(path,"ascii").split("\n")
 

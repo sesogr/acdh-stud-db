@@ -7,17 +7,15 @@ import {
   writeComparisonBatch,
 } from "./database";
 
-const [ids,pool] = workerData;
-
-
-parentPort?.on('message',() => {
-    pool.getConnection().then((conn:mariadb.PoolConnection) => loadBatchOfPropertyRecords(conn, ids)
-      .then(reducePropertyRecordsToPeople)
-      .then(computeStats)
-      .then((comparisons) => writeComparisonBatch(conn, comparisons))
-      .finally(() => {
-        conn.release();
-      }))})
+const [ids,credentials] = workerData;
+console.log(ids);
+mariadb.createConnection(credentials).then((conn) => loadBatchOfPropertyRecords(conn, ids)
+  .then(reducePropertyRecordsToPeople)
+  .then(computeStats)
+  .then((comparisons) => writeComparisonBatch(conn, comparisons))
+  .then(() => {
+    conn.end();
+  }).catch((err) => console.error(err)))
   /*let [ids,connection] = workerData;
   //let connection:Connection = workerData[1];
   getConnectionFromPool.then(() => loadBatchOfPropertyRecords(connection, ids)
