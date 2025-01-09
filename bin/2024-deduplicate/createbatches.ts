@@ -15,7 +15,7 @@ export function get4batches(pool:Pool){
     .then(() =>
       loopinggetnextavaialbleIds(connection)
     )
-    .then(() => connection.release().then()))
+    .then(() => connection.release()))
 }
 
 
