@@ -1,12 +1,11 @@
 import { createConnection } from "mariadb";
 import { computeStats, reducePropertyRecordsToPeople } from "./process";
-import {
-  findBatchIds,
-  getHighestAvailableIds,
-  loadBatchOfPropertyRecords,
-  writeComparisonBatch,
-} from "./database";
-
+import { getbatches } from "./createbatches";
+import fs from "node:fs"
+import { run } from "./mainWorker";
+import { getHighestAvailableIds, findBatchIds, loadBatchOfPropertyRecords, writeComparisonBatch } from "./database";
+const path = "ids.json";
+const workerpath = './worker.js'
 const credentials = {
   host: "localhost",
   port: 13006,
@@ -15,10 +14,29 @@ const credentials = {
   user: "rksd",
   password: "nJkyj2pOsfUi",
 };
-const BATCH_SIZE = 1024;
+if (fs.existsSync(path)){
+  fs.rmSync(path, {force:true});
+}
+//function to read the json file to create as many workers as needed
+function createworker(){
+  let idfile = fs.readFileSync(path,"ascii").split("\n");
+  for (let i = 1; i < idfile.length-1; i++) {
+    const idsstring = idfile[i].substring(1,idfile[i].length -1)
+    const ids:number[] = idsstring.split(",").map((id) => {
+      return parseInt(id)
+    })
+    run(ids,credentials,workerpath)
+  }
+}
+
+//get (4, 10 id) batches and then create workers
+getbatches(credentials,4,10).then(() => createworker());
+
+
+/* original
 createConnection(credentials).then((connection) =>
   getHighestAvailableIds(connection)
-    .then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
+    .then((limits) => findBatchIds(connection, limits, 10))
     .then((ids) => {
       console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
       return ids;
@@ -27,5 +45,6 @@ createConnection(credentials).then((connection) =>
     .then(reducePropertyRecordsToPeople)
     .then(computeStats)
     .then((comparisons) => writeComparisonBatch(connection, comparisons))
-    .then(() => connection.end()),
+    .then(() => connection.end()).catch((message) => console.error(message)),
 );
+*/
