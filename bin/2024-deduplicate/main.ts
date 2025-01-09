@@ -4,7 +4,7 @@ import { get4batches } from "./createbatches";
 import { Worker } from 'worker_threads'; 
 import { resolve } from "node:dns";
 import fs from "node:fs"
-
+const path = "ids.json";
 const pool = mariadb.createPool({
   host: "localhost",
   port: 13006,
@@ -14,23 +14,24 @@ const pool = mariadb.createPool({
   password: "nJkyj2pOsfUi",
   connectionLimit: 10,
 });
-if (fs.existsSync("ids.json")){
-  fs.rmSync("ids.json", {force:true});
+if (fs.existsSync(path)){
+    let idfile = fs.readFileSync(path,"ascii").split("\n");
+    let workers:Worker[] = [];
+  for (let i = 1; i < idfile.length-1; i++) {
+    let ids = idfile[i].substring(1,idfile[i].length -1)
+    let workerData = [ids,pool];
+    const worker = new Worker( 
+      './worker.js', { workerData }); 
+    worker.on('message', resolve); 
+    workers.push(worker);
+  }
+  workers.forEach((worker) => worker.postMessage({start:"start"}))
+  fs.rmSync(path, {force:true});
 }
+
 get4batches(pool)
-console.log("test");
 /*
-const idfile = fs.readFileSync("ids.json","ascii").split("\n")
-let workers:Worker[] = [];
-for (let i = 1; i < 5; i++) {
-  let ids = idfile[i].substring(1,idfile[i].length - 1)
-  let workerData = [ids,pool];
-  const worker = new Worker( 
-    './worker.js', { workerData }); 
-  worker.on('message', resolve); 
-  workers.push(worker);
-}
-workers.forEach((worker) => worker.postMessage("start"))
+const idfile = fs.readFileSync(path,"ascii").split("\n")
 
 /*
 
@@ -67,14 +68,14 @@ createConnection(credentials).then((connection) =>
 
 type GetBatchesFromFile = () => Promise<number[]>;
 export const getBatchesFromFile: GetBatchesFromFile = () =>
-  fsPromises.readFile("ids.json","ascii")
+  fsPromises.readFile(path,"ascii")
     .then((file) => {
     let fileArray = file.split("\n");
     let stringids = fileArray[1].substring(1,fileArray[1].length - 1).split(",");
-    fsPromises.writeFile("ids.json","")
-    fsPromises.writeFile("ids.json",fileArray[0])
+    fsPromises.writeFile(path,"")
+    fsPromises.writeFile(path,fileArray[0])
     for (let i = 2;fileArray.length-1;i++){
-      fsPromises.writeFile("ids.json",fileArray[0])
+      fsPromises.writeFile(path,fileArray[0])
     }
     let ids:number[] = []
     stringids.forEach((id) => ids.push(parseInt(id)))

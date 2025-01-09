@@ -12,11 +12,11 @@ export function get4batches(pool:Pool){
       fs.writeFileSync("ids.json",JSON.stringify(ids) + "\n", { flag: 'a+' });
       return ids;
     })
-    .then(() =>
+    .then(() => {
       loopinggetnextavaialbleIds(connection)
-    )
-    .then(() => connection.release()))
-}
+      connection.release()
+      }
+    ))}
 
 
 

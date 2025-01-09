@@ -10,13 +10,13 @@ import {
 const [ids,pool] = workerData;
 
 
-parentPort?.on('message',(query: string) => {
+parentPort?.on('message',() => {
     pool.getConnection().then((conn:mariadb.PoolConnection) => loadBatchOfPropertyRecords(conn, ids)
       .then(reducePropertyRecordsToPeople)
       .then(computeStats)
       .then((comparisons) => writeComparisonBatch(conn, comparisons))
       .finally(() => {
-        conn.release(); // Release the connection back to the pool
+        conn.release();
       }))})
   /*let [ids,connection] = workerData;
   //let connection:Connection = workerData[1];
