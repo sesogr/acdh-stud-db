@@ -5,8 +5,7 @@ import fsPromises from 'node:fs/promises'
 const BATCH_SIZE = 10;
 
 export function get4batches(pool:Pool){
-  return new Promise(
-  () => pool.getConnection().then((connection) => getHighestAvailableIds(connection)
+  pool.getConnection().then((connection) => getHighestAvailableIds(connection)
     .then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
     .then((ids) => {
       console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
@@ -16,7 +15,7 @@ export function get4batches(pool:Pool){
     .then(() =>
       loopinggetnextavaialbleIds(connection)
     )
-    .then(() => connection.release())))
+    .then(() => connection.release()))
 }
 
 
