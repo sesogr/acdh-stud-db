@@ -2,9 +2,7 @@ import { createConnection, Connection , PoolConnection, Pool} from "mariadb";
 import fs from 'node:fs';
 import fsPromises from 'node:fs/promises'
 
-const BATCH_SIZE = 10;
-
-export function get4batches(credentials:{}){
+export function getbatches(credentials:{},batches:number,BATCH_SIZE:number = 10){
   return new Promise<string>(
   (resolve, reject) => createConnection(credentials).then((connection) => getHighestAvailableIds(connection)
     .then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
@@ -14,7 +12,7 @@ export function get4batches(credentials:{}){
       return ids;
     })
     .then(() =>
-      loopinggetnextavaialbleIds(connection)
+      loopinggetnextavaialbleIds(connection,batches, BATCH_SIZE)
     )
     .then(() => {
       connection.end()
@@ -25,8 +23,8 @@ export function get4batches(credentials:{}){
 
 
 
-async function loopinggetnextavaialbleIds(connection:Connection) {
-  for (let i = 0; i < 3; i++) {
+async function loopinggetnextavaialbleIds(connection:Connection,batches: number, BATCH_SIZE:number) {
+  for (let i = 0; i < batches -1; i++) {
       await getnextavailableIds().then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
       .then((ids) => {
         console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);

@@ -1,6 +1,6 @@
 import mariadb from "mariadb";
 import { computeStats, reducePropertyRecordsToPeople } from "./process";
-import { get4batches } from "./createbatches";
+import { getbatches as getbatches } from "./createbatches";
 import { Worker } from 'worker_threads'; 
 import { resolve } from "node:dns";
 import fs from "node:fs"
@@ -29,7 +29,7 @@ function createworker(){
     run(ids,credentials,workerpath)
   }
 }
-get4batches(credentials).then(() => createworker());
+getbatches(credentials,4).then(() => createworker());
 /*
 const idfile = fs.readFileSync(path,"ascii").split("\n")
 

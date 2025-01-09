@@ -7,7 +7,7 @@ import {
   writeComparisonBatch,
 } from "./database";
 const [ids,credentials] = workerData;
-console.log(ids, "resolving");
+console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1] + " resolving")
 mariadb.createConnection(credentials).then((conn) => loadBatchOfPropertyRecords(conn, ids)
   .then(reducePropertyRecordsToPeople)
   .then(computeStats)
@@ -15,7 +15,7 @@ mariadb.createConnection(credentials).then((conn) => loadBatchOfPropertyRecords(
     writeComparisonBatch(conn, comparisons)}
   )
   .then(() => {
-    console.log(ids,"done")
+    console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1] + " done")
     conn.end();
   }))
   /*let [ids,connection] = workerData;
