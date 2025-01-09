@@ -4,6 +4,7 @@ import { get4batches } from "./createbatches";
 import { Worker } from 'worker_threads'; 
 import { resolve } from "node:dns";
 import fs from "node:fs"
+import { run } from "./mainWorker";
 const path = "ids.json";
 const credentials = {
   host: "localhost",
@@ -19,11 +20,13 @@ if (fs.existsSync(path)){
 function createworker(){
   console.log("test");
   let idfile = fs.readFileSync(path,"ascii").split("\n");
+  const ids:number[] = [];
   for (let i = 1; i < idfile.length-1; i++) {
-    const ids = idfile[i].substring(1,idfile[i].length -1)
-    const workerData = [ids,credentials];
-    const worker = new Worker( 
-      './worker.js', { workerData });
+    const idsstring = idfile[i].substring(1,idfile[i].length -1)
+    idsstring.split(",").forEach((id) => {
+      ids.push(parseInt(id));
+    })
+    run(ids,credentials)
   }
 }
 get4batches(credentials).then(() => createworker());

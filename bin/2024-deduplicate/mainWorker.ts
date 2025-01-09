@@ -2,7 +2,7 @@
 import { Connection } from 'mariadb';
 import { Worker } from 'worker_threads'; 
   
-function runService(workerData: [number[],connection:Connection]) { 
+function runService(workerData: [number[],{}]) { 
     return new Promise((resolve, reject) => { 
         const worker = new Worker( 
                 './worker.js', { workerData }); 
@@ -16,7 +16,7 @@ function runService(workerData: [number[],connection:Connection]) {
     }) 
 } 
   
-export async function run(workerData:number[],connection:Connection) { 
-    const result = await runService([workerData, connection]); 
+export async function run(workerData:number[],credentials:{}) { 
+    const result = await runService([workerData, credentials]); 
     console.log(result); 
 } 

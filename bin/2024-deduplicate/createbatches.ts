@@ -26,7 +26,7 @@ export function get4batches(credentials:{}){
 
 
 async function loopinggetnextavaialbleIds(connection:Connection) {
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 3; i++) {
       await getnextavailableIds().then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
       .then((ids) => {
         console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
