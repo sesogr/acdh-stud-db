@@ -4,9 +4,9 @@ import fsPromises from 'node:fs/promises'
 
 const BATCH_SIZE = 10;
 
-export async function get4batches(pool:Pool){
-  const connection = await getConnectionFromPool(pool)
-  getHighestAvailableIds(connection)
+export function get4batches(pool:Pool){
+  return new Promise(
+  () => pool.getConnection().then((connection) => getHighestAvailableIds(connection)
     .then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
     .then((ids) => {
       console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
@@ -16,14 +16,9 @@ export async function get4batches(pool:Pool){
     .then(() =>
       loopinggetnextavaialbleIds(connection)
     )
-    .then(() => connection.end());
+    .then(() => connection.release())))
 }
 
-const getConnectionFromPool = (pool: Pool): Promise<PoolConnection> => {
-  return new Promise((resolve, reject) => {
-    pool.getConnection();
-  });
-};  
 
 
 async function loopinggetnextavaialbleIds(connection:Connection) {
@@ -77,7 +72,7 @@ const findBatchIds: FindBatchIds = (
 ) => {
   const [left, right, max] = highestAvailableIds;
   if(!fs.existsSync("ids.json")){
-    fs.writeFileSync("ids.json", max + "")
+    fs.writeFileSync("ids.json", max + "\n")
   }
   return connection.query(
       {
