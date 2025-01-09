@@ -21,10 +21,9 @@ if (fs.existsSync(path)){
 function createworker(){
   let idfile = fs.readFileSync(path,"ascii").split("\n");
   for (let i = 1; i < idfile.length-1; i++) {
-    const ids:number[] = [];
     const idsstring = idfile[i].substring(1,idfile[i].length -1)
-    idsstring.split(",").forEach((id) => {
-      ids.push(parseInt(id));
+    const ids:number[] = idsstring.split(",").map((id) => {
+      return parseInt(id)
     })
     run(ids,credentials,workerpath)
   }
