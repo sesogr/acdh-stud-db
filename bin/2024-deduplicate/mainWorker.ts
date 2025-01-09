@@ -1,11 +1,12 @@
 
+import { PathLike } from 'fs';
 import { Connection } from 'mariadb';
 import { Worker } from 'worker_threads'; 
   
-function runService(workerData: [number[],{}]) { 
+function runService(workerData: [number[],{}],path:string) { 
     return new Promise((resolve, reject) => { 
         const worker = new Worker( 
-                './worker.js', { workerData }); 
+                path, { workerData }); 
         worker.on('message', resolve); 
         worker.on('error', reject); 
         worker.on('exit', (code) => { 
@@ -16,7 +17,7 @@ function runService(workerData: [number[],{}]) {
     }) 
 } 
   
-export async function run(workerData:number[],credentials:{}) { 
-    const result = await runService([workerData, credentials]); 
+export async function run(workerData:number[],credentials:{},workerpath:string) { 
+    const result = await runService([workerData, credentials],workerpath); 
     console.log(result); 
 } 

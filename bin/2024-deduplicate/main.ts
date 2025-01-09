@@ -6,6 +6,7 @@ import { resolve } from "node:dns";
 import fs from "node:fs"
 import { run } from "./mainWorker";
 const path = "ids.json";
+const workerpath = './worker.js'
 const credentials = {
   host: "localhost",
   port: 13006,
@@ -18,15 +19,14 @@ if (fs.existsSync(path)){
   fs.rmSync(path, {force:true});
 }
 function createworker(){
-  console.log("test");
   let idfile = fs.readFileSync(path,"ascii").split("\n");
-  const ids:number[] = [];
   for (let i = 1; i < idfile.length-1; i++) {
+    const ids:number[] = [];
     const idsstring = idfile[i].substring(1,idfile[i].length -1)
     idsstring.split(",").forEach((id) => {
       ids.push(parseInt(id));
     })
-    run(ids,credentials)
+    run(ids,credentials,workerpath)
   }
 }
 get4batches(credentials).then(() => createworker());

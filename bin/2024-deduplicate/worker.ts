@@ -6,16 +6,16 @@ import {
   loadBatchOfPropertyRecords,
   writeComparisonBatch,
 } from "./database";
-
 const [ids,credentials] = workerData;
+console.log(ids, "resolving");
 mariadb.createConnection(credentials).then((conn) => loadBatchOfPropertyRecords(conn, ids)
   .then(reducePropertyRecordsToPeople)
   .then(computeStats)
   .then((comparisons) => {
-    console.log(comparisons)
     writeComparisonBatch(conn, comparisons)}
   )
   .then(() => {
+    console.log(ids,"done")
     conn.end();
   }))
   /*let [ids,connection] = workerData;
