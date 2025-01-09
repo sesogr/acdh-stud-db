@@ -15,10 +15,9 @@ const pool = mariadb.createPool({
   connectionLimit: 10,
 });
 if (fs.existsSync("ids.json")){
-  fs.rmSync("ids.json");
+  fs.rmSync("ids.json",{ force:true });
 }
 get4batches(pool)
-console.log("test");
 /*
 const idfile = fs.readFileSync("ids.json","ascii").split("\n")
 let workers:Worker[] = [];
