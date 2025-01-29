@@ -6,3 +6,4 @@ bin/*/data
 !bin/*/data/.gitkeep
 bin/2024-deduplicate/ids.json
 bin/node_modules/
+.devcontainer
