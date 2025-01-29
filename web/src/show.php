@@ -7,7 +7,7 @@
     ));
     $pdo->exec('SET NAMES utf8');
     $sumPropertyWeights = $pdo->query('select sum(weight) from student_similarity_weight', PDO::FETCH_COLUMN, 0)->fetch();
-    $listProperties = $pdo->prepare('SELECT * FROM `v_student_complete` WHERE `person_id` = ?');
+    $listProperties = $pdo->prepare("SELECT * FROM `v_student_complete` WHERE ? like concat_ws(',', '%', `person_id`, '%')");
     $listLectures = $pdo->prepare('SELECT * FROM `student_attendance` WHERE `person_id` = ? ORDER BY substr(`semester_abs` FROM 4), `lecturer`');
     $listSimilarStudents = $pdo->prepare(<<<'EOD'
         select
@@ -21,16 +21,19 @@
             join student_similarity_weight sw using (property)
         where (`id_low` = ? or `id_high` = ?)
             and `max` > .5
-            and sg.`mean` > .3
             and `sg`.`property` <> 'birth_date'
         group by other_id
         having `weighted_mean` > .3
         order by weighted_mean desc
     EOD
     );
-    $listProperties->execute(array($_GET['id']));
-    $listLectures->execute(array($_GET['id']));
     $listSimilarStudents->execute(array($_GET['id'], $sumPropertyWeights, $_GET['id'], $_GET['id']));
+    $similarStudents = $listSimilarStudents->fetchAll();
+    $showDupes = count($similarStudents);
+    $similarIds = array_map(function ($record) { return $record['other_id']; }, $similarStudents);
+    array_unshift($similarIds, $_GET['id']);
+    $listProperties->execute(array(sprintf(",%s,", implode(",", $similarIds))));
+    $listLectures->execute(array($_GET['id']));
     $student = array();
     $hasTimes = false;
     foreach ($listProperties as $property) {
@@ -53,7 +56,8 @@
                 $property['is_doubtful'] ? '[ungewiss] ' : '',
                 $property['times']
             ),
-            'doubtful' => !!$property['is_doubtful']
+            'doubtful' => !!$property['is_doubtful'],
+            'id' => $property['person_id']
         );
     }
     $fields = array(
@@ -75,7 +79,16 @@
         'literature' => 'Literaturhinweise',
         'remarks' => 'Bemerkungen'
     );
-?>
+    if ($showDupes): ?>
+    <p>Es wurden <?php out(count($similarStudents)) ?> mögliche Duplikate gefunden:</p>
+    <ul class="dupes">
+        <?php foreach ($similarStudents as $index => $record): ?>
+            <li>
+                <a href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%', 100 * $record['weighted_mean'])) ?>
+            </li>
+        <?php endforeach ?>
+    </ul>
+<?php endif ?>
 <table>
     <tbody>
         <?php foreach ($fields as $field => $title): ?>
@@ -84,6 +97,11 @@
                     <tr>
                         <?php if ($index === 0): ?>
                             <th rowspan="<?php echo count($student[$field]) ?>"><?php out($title) ?></th>
+                        <?php endif ?>
+                        <?php if ($showDupes): ?>
+                            <td class="<?php out($value['id'] == $_GET['id'] ? 'orig' : 'dupe') ?>">
+                                <span class="<?php out(chr(97 + array_search($value['id'], $similarIds))) ?>"><?php out(chr(65 + array_search($value['id'], $similarIds))) ?></span>
+                            </td>
                         <?php endif ?>
                         <td><?php out($value['value'], $value['doubtful']) ?></td>
                         <?php if ($hasTimes): ?>
@@ -100,30 +118,6 @@
                     <?php endif ?>
                 </tr>
             <?php endif ?>
-        <?php endforeach ?>
-    </tbody>
-</table>
-<table>
-    <thead>
-        <tr>
-            <th>other_id</th>
-            <th>mean</th>
-            <th>median</th>
-            <th>min</th>
-            <th>max</th>
-            <th>count</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($listSimilarStudents as $similarity): ?>
-            <tr>
-                <td><?php out($similarity['other_id']) ?></td>
-                <td><?php out($similarity['weighted_mean']) ?></td>
-                <td><?php out($similarity['median']) ?></td>
-                <td><?php out($similarity['min']) ?></td>
-                <td><?php out($similarity['max']) ?></td>
-                <td><?php out($similarity['count']) ?></td>
-            </tr>
         <?php endforeach ?>
     </tbody>
 </table>
