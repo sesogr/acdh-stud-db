@@ -14,21 +14,21 @@
             main section form>div>label,
             main section form>div>span { padding: 0 6px; }
             main section ul { list-item-type: none; }
-            main section ul.dupes a { text-decoration: none; font-size: 80%; font-weight: bold; padding: 2px 4px 0; border-radius: 8px; background-color: #999; }
+            main section ul.dupes a { text-decoration: none; font-size: 80%; font-weight: bold; padding: 2px 4px 0; border-radius: 8px; }
             main section td.orig span { font-size: 80%; font-weight: bold; padding: 2px 4px 0; border-radius: 8px; background-color: #ccc; }
             main section td.dupe span { font-size: 80%; font-weight: bold; color: #eee; padding: 2px 4px 0; border-radius: 8px; }
-            main section td.dupe span.b { background-color: #914560; } /* 12:00 000° */
-            main section td.dupe span.c { background-color: #006b79; } /* 07:00 210° */
-            main section td.dupe span.d { background-color: #82532d; } /* 02:00 060° */
-            main section td.dupe span.e { background-color: #3a6098; } /* 09:00 270° */
-            main section td.dupe span.f { background-color: #4d6629; } /* 04:00 120° */
-            main section td.dupe span.g { background-color: #834a7c; } /* 11:00 330° */
-            main section td.dupe span.h { background-color: #006d5d; } /* 06:00 180° */
-            main section td.dupe span.i { background-color: #904944; } /* 01:00 030° */
-            main section td.dupe span.j { background-color: #00688f; } /* 08:00 240° */
-            main section td.dupe span.k { background-color: #6b5d22; } /* 03:00 090° */
-            main section td.dupe span.l { background-color: #665590; } /* 10:00 300° */
-            main section td.dupe span.m { background-color: #276b40; } /* 05:00 150° */
+            main section .b { background-color: #914560; } /* 12:00 000° */
+            main section .c { background-color: #006b79; } /* 07:00 210° */
+            main section .d { background-color: #82532d; } /* 02:00 060° */
+            main section .e { background-color: #3a6098; } /* 09:00 270° */
+            main section .f { background-color: #4d6629; } /* 04:00 120° */
+            main section .g { background-color: #834a7c; } /* 11:00 330° */
+            main section .h { background-color: #006d5d; } /* 06:00 180° */
+            main section .i { background-color: #904944; } /* 01:00 030° */
+            main section .j { background-color: #00688f; } /* 08:00 240° */
+            main section .k { background-color: #6b5d22; } /* 03:00 090° */
+            main section .l { background-color: #665590; } /* 10:00 300° */
+            main section .m { background-color: #276b40; } /* 05:00 150° */
             main section table { border-collapse: collapse; empty-cells: show; margin: 12px 0; }
             main section table th { vertical-align: top; text-align: left; padding: 3px; border: 1px #999 solid; }
             main section table td { padding: 1px 3px; border: 1px #999 dotted; }
