@@ -19,18 +19,18 @@
             main section td.orig span { font-size: 80%; font-weight: bold; padding: 2px 4px 0; border-radius: 8px; background-color: #ccc; }
             main section td.dupe span { font-size: 80%; font-weight: bold; color: #000; padding: 2px 4px 0; border-radius: 8px; }
             main section .hide { display: none; }
-            main section .b { background-color: #f5c0cf; } /* 12:00 000° */
-            main section .c { background-color: #a0dde8; } /* 07:00 210° */
-            main section .d { background-color: #f0c8a8; } /* 02:00 060° */
-            main section .e { background-color: #c0d0fb; } /* 09:00 270° */
-            main section .f { background-color: #cbd7a9; } /* 04:00 120° */
-            main section .g { background-color: #e9c2e5; } /* 11:00 330° */
-            main section .h { background-color: #a3dfd2; } /* 06:00 180° */
-            main section .i { background-color: #f7c2b9; } /* 01:00 030° */
-            main section .j { background-color: #acd7f6; } /* 08:00 240° */
-            main section .k { background-color: #e1d0a2; } /* 03:00 090° */
-            main section .l { background-color: #d7c8f5; } /* 10:00 300° */
-            main section .m { background-color: #b4ddbb; } /* 05:00 150° */
+            main section :is(div, a) .b { background-color: #f5c0cf; } /* 12:00 000° */
+            main section :is(div, a) .c { background-color: #a0dde8; } /* 07:00 210° */
+            main section :is(div, a) .d { background-color: #f0c8a8; } /* 02:00 060° */
+            main section :is(div, a) .e { background-color: #c0d0fb; } /* 09:00 270° */
+            main section :is(div, a) .f { background-color: #cbd7a9; } /* 04:00 120° */
+            main section :is(div, a) .g { background-color: #e9c2e5; } /* 11:00 330° */
+            main section :is(div, a) .h { background-color: #a3dfd2; } /* 06:00 180° */
+            main section :is(div, a) .i { background-color: #f7c2b9; } /* 01:00 030° */
+            main section :is(div, a) .j { background-color: #acd7f6; } /* 08:00 240° */
+            main section :is(div, a) .k { background-color: #e1d0a2; } /* 03:00 090° */
+            main section :is(div, a) .l { background-color: #d7c8f5; } /* 10:00 300° */
+            main section :is(div, a) .m { background-color: #b4ddbb; } /* 05:00 150° */
             main section table { border-collapse: collapse; empty-cells: show; margin: 12px 0; }
             main section table th { vertical-align: top; text-align: left; padding: 3px; border: 1px #999 solid; }
             main section table td { padding: 1px 3px; border: 1px #999 dotted; }
