@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <title>DEMOS — Suche Studenten Musikwissenschaft Wien</title>
+        <script src="src/showhidetoogle.js"></script>
         <style>
             body { font-family: sans-serif; font-size: 10px /*max(1.6vmin, 1vmax)*/; }
             main section datalist, main section datalist option { display: none; }
@@ -17,6 +18,7 @@
             main section ul.dupes a { text-decoration: none; font-size: 80%; font-weight: bold; padding: 2px 4px 0; border-radius: 8px; }
             main section td.orig span { font-size: 80%; font-weight: bold; padding: 2px 4px 0; border-radius: 8px; background-color: #ccc; }
             main section td.dupe span { font-size: 80%; font-weight: bold; color: #000; padding: 2px 4px 0; border-radius: 8px; }
+            main section .hide { display: none; }
             main section .b { background-color: #f5c0cf; } /* 12:00 000° */
             main section .c { background-color: #a0dde8; } /* 07:00 210° */
             main section .d { background-color: #f0c8a8; } /* 02:00 060° */
