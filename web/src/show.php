@@ -84,7 +84,7 @@
     <ul class="dupes">
         <?php foreach ($similarStudents as $index => $record): ?>
             <li>
-                <a href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%', 100 * $record['weighted_mean'])) ?>
+                <a class=<?php out(chr(82 + $index))?> href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%', 100 * $record['weighted_mean'])) ?>
             </li>
         <?php endforeach ?>
     </ul>
