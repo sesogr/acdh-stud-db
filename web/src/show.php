@@ -85,7 +85,7 @@
         <?php foreach ($similarStudents as $index => $record): ?>
             <li>
                 <a class=<?php out(chr(98 + $index))?> href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%', 100 * $record['weighted_mean'])) ?>
-                <input type="checkbox" onclick=showhidetoggle('<?php out(chr(98 + $index))?>') />
+                <input type="checkbox" checked="checked" data-dupe-id="<?php out(chr(98 + $index))?>" onclick=showhidetoggle(this) />
             </li>
         <?php endforeach ?>
     </ul>
