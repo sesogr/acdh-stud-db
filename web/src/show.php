@@ -60,6 +60,14 @@
             'id' => $property['person_id']
         );
     }
+    $lecturefields = array(
+        'semester_abs' => 'Semester',
+        'semester_rel' => 'Vorname',
+        'faculty' => 'Fakultät',
+        'lecturer' => 'Dozent',
+        'class' => 'Vorlesung',
+        'remarks' => 'Bemerkungen'
+    );
     $fields = array(
         'last_name' => 'Name',
         'given_names' => 'Vorname',
@@ -122,6 +130,7 @@
         <?php endforeach ?>
     </tbody>
 </table>
+
 <table>
     <thead>
         <tr>
