@@ -7,6 +7,7 @@ import {
   writeComparisonBatch,
 } from "./database";
 const [ids,credentials] = workerData;
+const startDate:Date = new Date()
 console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1] + " resolving")
 
 createConnection(credentials).then((connection) =>
@@ -15,7 +16,7 @@ createConnection(credentials).then((connection) =>
     .then(computeStats)
     .then((comparisons) => writeComparisonBatch(connection, comparisons))
     .then(() => {
-      console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1] + " done")
+      console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1] + " done: " + (new Date().getTime()-startDate.getTime())/1000 + " seconds")
       connection.end()
     })
 );
