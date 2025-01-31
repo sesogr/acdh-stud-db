@@ -61,6 +61,7 @@
         );
     }
     $lecturefields = array(
+        'person_id' => 'Student',
         'semester_abs' => 'Semester',
         'semester_rel' => 'Vorname',
         'faculty' => 'Fakultät',
@@ -139,7 +140,11 @@
     </thead>
     <tbody>
         <?php /** @var array $lecture */ foreach ($listLectures as $lecture): ?>
-            <tr>
+            <tr class="<?php out(chr(97 + array_search($lecture['person_id'], $similarIds)))?>" >
+                <td>
+                    <span class="<?php out(chr(97 + array_search($lecture['person_id'], $similarIds))) ?>"><?php out(chr(65 + array_search($lecture['person_id'], $similarIds))) ?></span>
+                    <?php out($lecture['person_id']) ?>
+                </td>
                 <td><?php out($lecture['semester_abs']) ?></td>
                 <td><?php out($lecture['semester_rel']) ?></td>
                 <td><?php out($lecture['faculty']) ?></td>
