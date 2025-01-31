@@ -133,14 +133,9 @@
 
 <table>
     <thead>
-        <tr>
-            <th>Semester</th>
-            <th>ordinal</th>
-            <th>Fakultät</th>
-            <th>Dozent</th>
-            <th>Vorlesung</th>
-            <th>Bemerkungen</th>
-        </tr>
+        <?php foreach ($lecturefields as $field => $title ): ?>
+            <th><?php out($title)?></th>
+        <?php endforeach ?>
     </thead>
     <tbody>
         <?php /** @var array $lecture */ foreach ($listLectures as $lecture): ?>
