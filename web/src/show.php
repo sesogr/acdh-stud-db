@@ -23,7 +23,7 @@
             and `max` > .5
             and `sg`.`property` <> 'birth_date'
         group by other_id
-        having `weighted_mean` > .3
+         having `weighted_mean` > .3
         order by weighted_mean desc
     EOD
     );
@@ -84,8 +84,8 @@
     <ul class="dupes">
         <?php foreach ($similarStudents as $index => $record): ?>
             <li>
-                <a class=<?php out(chr(82 + $index))?> href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%', 100 * $record['weighted_mean'])) ?>
-                <input type="checkbox" onclick="showhidetoggle(<?php out(chr(82 + $index)) ?>)" />
+                <a class=<?php out(chr(98 + $index))?> href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%', 100 * $record['weighted_mean'])) ?>
+                <input type="checkbox" onclick=showhidetoggle('<?php out(chr(98 + $index))?>') />
             </li>
         <?php endforeach ?>
     </ul>
@@ -95,7 +95,7 @@
         <?php foreach ($fields as $field => $title): ?>
             <?php if (isset($student[$field])): ?>
                 <?php foreach ($student[$field] as $index => $value): ?>
-                    <tr class="<?php out(chr(82 + $index)) ?>">
+                    <tr class="<?php out(chr(97 + array_search($value['id'], $similarIds))) ?>">
                         <?php if ($index === 0): ?>
                             <th rowspan="<?php echo count($student[$field]) ?>"><?php out($title) ?></th>
                         <?php endif ?>

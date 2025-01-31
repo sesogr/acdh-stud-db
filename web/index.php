@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <title>DEMOS — Suche Studenten Musikwissenschaft Wien</title>
-        <script src="src/showhidetoogle.js"></script>
+        <script src="src/showhidetoggle.js"></script>
         <style>
             body { font-family: sans-serif; font-size: 10px /*max(1.6vmin, 1vmax)*/; }
             main section datalist, main section datalist option { display: none; }
