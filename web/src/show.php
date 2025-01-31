@@ -8,7 +8,7 @@
     $pdo->exec('SET NAMES utf8');
     $sumPropertyWeights = $pdo->query('select sum(weight) from student_similarity_weight', PDO::FETCH_COLUMN, 0)->fetch();
     $listProperties = $pdo->prepare("SELECT * FROM `v_student_complete` WHERE ? like concat_ws(',', '%', `person_id`, '%')");
-    $listLectures = $pdo->prepare('SELECT * FROM `student_attendance` WHERE `person_id` = ? ORDER BY substr(`semester_abs` FROM 4), `lecturer`');
+    $listLectures = $pdo->prepare("SELECT * FROM `student_attendance` WHERE ? like concat_ws(',', '%', `person_id`, '%')");
     $listSimilarStudents = $pdo->prepare(<<<'EOD'
         select
             if(id_low = ?, id_high, id_low) other_id,
@@ -20,10 +20,10 @@
         from `student_similarity_graph` sg
             join student_similarity_weight sw using (property)
         where (`id_low` = ? or `id_high` = ?)
-            and `max` > .5
+            -- and `max` > .5
             and `sg`.`property` <> 'birth_date'
         group by other_id
-        having `weighted_mean` > .3
+        having `weighted_mean` > .2
         order by weighted_mean desc
     EOD
     );
@@ -33,7 +33,7 @@
     $similarIds = array_map(function ($record) { return $record['other_id']; }, $similarStudents);
     array_unshift($similarIds, $_GET['id']);
     $listProperties->execute(array(sprintf(",%s,", implode(",", $similarIds))));
-    $listLectures->execute(array($_GET['id']));
+    $listLectures->execute(array(sprintf(",%s,", implode(",", $similarIds))));
     $student = array();
     $hasTimes = false;
     foreach ($listProperties as $property) {
