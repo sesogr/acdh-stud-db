@@ -23,7 +23,7 @@
             and `max` > .5
             and `sg`.`property` <> 'birth_date'
         group by other_id
-         having `weighted_mean` > .3
+        having `weighted_mean` > .3
         order by weighted_mean desc
     EOD
     );
