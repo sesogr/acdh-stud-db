@@ -63,7 +63,7 @@
     $lecturefields = array(
         'person_id' => 'Student',
         'semester_abs' => 'Semester',
-        'semester_rel' => 'Vorname',
+        'semester_rel' => 'Ordinal',
         'faculty' => 'Fakultät',
         'lecturer' => 'Dozent',
         'class' => 'Vorlesung',
