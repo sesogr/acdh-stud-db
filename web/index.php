@@ -14,7 +14,7 @@
             main section form>div>input[type="checkbox"] { width: auto; }
             main section form>div>label,
             main section form>div>span { padding: 0 6px; }
-            main section ul { list-item-type: none; }
+            main section ul { list-style-type: none; }
             main section ul.dupes a { text-decoration: none; font-size: 80%; font-weight: bold; padding: 2px 4px 0; border-radius: 8px; }
             main section td.orig span { font-size: 80%; font-weight: bold; padding: 2px 4px 0; border-radius: 8px; background-color: #ccc; }
             main section td.dupe span { font-size: 80%; font-weight: bold; color: #000; padding: 2px 4px 0; border-radius: 8px; }
