@@ -1,4 +1,4 @@
-const showhidetoggle = (checkbox) =>
+const showhidetoggle = (checkbox) => {
   document
     .querySelectorAll("tr." + checkbox.dataset.dupeId)
     .forEach((el) => el.classList.toggle("hide"));
@@ -8,10 +8,13 @@ document.addEventListener("DOMContentLoaded", () =>
     .querySelectorAll('input[type="checkbox"][data-dupe-id]')
     .forEach((cb) => !cb.checked && showhidetoggle(cb)),
 );
+document.querySelector('input[type="checkbox"]').indeterminate = true;
+}
 
 
 const changeall = (checkbox) => {
   let allstates = []
+  
   const allinputs = document.querySelectorAll('input[type="checkbox"][data-dupe-id]');
   allinputs.forEach((e) => {
       allstates.push(e.checked)
@@ -31,4 +34,5 @@ const changeall = (checkbox) => {
           }
       }
   };
+  checkbox.indeterminate = false;
 };
