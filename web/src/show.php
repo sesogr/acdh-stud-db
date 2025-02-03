@@ -8,7 +8,7 @@
     $pdo->exec('SET NAMES utf8');
     $sumPropertyWeights = $pdo->query('select sum(weight) from student_similarity_weight', PDO::FETCH_COLUMN, 0)->fetch();
     $listProperties = $pdo->prepare("SELECT * FROM `v_student_complete` WHERE ? like concat_ws(',', '%', `person_id`, '%')");
-    $listLectures = $pdo->prepare('SELECT * FROM `student_attendance` WHERE `person_id` = ? ORDER BY substr(`semester_abs` FROM 4), `lecturer`');
+    $listLectures = $pdo->prepare("SELECT * FROM `student_attendance` WHERE ? like concat_ws(',', '%', `person_id`, '%') ORDER BY substr(`semester_abs` FROM 4), `lecturer`");
     $listSimilarStudents = $pdo->prepare(<<<'EOD'
         select
             if(id_low = ?, id_high, id_low) other_id,
@@ -33,7 +33,7 @@
     $similarIds = array_map(function ($record) { return $record['other_id']; }, $similarStudents);
     array_unshift($similarIds, $_GET['id']);
     $listProperties->execute(array(sprintf(",%s,", implode(",", $similarIds))));
-    $listLectures->execute(array($_GET['id']));
+    $listLectures->execute(array(sprintf(",%s,", implode(",", $similarIds))));
     $student = array();
     $hasTimes = false;
     foreach ($listProperties as $property) {
@@ -60,6 +60,15 @@
             'id' => $property['person_id']
         );
     }
+    $lecturefields = array(
+        'person_id' => '  ',
+        'semester_abs' => 'Semester',
+        'semester_rel' => 'ordinal',
+        'faculty' => 'Fakultät',
+        'lecturer' => 'Dozent',
+        'class' => 'Vorlesung',
+        'remarks' => 'Bemerkungen'
+    );
     $fields = array(
         'last_name' => 'Name',
         'given_names' => 'Vorname',
@@ -85,7 +94,8 @@
         <?php foreach ($similarStudents as $index => $record): ?>
             <li>
                 <a class=<?php out(chr(98 + $index))?> href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%', 100 * $record['weighted_mean'])) ?>
-                <input type="checkbox" checked="checked" data-dupe-id="<?php out(chr(98 + $index))?>" onclick=showhidetoggle(this) />
+                <input type="checkbox" checked="checked" data-dupe-id="<?php out(chr(98 + $index))?>" onclick="showhidetoggle(this)" />
+
             </li>
         <?php endforeach ?>
     </ul>
@@ -95,13 +105,14 @@
         <?php foreach ($fields as $field => $title): ?>
             <?php if (isset($student[$field])): ?>
                 <?php foreach ($student[$field] as $index => $value): ?>
-                    <tr class="<?php out(chr(97 + array_search($value['id'], $similarIds))) ?>">
+                    <?php $index_ID = array_search($value['id'], $similarIds) ?>
+                    <tr class="<?php out(chr(97 + $index_ID)) ?>">
                         <?php if ($index === 0): ?>
                             <th rowspan="<?php echo count($student[$field]) ?>"><?php out($title) ?></th>
                         <?php endif ?>
                         <?php if ($showDupes): ?>
                             <td class="<?php out($value['id'] == $_GET['id'] ? 'orig' : 'dupe') ?>">
-                                <span class="<?php out(chr(97 + array_search($value['id'], $similarIds))) ?>"><?php out(chr(65 + array_search($value['id'], $similarIds))) ?></span>
+                                <span class="<?php out(chr(97 + $index_ID)) ?>"><?php out(chr(65 + $index_ID)) ?></span>
                             </td>
                         <?php endif ?>
                         <td><?php out($value['value'], $value['doubtful']) ?></td>
@@ -122,20 +133,22 @@
         <?php endforeach ?>
     </tbody>
 </table>
+
 <table>
     <thead>
         <tr>
-            <th>Semester</th>
-            <th>ordinal</th>
-            <th>Fakultät</th>
-            <th>Dozent</th>
-            <th>Vorlesung</th>
-            <th>Bemerkungen</th>
+            <?php foreach ($lecturefields as $field => $title ): ?>
+                <th><?php out($title)?></th>
+            <?php endforeach ?>
         </tr>
     </thead>
     <tbody>
         <?php /** @var array $lecture */ foreach ($listLectures as $lecture): ?>
-            <tr>
+            <?php $index_Lecture = array_search($lecture['person_id'], $similarIds) ?>
+            <tr class="<?php out(chr(97 + $index_Lecture))?>" >
+                <td>
+                    <span class="<?php out(chr(97 + $index_Lecture)) ?>"><?php out(chr(65 + $index_Lecture)) ?></span>
+                </td>
                 <td><?php out($lecture['semester_abs']) ?></td>
                 <td><?php out($lecture['semester_rel']) ?></td>
                 <td><?php out($lecture['faculty']) ?></td>
