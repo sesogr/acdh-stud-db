@@ -61,9 +61,9 @@
         );
     }
     $lecturefields = array(
-        'person_id' => 'Student',
+        'person_id' => '  ',
         'semester_abs' => 'Semester',
-        'semester_rel' => 'Ordinal',
+        'semester_rel' => 'ordinal',
         'faculty' => 'Fakultät',
         'lecturer' => 'Dozent',
         'class' => 'Vorlesung',
@@ -148,7 +148,6 @@
             <tr class="<?php out(chr(97 + $index_Lecture))?>" >
                 <td>
                     <span class="<?php out(chr(97 + $index_Lecture)) ?>"><?php out(chr(65 + $index_Lecture)) ?></span>
-                    <?php out($lecture['person_id']) ?>
                 </td>
                 <td><?php out($lecture['semester_abs']) ?></td>
                 <td><?php out($lecture['semester_rel']) ?></td>
