@@ -94,7 +94,7 @@
         <?php foreach ($similarStudents as $index => $record): ?>
             <li>
                 <a class=<?php out(chr(98 + $index))?> href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%', 100 * $record['weighted_mean'])) ?>
-                <input type="checkbox" checked="checked" data-dupe-id="<?php out(chr(98 + $index))?>" onclick=showhidetoggle(this) />
+                <input type="checkbox" checked="checked" data-dupe-id="<?php out(chr(98 + $index))?>" onclick="showhidetoggle(this)" />
             </li>
         <?php endforeach ?>
     </ul>
@@ -134,9 +134,11 @@
 
 <table>
     <thead>
-        <?php foreach ($lecturefields as $field => $title ): ?>
-            <th><?php out($title)?></th>
-        <?php endforeach ?>
+        <tr>
+            <?php foreach ($lecturefields as $field => $title ): ?>
+                <th><?php out($title)?></th>
+            <?php endforeach ?>
+        </tr>
     </thead>
     <tbody>
         <?php /** @var array $lecture */ foreach ($listLectures as $lecture): ?>
