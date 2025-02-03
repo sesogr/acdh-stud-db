@@ -104,13 +104,14 @@
         <?php foreach ($fields as $field => $title): ?>
             <?php if (isset($student[$field])): ?>
                 <?php foreach ($student[$field] as $index => $value): ?>
-                    <tr class="<?php out(chr(97 + array_search($value['id'], $similarIds))) ?>">
+                    <?php $index_ID = array_search($value['id'], $similarIds) ?>
+                    <tr class="<?php out(chr(97 + $index_ID)) ?>">
                         <?php if ($index === 0): ?>
                             <th rowspan="<?php echo count($student[$field]) ?>"><?php out($title) ?></th>
                         <?php endif ?>
                         <?php if ($showDupes): ?>
                             <td class="<?php out($value['id'] == $_GET['id'] ? 'orig' : 'dupe') ?>">
-                                <span class="<?php out(chr(97 + array_search($value['id'], $similarIds))) ?>"><?php out(chr(65 + array_search($value['id'], $similarIds))) ?></span>
+                                <span class="<?php out(chr(97 + $index_ID)) ?>"><?php out(chr(65 + $index_ID)) ?></span>
                             </td>
                         <?php endif ?>
                         <td><?php out($value['value'], $value['doubtful']) ?></td>
