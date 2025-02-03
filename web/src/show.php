@@ -91,6 +91,12 @@
     if ($showDupes): ?>
     <p>Es wurden <?php out(count($similarStudents)) ?> mögliche Duplikate gefunden:</p>
     <ul class="dupes">
+        <?php if ($showDupes > 1): ?>
+            <li>
+                <a> Alle </a>
+                <input type="checkbox" checked="checked" onclick="changeall(this)" />
+            </li>
+        <?php endif ?>
         <?php foreach ($similarStudents as $index => $record): ?>
             <li>
                 <a class=<?php out(chr(98 + $index))?> href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%', 100 * $record['weighted_mean'])) ?>
