@@ -93,15 +93,15 @@
     <ul class="dupes">
         <?php if ($showDupes > 1): ?>
             <li>
-                <a> Alle </a>
                 <input type="checkbox" checked="checked" onclick="changeall(this)" />
+                <a> Alle </a>
             </li>
         <?php endif ?>
         <?php foreach ($similarStudents as $index => $record): ?>
             <li>
-                <a class=<?php out(chr(98 + $index))?> href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%', 100 * $record['weighted_mean'])) ?>
                 <input type="checkbox" checked="checked" data-dupe-id="<?php out(chr(98 + $index))?>" onclick="showhidetoggle(this)" />
-
+                <a class=<?php out(chr(98 + $index))?> href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%', 100 * $record['weighted_mean'])) ?>
+                
             </li>
         <?php endforeach ?>
     </ul>
