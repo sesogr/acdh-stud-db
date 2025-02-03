@@ -144,9 +144,10 @@
     </thead>
     <tbody>
         <?php /** @var array $lecture */ foreach ($listLectures as $lecture): ?>
-            <tr class="<?php out(chr(97 + array_search($lecture['person_id'], $similarIds)))?>" >
+            <?php $index_Lecture = array_search($lecture['person_id'], $similarIds) ?>
+            <tr class="<?php out(chr(97 + $index_Lecture))?>" >
                 <td>
-                    <span class="<?php out(chr(97 + array_search($lecture['person_id'], $similarIds))) ?>"><?php out(chr(65 + array_search($lecture['person_id'], $similarIds))) ?></span>
+                    <span class="<?php out(chr(97 + $index_Lecture)) ?>"><?php out(chr(65 + $index_Lecture)) ?></span>
                     <?php out($lecture['person_id']) ?>
                 </td>
                 <td><?php out($lecture['semester_abs']) ?></td>
