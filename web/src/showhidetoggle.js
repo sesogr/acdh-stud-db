@@ -2,9 +2,18 @@ const showhidetoggle = (checkbox) => {
   document
     .querySelectorAll("tr." + checkbox.dataset.dupeId)
     .forEach((el) => el.classList.toggle("hide"));
-
-    document.querySelector('input[type="checkbox"]').indeterminate = true;
     
+    const allcheckbox = document.querySelectorAll('input[type="checkbox"][data-dupe-id]')
+    let indetermin = false
+    allcheckbox.forEach((e) => {
+        if (e.checked != checkbox.checked) {
+            indetermin = true;
+        }
+    });
+    document.querySelector('input[type="checkbox"]').indeterminate = false;
+    if(indetermin){
+        document.querySelector('input[type="checkbox"]').indeterminate = true;
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () =>

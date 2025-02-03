@@ -94,7 +94,7 @@
         <?php if ($showDupes > 1): ?>
             <li>
                 <input type="checkbox" checked="checked" onclick="changeall(this)" />
-                <a> Alle </a>
+                <a> ALLE </a>
             </li>
         <?php endif ?>
         <?php foreach ($similarStudents as $index => $record): ?>
