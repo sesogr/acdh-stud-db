@@ -6,9 +6,8 @@ const showhidetoggle = (checkbox, ini=false) => {
     const allcheckboxes = document.querySelectorAll('input[type="checkbox"][data-dupe-id]');
 
     const allcheckbox = document.querySelector('input[type="checkbox"]');
-    if(ini){
-        return null;
-    };
+    if(ini) return null;
+    
     if( [...allcheckboxes].filter((e) => e.checked != checkbox.checked).length > 0 ){
         
         allcheckbox.indeterminate = true
