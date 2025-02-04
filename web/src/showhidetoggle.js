@@ -8,7 +8,7 @@ const showhidetoggle = (checkbox, origin=false) => {
     const allcheckbox = document.querySelector('input[type="checkbox"]');
     if(origin) return null;
     
-    if( [...allcheckboxes].filter((e) => e.checked != checkbox.checked).length > 0 ){
+    if( [...allcheckboxes].any((e) => (e.checked != checkbox.checked)) ){
         
         allcheckbox.indeterminate = true
 
