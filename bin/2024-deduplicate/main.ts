@@ -15,13 +15,13 @@ if (fs.existsSync(path)) {
   fs.rmSync(path, { force: true });
 }
 //function to read the json file to create as many workers as needed
-function createworker(workerpath:string="./worker.js") {
+function createworker(workerpath: string = "./worker.js") {
   let idfile = fs.readFileSync(path, "utf-8");
-  const id:number[][] = JSON.parse(idfile);
-  const workers:any[] = [];
-  for (let i = 1; i < id.length - 1; i++) {
-      const ids = id[i];
-      workers.push(
+  const id: number[][] = JSON.parse(idfile);
+  const workers: any[] = [];
+  for (let i = 1; i < id.length; i++) {
+    const ids = id[i];
+    workers.push(
       promiseWorker<ComparisonWorkers>(ids, credentials, workerpath)
     );
   }
@@ -30,13 +30,20 @@ function createworker(workerpath:string="./worker.js") {
       if (e.status === "rejected") {
         console.error(e.reason, "failed");
       } else {
-        console.log(e.value.value.ids[0], "/", e.value.value.ids[1], "done in", e.value.time, "seconds");
+        console.log(
+          e.value.value.ids[0],
+          "/",
+          e.value.value.ids[1],
+          "done in",
+          e.value.time,
+          "seconds"
+        );
       }
     });
   });
 }
 
 //get (8, 125 ids) batches and then create workers
-//getbatches(credentials, 12, 1024).then(() => createworker());
+getbatches(credentials, 8, 1024).then(() => createworker());
 
-getbatches(credentials, 24, 4048,'student_similarity_birthrange').then(() => createworker("./workerDateRange.js"));
+//getbatches(credentials, 12, 2048,'student_similarity_birthrange').then(() => createworker("./workerDateRange.js"));
