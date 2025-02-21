@@ -44,6 +44,19 @@ function createworker(workerpath: string = "./worker.js") {
 }
 
 //get (8, 125 ids) batches and then create workers
-getbatches(credentials, 8, 1024).then(() => createworker());
-
-//getbatches(credentials, 12, 2048,'student_similarity_birthrange').then(() => createworker("./workerDateRange.js"));
+/*
+getbatches(credentials, 8, 1024)
+  .then(() => createworker())
+  .catch((error) => {
+    console.log(error);
+    createworker();
+  });
+*/
+/*
+getbatches(credentials, 12, 2048, "student_similarity_birthrange")
+  .then(() => createworker("./workerDateRange.js"))
+  .catch((error) => {
+    console.log(error);
+    createworker("./workerDateRange.js");
+  });
+*/
