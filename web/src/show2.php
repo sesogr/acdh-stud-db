@@ -10,19 +10,23 @@
     $listProperties = $pdo->prepare("SELECT * FROM `v_student_complete` WHERE ? like concat_ws(',', '%', `person_id`, '%')");
     $listLectures = $pdo->prepare("SELECT * FROM `student_attendance` WHERE ? like concat_ws(',', '%', `person_id`, '%') ORDER BY substr(`semester_abs` FROM 4), `lecturer`");
     $listSimilarStudents = $pdo->prepare(<<<'EOD'
-        SELECT 
-            duplicate_ids
-        FROM 
-            exact_birthdates_duplicates
-        WHERE duplicate_ids LIKE '%?%'
+        select
+            if(id_low = ?, id_high, id_low) other_id,
+            mean weighted_mean,
+            median,
+            min min,
+            max max,
+            property count
+        from `student_similarity_birthrange`
+        where (`id_low` = ? or `id_high` = ?)
+        group by other_id
+        order by weighted_mean desc
     EOD
     );
-    $listSimilarStudents->execute(array($_GET['ids']));
-    $similarStudents =  $listSimilarStudents->fetchAll();;
-    $similarStudents = "35025,35060,35780,35805,35988,36022,36227,36434,36463,36654";
-    $similarIds = explode(",",$similarStudents);
-    
-    $showDupes = count($similarIds);
+    $listSimilarStudents->execute(array($_GET['ids'], $_GET['ids'], $_GET['ids']));
+    $similarStudents = $listSimilarStudents->fetchAll();
+    $showDupes = count($similarStudents);
+    $similarIds = array_map(function ($record) { return $record['other_id']; }, $similarStudents);
     array_unshift($similarIds, $_GET['ids']);
     $listProperties->execute(array(sprintf(",%s,", implode(",", $similarIds))));
     $listLectures->execute(array(sprintf(",%s,", implode(",", $similarIds))));
@@ -81,7 +85,7 @@
         'remarks' => 'Bemerkungen'
     );
     if ($showDupes): ?>
-    <p>Es wurden <?php out(count($similarIds)) ?> mögliche Duplikate gefunden:</p>
+    <p>Es wurden <?php out(count($similarStudents)) ?> mögliche Duplikate gefunden:</p>
     <ul class="dupes">
         <?php if ($showDupes > 1): ?>
             <li>
@@ -89,10 +93,10 @@
                 <a> ALLE </a>
             </li>
         <?php endif ?>
-        <?php foreach ($similarIds as $index => $record): ?>
+        <?php foreach ($similarStudents as $index => $record): ?>
             <li>
                 <input type="checkbox" checked="checked" data-dupe-id="<?php out(chr(98 + $index))?>" onclick="showhidetoggle(this)" />
-                <a class=<?php out(chr(98 + $index))?> href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%',0)) ?>
+                <a class=<?php out(chr(98 + $index))?> href="?id=<?php out($record['other_id']) ?>"><?php out(chr(66 + $index)) ?></a>: <?php out(sprintf('%.0f%%', 100 * $record['weighted_mean'])) ?>
                 
             </li>
         <?php endforeach ?>
