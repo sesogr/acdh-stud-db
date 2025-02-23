@@ -57,6 +57,6 @@ const getnextavailableIds: GetNextAvailableIds = async () => {
     returntype[1][0] || 0,
     returntype[1][1] || 0,
   ];
-  return [low, high, end];
+  return [end, low, high];
 };
 
