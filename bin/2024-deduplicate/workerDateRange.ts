@@ -19,20 +19,8 @@ console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1] + " resolving");
 createConnection(credentials).then((connection) =>
   loadBirthRangeProperties(connection, ids)
     .then(reducePropertyRecordsToPeople2)
-    .then((e) => {
-      console.log(e);
-      return e;
-    })
     .then(convertStringsArraystoDateRanges)
-    .then((e) => {
-      console.log(e);
-      return e;
-    })
     .then(computeBirthRangeStats)
-    .then((e) => {
-      console.log(e);
-      return e;
-    })
     .then((comparisons) =>
       writeComparisonBatchBirthrange(connection, comparisons)
     )

@@ -52,7 +52,7 @@ function createworker(workerpath: string = "./worker.js") {
 //     createworker();
 //   });
 
-getbatches(credentials, 2, 3, "student_similarity_birthrange")
+getbatches(credentials, 12, 4086, "student_similarity_birthrange")
   .then(() => createworker("./workerDateRange.js"))
   .catch((error) => {
     console.log(error);

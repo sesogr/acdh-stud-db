@@ -22,6 +22,7 @@
             and min > 0
             and max > 0.5
         group by other_id
+        having mean > 0.8
         order by weighted_mean desc
     EOD
     );

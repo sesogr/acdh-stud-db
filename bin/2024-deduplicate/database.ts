@@ -137,7 +137,7 @@ export const writeComparisonBatchBirthrange: WriteComparisonBatchBirthrange = (
   connection,
   data
 ) => {
-  const paramMap: number[] = data.flatMap((c) => [
+  const paramMap = data.map((c) => [
     c.idLow,
     c.idHigh,
     ...c.stats.map((n) => parseFloat(n.toFixed(5))),
