@@ -1,5 +1,13 @@
 import { DateRange } from "./DateRange";
-import { Comparison, Person, Property, DatePropRecord, PropRecord, Stats, Person2 } from "./types";
+import {
+  Comparison,
+  Person,
+  Property,
+  DatePropRecord,
+  PropRecord,
+  Stats,
+  Person2,
+} from "./types";
 
 type Add = (a: number, b: number) => number;
 const add: Add = (a, b) => a + b;
@@ -51,8 +59,8 @@ const cosineSimilarity: CosineSimilarity = (a, b) => {
   const [vectorA, vectorB] = [ngramsA, ngramsB].map((haystack) =>
     uniqueNGrams.map(
       (needle) =>
-        haystack.filter((item) => areStringsEqual(item, needle)).length,
-    ),
+        haystack.filter((item) => areStringsEqual(item, needle)).length
+    )
   );
   return dotProduct(vectorA, vectorB) / magnitude(vectorA) / magnitude(vectorB);
 };
@@ -73,15 +81,15 @@ const compareStudents: CompareStudents = (a, b) => ({
           value
             .flatMap((va) =>
               (b[k as Property] ?? []).map((vb) =>
-                cosineSimilarity(`${va}`, `${vb}`),
-              ),
+                cosineSimilarity(`${va}`, `${vb}`)
+              )
             )
             .reduce(
               (
                 [sum, median, minimum, maximum, count],
                 similarity,
                 index,
-                collection,
+                collection
               ) => {
                 const isLastItem = index === collection.length - 1;
                 const accumulatedSimilarity = sum + similarity;
@@ -94,17 +102,17 @@ const compareStudents: CompareStudents = (a, b) => ({
                   count || collection.length,
                 ];
               },
-              [0, 0, Infinity, 0, 0] as Stats,
+              [0, 0, Infinity, 0, 0] as Stats
             ),
         ];
-      }),
+      })
   ) as Record<Property, Stats>,
 });
 
 type ReducePropertyRecordsToPeople = (records: PropRecord[]) => Person[];
 export const reducePropertyRecordsToPeople: ReducePropertyRecordsToPeople = (
-  records,
-) => 
+  records
+) =>
   Object.values(
     records.reduce(
       (accu: Record<string, Person>, item) => ({
@@ -118,45 +126,53 @@ export const reducePropertyRecordsToPeople: ReducePropertyRecordsToPeople = (
           ],
         },
       }),
-      {} as Record<string, Person>,
-    ),
-);
+      {} as Record<string, Person>
+    )
+  );
 type ComputeStats = (people: Person[]) => Comparison[];
 export const computeStats: ComputeStats = ([first, ...rest]) =>
   rest.map((other) => compareStudents(first, other));
 
 type ReducePropertyRecordsToPeople2 = (records: DatePropRecord[]) => Person2[];
 export const reducePropertyRecordsToPeople2: ReducePropertyRecordsToPeople2 = (
-  records,
+  records
 ) => {
   return Object.values(
     records.reduce(
       (accu: Record<number, Person2>, item) => {
-        const person = accu[item.person_id] ?? { person_id: item.person_id, bornranges: [] };
-        person.bornranges?.push([item.born_on_or_after, item.born_on_or_before]);
+        const person = accu[item.person_id] ?? {
+          person_id: item.person_id,
+          bornranges: [],
+        };
+        person.bornranges?.push([
+          item.born_on_or_after,
+          item.born_on_or_before,
+        ]);
         return {
           ...accu,
           [item.person_id]: person,
         };
       },
-      {} as Record<number, Person2>,
-    ),
+      {} as Record<number, Person2>
+    )
   );
 };
 
-
-
-type ComputeBirthRangeStats = (people:any) => {idLow:number,idHigh:number,stats:Stats}[];
-export const computeBirthRangeStats: ComputeBirthRangeStats = ([first, ...rest]) =>
-  rest.map((other: { person_id: any; bornranges: DateRange[]; }) => {
+type ComputeBirthRangeStats = (
+  people: { person_id: number; bornranges: DateRange[] }[]
+) => { idLow: number; idHigh: number; stats: Stats }[];
+export const computeBirthRangeStats: ComputeBirthRangeStats = ([
+  first,
+  ...rest
+]) => {
+  return rest.map((other: { person_id: number; bornranges: DateRange[] }) => {
     return {
-    idLow: first.person_id,
-    idHigh: other.person_id,
-    stats: compare(first.bornranges, other.bornranges)
-  }
-});
-
-
+      idLow: first.person_id,
+      idHigh: other.person_id,
+      stats: compare(first.bornranges, other.bornranges),
+    };
+  });
+};
 
 export function compare(person1: DateRange[], person2: DateRange[]): Stats {
   let median: number = 0,
@@ -180,15 +196,16 @@ export function compare(person1: DateRange[], person2: DateRange[]): Stats {
   array.sort((a, b) => a - b);
   minimum = Math.min(...array);
   maximum = Math.max(...array);
-  median = array.length === 1 ? array[0] :
-    array.length % 2
-      ? (array[Math.floor(array.length / 2)] +
-          array[Math.floor(array.length / 2) + 1]) /
-        2
-      : array[array.length / 2];
+  median =
+    array.length === 1
+      ? array[0]
+      : array.length % 2
+        ? (array[Math.floor(array.length / 2)] +
+            array[Math.floor(array.length / 2) + 1]) /
+          2
+        : array[array.length / 2];
   return [mean, median, minimum, maximum, count];
 }
-
 
 export const personBirthRanges = (dates: Date[][]) => {
   const ranges: DateRange[] = [];
@@ -207,10 +224,13 @@ export const personBirthRanges = (dates: Date[][]) => {
   return ranges;
 };
 
-
 export const convertStringsArraystoDateRanges = (persons: Person2[]) => {
   return persons.map((e) => ({
     person_id: e.person_id,
-    bornranges: e.bornranges ? personBirthRanges(e.bornranges.map(range => [new Date(range[0]), new Date(range[1])])) : []
+    bornranges: e.bornranges
+      ? personBirthRanges(
+          e.bornranges.map((range) => [new Date(range[0]), new Date(range[1])])
+        )
+      : [],
   }));
 };

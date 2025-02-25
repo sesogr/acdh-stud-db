@@ -1,5 +1,5 @@
 import { Connection, UpsertResult } from "mariadb";
-import { Comparison, PropRecord , DateRangeComparison} from "./types";
+import { Comparison, PropRecord, DateRangeComparison } from "./types";
 import fs from "node:fs";
 
 type FindBatchIds = (
@@ -128,22 +128,20 @@ export const writeComparisonBatch: WriteComparisonBatch = (
   }
 };
 
-
 type WriteComparisonBatchBirthrange = (
   connection: Connection,
   data: DateRangeComparison[]
 ) => Promise<UpsertResult> | undefined;
 export const writeComparisonBatchBirthrange: WriteComparisonBatchBirthrange = (
+  //bug only inserts first comparison
   connection,
   data
 ) => {
-  const paramMap: number[] = data.flatMap((c) =>
-    [
-      c.idLow,
-      c.idHigh,
-      ...c.stats.map((n) => parseFloat(n.toFixed(5))),
-    ]
-  );
+  const paramMap: number[] = data.flatMap((c) => [
+    c.idLow,
+    c.idHigh,
+    ...c.stats.map((n) => parseFloat(n.toFixed(5))),
+  ]);
   if (paramMap.length > 0) {
     return connection.batch(
       {
@@ -157,9 +155,12 @@ export const writeComparisonBatchBirthrange: WriteComparisonBatchBirthrange = (
   }
 };
 
-
-export const loadBirthRangeProperties = (connection:Connection,ids:number[]) => connection.query(
-  // language=MariaDB
-  "select person_id, id, born_on_or_after, born_on_or_before from student_birth_date_value where (person_id = ? or person_id between ? and ?) order by person_id",
-  [ids[0], ids[1], ids[ids.length - 1]]
-);
+export const loadBirthRangeProperties = (
+  connection: Connection,
+  ids: number[]
+) =>
+  connection.query(
+    // language=MariaDB
+    "select person_id, id, born_on_or_after, born_on_or_before from student_birth_date_value where (person_id = ? or person_id between ? and ?) order by person_id",
+    [ids[0], ids[1], ids[ids.length - 1]]
+  );
