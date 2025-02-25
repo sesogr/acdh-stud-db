@@ -52,11 +52,10 @@ getbatches(credentials, 8, 1024)
     createworker();
   });
 */
-/*
-getbatches(credentials, 12, 2048, "student_similarity_birthrange")
+
+getbatches(credentials, 120, 10, "student_similarity_birthrange")
   .then(() => createworker("./workerDateRange.js"))
   .catch((error) => {
     console.log(error);
     createworker("./workerDateRange.js");
   });
-*/
