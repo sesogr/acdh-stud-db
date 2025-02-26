@@ -41,7 +41,6 @@ async function loopinggetnextavaialbleIds(
     await getnextavailableIds()
       .then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
       .then(async (ids) => {
-        console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
         await fsPromises.readFile("ids.json", "utf-8").then((file: string) => {
           const idArray: number[][] = JSON.parse(file);
           const updated = [...idArray, ids];

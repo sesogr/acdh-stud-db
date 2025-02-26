@@ -1,5 +1,5 @@
 import { parentPort, workerData } from "worker_threads";
-
+import fs from "node:fs";
 import { createConnection } from "mariadb";
 import {
   computeBirthRangeStats,
@@ -18,6 +18,10 @@ console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1] + " resolving");
 
 createConnection(credentials).then((connection) =>
   loadBirthRangeProperties(connection, ids)
+    .then((e) => {
+      if (e[0].person_id != ids[0]) throw Error;
+      return e;
+    })
     .then(reducePropertyRecordsToPeople2)
     .then(convertStringsArraystoDateRanges)
     .then(computeBirthRangeStats)
