@@ -14,7 +14,7 @@ const credentials = {
 if (fs.existsSync(path)) {
   fs.rmSync(path, { force: true });
 }
-//function to read the json file to create as many workers as needed
+// function to read the json file to create as many workers as needed
 function createworker(workerpath: string = "./worker.js") {
   let idfile = fs.readFileSync(path, "utf-8");
   const id: number[][] = JSON.parse(idfile);
@@ -55,9 +55,11 @@ function createworker(workerpath: string = "./worker.js") {
 //     createworker();
 //   });
 
-getbatches(credentials, 1, 4086, "student_similarity_birthrange")
+getbatches(credentials, 12, 4086, "student_similarity_birthrange")
   .then(() => createworker("./workerDateRange.js"))
   .catch((error) => {
     console.log(error);
     createworker("./workerDateRange.js");
   });
+
+// createworker("./workerDateRange.js");

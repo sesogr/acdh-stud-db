@@ -225,12 +225,13 @@ export const personBirthRanges = (dates: Date[][]) => {
 };
 
 export const convertStringsArraystoDateRanges = (persons: Person2[]) => {
-  return persons.map((e) => ({
-    person_id: e.person_id,
-    bornranges: e.bornranges
-      ? personBirthRanges(
-          e.bornranges.map((range) => [new Date(range[0]), new Date(range[1])])
-        )
-      : [],
-  }));
+  return persons.map((e) => {
+    if (e.bornranges === undefined) throw Error;
+    return {
+      person_id: e.person_id,
+      bornranges: personBirthRanges(
+        e.bornranges.map((range) => [new Date(range[0]), new Date(range[1])])
+      ),
+    };
+  });
 };

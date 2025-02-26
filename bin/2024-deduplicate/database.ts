@@ -133,7 +133,6 @@ type WriteComparisonBatchBirthrange = (
   data: DateRangeComparison[]
 ) => Promise<UpsertResult> | undefined;
 export const writeComparisonBatchBirthrange: WriteComparisonBatchBirthrange = (
-  //bug only inserts first comparison
   connection,
   data
 ) => {
