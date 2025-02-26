@@ -36,7 +36,8 @@ createConnection(credentials).then((connection) =>
     })
     .catch((error) => {
       throw Error(
-        error + `Failed to process ${ids[0]} to ${ids[ids.length - 1]}`
+        error +
+          `\n Failed to process ${ids[0]} ... ${ids[1]} to ${ids[ids.length - 1]}`
       );
     })
 );

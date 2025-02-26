@@ -1,5 +1,6 @@
 import { createConnection, Connection } from "mariadb";
 import fsPromises from "node:fs/promises";
+import fs from "node:fs";
 import { findBatchIds, getHighestAvailableIds } from "./database";
 
 export async function getbatches(
@@ -11,7 +12,15 @@ export async function getbatches(
   const connection = await createConnection(credentials);
   try {
     const limits = await getHighestAvailableIds(connection, table);
+
     const ids = await findBatchIds(connection, limits, BATCH_SIZE);
+    fs.writeFileSync(
+      "error2.log",
+      JSON.stringify([[limits[2]], [ids[0], ids[1]]]) + "\n",
+      {
+        flag: "a",
+      }
+    );
     console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
     await updateIdsFile(ids);
     await loopinggetnextavaialbleIds(connection, batches, BATCH_SIZE);
@@ -50,13 +59,15 @@ const getnextavailableIds: GetNextAvailableIds = async () => {
   const lastIDs = idArray[idArray.length - 1];
   const returntype: [[number], [number, number]] = [
     [idArray[0][0]],
-    [lastIDs[0], lastIDs.slice(-1)[0]],
+    [lastIDs[0], lastIDs[lastIDs.length - 1]],
   ];
+  fs.writeFileSync("error2.log", JSON.stringify(returntype) + "\n", {
+    flag: "a",
+  });
   const [end, low, high] = [
     returntype[0][0] || 0,
     returntype[1][0] || 0,
     returntype[1][1] || 0,
   ];
-  return [low, high,  end];
+  return [low, high, end];
 };
-

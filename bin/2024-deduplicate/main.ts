@@ -29,6 +29,7 @@ function createworker(workerpath: string = "./worker.js") {
     workerResults.forEach((e) => {
       if (e.status === "rejected") {
         console.error(e.reason, "failed");
+        fs.writeFileSync("error.log", e.reason + "\n", { flag: "a" });
       } else {
         console.log(
           e.value.value.ids[0],
@@ -52,7 +53,7 @@ function createworker(workerpath: string = "./worker.js") {
 //     createworker();
 //   });
 
-getbatches(credentials, 12, 4086, "student_similarity_birthrange")
+getbatches(credentials, 24, 4086, "student_similarity_birthrange")
   .then(() => createworker("./workerDateRange.js"))
   .catch((error) => {
     console.log(error);

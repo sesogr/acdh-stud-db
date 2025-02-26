@@ -192,7 +192,7 @@ export function compare(person1: DateRange[], person2: DateRange[]): Stats {
     });
     return innermean;
   });
-  let mean: number = array.reduce((e, sum) => sum + e, 0) / count;
+  let mean: number = array.reduce((sum, e) => sum + e, 0) / count;
   array.sort((a, b) => a - b);
   minimum = Math.min(...array);
   maximum = Math.max(...array);
