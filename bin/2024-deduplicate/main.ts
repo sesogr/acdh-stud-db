@@ -35,6 +35,8 @@ function createworker(workerpath: string = "./worker.js") {
           e.value.value.ids[0],
           "/",
           e.value.value.ids[1],
+          "..",
+          e.value.value.ids[e.value.value.ids.length - 1],
           "done in",
           e.value.time,
           "seconds"
@@ -53,7 +55,7 @@ function createworker(workerpath: string = "./worker.js") {
 //     createworker();
 //   });
 
-getbatches(credentials, 24, 4086, "student_similarity_birthrange")
+getbatches(credentials, 1, 4086, "student_similarity_birthrange")
   .then(() => createworker("./workerDateRange.js"))
   .catch((error) => {
     console.log(error);
