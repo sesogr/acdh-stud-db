@@ -1,33 +1,35 @@
 import { createConnection, Connection } from "mariadb";
-import fsPromises from "node:fs/promises";
 import fs from "node:fs";
+import fsPromises from "node:fs/promises";
 import { findBatchIds, getHighestAvailableIds } from "./database";
 
-export async function getbatches(
+export function getbatches(
   credentials: {},
   batches: number,
   BATCH_SIZE: number = 10,
   table: string = "student_similarity_graph"
 ) {
-  const connection = await createConnection(credentials);
-  try {
-    const limits = await getHighestAvailableIds(connection, table);
-
-    const ids = await findBatchIds(connection, limits, BATCH_SIZE);
-    fs.writeFileSync(
-      "error2.log",
-      JSON.stringify([[limits[2]], [ids[0], ids[1]]]) + "\n",
-      {
-        flag: "a",
-      }
-    );
-    console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
-    await updateIdsFile(ids);
-    await loopinggetnextavaialbleIds(connection, batches, BATCH_SIZE);
-    return "success";
-  } finally {
-    connection.end();
-  }
+  return new Promise<string>((resolve) =>
+    createConnection(credentials).then((connection) =>
+      getHighestAvailableIds(connection, table)
+        .then((limits: [number, number, number]) =>
+          findBatchIds(connection, limits, BATCH_SIZE)
+        )
+        .then(async (ids) => {
+          const file = await fsPromises.readFile("ids.json", "utf-8");
+          const idArray: number[][] = JSON.parse(file);
+          idArray.push(ids);
+          fs.writeFileSync("ids.json", JSON.stringify(idArray), {
+            flag: "w",
+          });
+        })
+        .then(() => loopinggetnextavaialbleIds(connection, batches, BATCH_SIZE))
+        .then(() => {
+          connection.end();
+          resolve("success");
+        })
+    )
+  );
 }
 
 async function loopinggetnextavaialbleIds(
@@ -36,38 +38,40 @@ async function loopinggetnextavaialbleIds(
   BATCH_SIZE: number
 ) {
   for (let i = 0; i < batches - 1; i++) {
-    const limits = await getnextavailableIds();
-    const ids = await findBatchIds(connection, limits, BATCH_SIZE);
-    console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
-    await updateIdsFile(ids);
+    await getnextavailableIds()
+      .then((limits) => findBatchIds(connection, limits, BATCH_SIZE))
+      .then(async (ids) => {
+        console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1]);
+        await fsPromises.readFile("ids.json", "utf-8").then((file: string) => {
+          const idArray: number[][] = JSON.parse(file);
+          idArray.push(ids);
+          fs.writeFileSync("ids.json", JSON.stringify(idArray), {
+            flag: "w",
+          });
+        });
+        return ids;
+      });
   }
 }
 
-async function updateIdsFile(ids: number[]) {
-  const file = await fsPromises.readFile("ids.json", "utf-8");
-  const idArray: number[][] = JSON.parse(file);
-  idArray.push(ids);
-  await fsPromises.writeFile("ids.json", JSON.stringify(idArray), {
-    flag: "w",
-  });
-}
-
 type GetNextAvailableIds = () => Promise<[number, number, number]>;
-const getnextavailableIds: GetNextAvailableIds = async () => {
-  const file = await fsPromises.readFile("ids.json", "utf-8");
-  const idArray: number[][] = JSON.parse(file);
-  const lastIDs = idArray[idArray.length - 1];
-  const returntype: [[number], [number, number]] = [
-    [idArray[0][0]],
-    [lastIDs[0], lastIDs[lastIDs.length - 1]],
-  ];
-  fs.writeFileSync("error2.log", JSON.stringify(returntype) + "\n", {
-    flag: "a",
-  });
-  const [end, low, high] = [
-    returntype[0][0] || 0,
-    returntype[1][0] || 0,
-    returntype[1][1] || 0,
-  ];
-  return [low, high, end];
-};
+const getnextavailableIds: GetNextAvailableIds = () =>
+  fsPromises
+    .readFile("ids.json", "utf-8")
+    .then((file: string) => {
+      const idArray: number[][] = JSON.parse(file);
+      const lastIDs = idArray[idArray.length - 1];
+      const returntype: [[number], [number, number]] = [
+        [idArray[0][0]],
+        [lastIDs[0], lastIDs.slice(-1)[0]],
+      ];
+      return returntype;
+    })
+    .then(
+      ([[end], [low, high]]: [[number], [number, number]]) =>
+        [low || 0, high || 0, end || 0].map((n) => +n) as [
+          number,
+          number,
+          number,
+        ]
+    );
