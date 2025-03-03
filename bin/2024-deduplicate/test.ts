@@ -275,6 +275,23 @@ describe("DateRange", () => {
     );
     expect(range3.inbetween(range1, range2)).toBeFalsy();
   });
+  test("unite date ranges", () => {
+    const range1 = DateRange.create(
+      new Date("1900-01-01"),
+      new Date("1900-12-31")
+    );
+    const range2 = DateRange.create(
+      new Date("1899-01-01"),
+      new Date("1901-12-31")
+    );
+    const range3 = range2.uniteDateRange(range1);
+    expect(range3?.getStartDate()).toStrictEqual(range2.getStartDate());
+    expect(range3?.getEndDate()).toStrictEqual(range2.getEndDate());
+
+    const range4 = range1.uniteDateRange(range2);
+    expect(range4?.getStartDate()).toStrictEqual(range2.getStartDate());
+    expect(range4?.getEndDate()).toStrictEqual(range2.getEndDate());
+  });
   test("compare 1 year with 3 years", () => {
     const range1 = DateRange.create(
       new Date("1900-01-01"),

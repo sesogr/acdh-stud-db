@@ -98,6 +98,15 @@ export class DateRange {
     if (!this.hasOverlap(otherrange)) {
       throw new Error("dont have overlap");
     }
+    if (this.withinDateRange(otherrange)) {
+      return new DateRange(
+        otherrange.startdate,
+        otherrange.enddate,
+        otherrange.lengthindays
+      );
+    } else if (otherrange.withinDateRange(this)) {
+      return new DateRange(this.startdate, this.enddate, this.lengthindays);
+    }
     const [early, late] = this.sortDateRange(otherrange);
     return new DateRange(
       early.startdate,
@@ -106,12 +115,12 @@ export class DateRange {
     );
   }
   sortDateRange(otherrange: DateRange): DateRange[] {
-    if (this.startdate === otherrange.startdate) {
+    if (this.startdate.getTime() === otherrange.startdate.getTime()) {
       return this.enddate < otherrange.enddate
         ? [this, otherrange]
         : [otherrange, this];
     }
-    return this.startdate < otherrange.startdate
+    return this.startdate.getTime() < otherrange.startdate.getTime()
       ? [this, otherrange]
       : [otherrange, this];
   }
