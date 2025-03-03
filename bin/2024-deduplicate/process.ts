@@ -179,31 +179,59 @@ export function compare(person1: DateRange[], person2: DateRange[]): Stats {
     minimum: number = Infinity,
     maximum: number = 0,
     count: number = 0;
-  let array: number[] = person1.flatMap((n) => {
-    const innermean = person2.map((e) => {
+  let innerMeanList: number[] = person1.flatMap((person1DateRangeElement) => {
+    const innermean = person2.map((person2DateRangeElement) => {
       let f;
-      try {
-        f = e.overlap(n) / e.uniteDateRange(n).getLength();
-      } catch {
-        f = 0;
+      if (
+        person1DateRangeElement.getWasASpecificDate() &&
+        person2DateRangeElement.getWasASpecificDate()
+      ) {
+        return person1DateRangeElement.getStartDate().getTime() !=
+          person2DateRangeElement.getStartDate().getTime()
+          ? 0
+          : 1;
+      } else if (
+        person1DateRangeElement.getWasASpecificDate() ||
+        person2DateRangeElement.getWasASpecificDate()
+      ) {
+        try {
+          f =
+            (person2DateRangeElement.overlap(person1DateRangeElement) /
+              person2DateRangeElement
+                .uniteDateRange(person1DateRangeElement)
+                .getLength()) ^
+            0.5;
+        } catch {
+          f = 0;
+        }
+      } else {
+        try {
+          f =
+            person2DateRangeElement.overlap(person1DateRangeElement) /
+            person2DateRangeElement
+              .uniteDateRange(person1DateRangeElement)
+              .getLength();
+        } catch {
+          f = 0;
+        }
       }
       count++;
       return f;
     });
     return innermean;
   });
-  let mean: number = array.reduce((sum, e) => sum + e, 0) / count;
-  array.sort((a, b) => a - b);
-  minimum = Math.min(...array);
-  maximum = Math.max(...array);
+  let mean: number = innerMeanList.reduce((sum, e) => sum + e, 0) / count;
+  innerMeanList.sort((a, b) => a - b);
+  minimum = Math.min(...innerMeanList);
+  maximum = Math.max(...innerMeanList);
   median =
-    array.length === 1
-      ? array[0]
-      : array.length % 2
-        ? (array[Math.floor(array.length / 2)] +
-            array[Math.floor(array.length / 2) + 1]) /
+    innerMeanList.length === 1
+      ? innerMeanList[0]
+      : innerMeanList.length % 2
+        ? (innerMeanList[Math.floor(innerMeanList.length / 2)] +
+            innerMeanList[Math.floor(innerMeanList.length / 2) + 1]) /
           2
-        : array[array.length / 2];
+        : innerMeanList[innerMeanList.length / 2];
   return [mean, median, minimum, maximum, count];
 }
 
@@ -212,14 +240,14 @@ export const personBirthRanges = (dates: Date[][]) => {
   dates.forEach((e) => {
     let after = new Date(e[0]),
       before = new Date(e[1]),
-      originaldate: Date | boolean = false;
+      wasSpecific: boolean = false;
     if (after.getTime() == before.getTime()) {
-      originaldate = new Date(before);
+      wasSpecific = true;
       before = new Date(before.getTime() - 180 * DateRange.millisecondsPerDay);
       after = new Date(after.getTime() + 179 * DateRange.millisecondsPerDay);
     }
 
-    ranges.push(DateRange.create(after, before, originaldate));
+    ranges.push(DateRange.create(after, before, wasSpecific));
   });
   return ranges;
 };
