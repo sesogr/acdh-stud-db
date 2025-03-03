@@ -12,7 +12,7 @@
     $listSimilarStudents = $pdo->prepare(<<<'EOD'
         select
             if(id_low = ?, id_high, id_low) other_id,
-            mean weighted_mean,
+            mean mean,
             median,
             min min,
             max max,
@@ -23,7 +23,7 @@
             and max > 0.5
         group by other_id
         having mean > 0.8
-        order by weighted_mean desc
+        order by mean desc
     EOD
     );
     $listSimilarStudents->execute(array($_GET['ids'], $_GET['ids'], $_GET['ids']));
