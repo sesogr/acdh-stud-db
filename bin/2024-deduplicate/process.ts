@@ -186,21 +186,22 @@ export function compare(person1: DateRange[], person2: DateRange[]): Stats {
         person1DateRangeElement.getWasASpecificDate() &&
         person2DateRangeElement.getWasASpecificDate()
       ) {
-        return person1DateRangeElement.getStartDate().getTime() !=
+        f =
+          person1DateRangeElement.getStartDate().getTime() !=
           person2DateRangeElement.getStartDate().getTime()
-          ? 0
-          : 1;
+            ? 0
+            : 1;
       } else if (
         person1DateRangeElement.getWasASpecificDate() ||
         person2DateRangeElement.getWasASpecificDate()
       ) {
         try {
           f =
-            (person2DateRangeElement.overlap(person1DateRangeElement) /
-              person2DateRangeElement
-                .uniteDateRange(person1DateRangeElement)
-                .getLength()) ^
-            0.5;
+            person2DateRangeElement.overlap(person1DateRangeElement) /
+            person2DateRangeElement
+              .uniteDateRange(person1DateRangeElement)
+              .getLength();
+          f = Math.pow(f, 0.5);
         } catch {
           f = 0;
         }
