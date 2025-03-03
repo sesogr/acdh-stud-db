@@ -12,11 +12,11 @@
     $listSimilarStudents = $pdo->prepare(<<<'EOD'
         select
             if(id_low = ?, id_high, id_low) other_id,
-            mean mean,
+            mean weighted_mean,
             median,
             min min,
             max max,
-            property count
+            count count
         from `student_similarity_birthrange`
         where (`id_low` = ? or `id_high` = ?)
             and min > 0

@@ -21,7 +21,6 @@
             join student_similarity_weight sw using (property)
         where (`id_low` = ? or `id_high` = ?)
             and `max` > .5
-            and `sg`.`property` <> 'birth_date'
         group by other_id
         having `weighted_mean` > .3
         order by weighted_mean desc
