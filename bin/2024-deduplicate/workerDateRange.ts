@@ -19,7 +19,7 @@ console.log(ids[0], "/", ids[1], "..", ids[ids.length - 1] + " resolving");
 createConnection(credentials).then((connection) =>
   loadBirthRangeProperties(connection, ids)
     .then((e) => {
-      if (e[0].person_id != ids[0]) throw Error;
+      if (e[0].person_id != ids[0]) throw Error("this is an ignoreable error");
       return e;
     })
     .then(reducePropertyRecordsToPeople2)

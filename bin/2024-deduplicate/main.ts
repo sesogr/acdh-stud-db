@@ -11,9 +11,7 @@ const credentials = {
   user: "rksd",
   password: "nJkyj2pOsfUi",
 };
-if (fs.existsSync(path)) {
-  fs.rmSync(path, { force: true });
-}
+
 // function to read the json file to create as many workers as needed
 function createworker(workerpath: string = "./worker.js") {
   let idfile = fs.readFileSync(path, "utf-8");
@@ -46,20 +44,35 @@ function createworker(workerpath: string = "./worker.js") {
   });
 }
 
-//get (8, 125 ids) batches and then create workers
+// remove the ids.json file if it exists for looping
+if (fs.existsSync(path)) {
+  fs.rmSync(path, { force: true });
+}
 
-// getbatches(credentials, 8, 1024)
-//   .then(() => createworker())
-//   .catch((error) => {
-//     console.log(error);
-//     createworker();
-//   });
+// resize workercount to the number of available cores
+// resize batchsize to the a number that each worker takes a reasonable amount of time
+const workercount: number = 12;
+const batchsize: number = 1024;
 
-getbatches(credentials, 12, 4086, "student_similarity_birthrange")
+/* comment block for the main graph
+getbatches(credentials, workercount, batchsize, "student_similarity_graph")
+  .then(() => createworker("./worker.js"))
+  .catch((error) => {
+    console.log(error);
+    createworker();
+  });
+*/
+
+/* comment block for the birthrange graph
+getbatches(credentials, workercount,batchsize, "student_similarity_graph_birthrange")
   .then(() => createworker("./workerDateRange.js"))
   .catch((error) => {
     console.log(error);
     createworker("./workerDateRange.js");
   });
+*/
 
+// run this if you want to setup specific ids in ids.json remember to disable the remove ids.json
+// the number of created workers will be the number of arrays in the ids.json file -1 because
+// zero index is an array with the highest possible id in the database
 // createworker("./workerDateRange.js");
