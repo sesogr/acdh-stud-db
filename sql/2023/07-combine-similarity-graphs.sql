@@ -1,0 +1,1 @@
+insert into student_similarity_graph select * from student_similarity_birthrange

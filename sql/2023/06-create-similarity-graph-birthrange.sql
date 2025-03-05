@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS student_similarity_birthrange;
-CREATE TABLE student_similarity_birthrange
+DROP TABLE IF EXISTS student_similarity_graph_birthrange;
+CREATE TABLE student_similarity_graph_birthrange
 (
     id_low   bigint unsigned not null,
     id_high  bigint unsigned not null,

@@ -6,4 +6,6 @@ VALUES ('birth_place', 1 - log(100000) / 12),
        ('guardian', 1 - log(2) / 12),
        ('last_name', 1 - log(1000) / 12),
        ('last_school', 1 - log(1000) / 12),
-       ('studying_address', 1 - log(10) / 12);
+       ('studying_address', 1 - log(10) / 12),
+       ('birth_date', 1 - log(10) / 12),
+       ('birthrange', 1 - log(100) / 12)
