@@ -19,5 +19,8 @@ services:
       MYSQL_DATABASE: rksd
       MYSQL_USER: rksd
       MYSQL_PASSWORD: nJkyj2pOsfUi
+    volumes:
+      # SQL files present in this directory will initialise the DB if it is empty on container start
+      - ./sql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
       - "13006:3306"
