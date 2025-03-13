@@ -168,12 +168,17 @@ export const loadBirthRangeProperties = (
 export const getAllIds = (connection: Connection) => {
   return connection.query(
     // language=MariaDB
-    "select person_id from v_student_complete order by person_id"
+    "select distinct person_id from v_student_complete order by person_id"
   );
 };
-export const getIdLow = (connection: Connection, table: string) => {
+export const getAllIdLow = (connection: Connection, table: string) => {
   return connection.query(
     // language=MariaDB
-    `select id_low from ${table} order by id_low`
+    `select distinct id_low from ${table} force index (id_low) order by id_low`
   );
+};
+// TODO: needs 2+GB ram
+export const getAllIdLowHighPairs = (connection: Connection, table: string) => {
+  return connection.query(`
+    select distinct id_low, id_high from ${table} force index (id_low_2) order by id_low,id_high `);
 };
