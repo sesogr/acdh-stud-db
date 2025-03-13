@@ -1,6 +1,7 @@
 import { Connection, UpsertResult } from "mariadb";
 import { Comparison, PropRecord, DateRangeComparison } from "./types";
 import fs from "node:fs";
+import { connect } from "node:http2";
 
 type FindBatchIds = (
   connection: Connection,
@@ -163,3 +164,16 @@ export const loadBirthRangeProperties = (
     "select person_id, id, born_on_or_after, born_on_or_before from student_birth_date_value where (person_id = ? or person_id between ? and ?) order by person_id",
     [ids[0], ids[1], ids[ids.length - 1]]
   );
+
+export const getAllIds = (connection: Connection) => {
+  return connection.query(
+    // language=MariaDB
+    "select person_id from v_student_complete order by person_id"
+  );
+};
+export const getIdLow = (connection: Connection, table: string) => {
+  return connection.query(
+    // language=MariaDB
+    `select id_low from ${table} order by id_low`
+  );
+};
