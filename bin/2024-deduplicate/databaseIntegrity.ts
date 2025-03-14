@@ -1,6 +1,8 @@
-import { getAllIds, getAllIdLow } from "./database";
+import { getAllIds, getAllIdLow, getIdHighFromIdLow } from "./database";
 import { createConnection } from "mariadb";
-
+import fs from "node:fs";
+let starter = 1;
+let table = "student_similarity_graph";
 const credentials = {
   host: "localhost",
   port: 13006,
@@ -10,37 +12,70 @@ const credentials = {
   password: "nJkyj2pOsfUi",
 };
 
-createConnection(credentials).then((connection) => {
-  getAllIds(connection).then((allIdObjects) => {
-    const allIds: number[] = allIdObjects.map(
-      (element: { person_id: number }) => element.person_id
-    );
-    getAllIdLow(connection, "student_similarity_graph").then((idLowObjects) => {
-      connection.end();
-      const idLows: number[] = idLowObjects.map(
-        (element: { id_low: number }) => element.id_low
+if (starter == 0)
+  createConnection(credentials).then((connection) => {
+    getAllIds(connection).then((allIdObjects) => {
+      const allIds: number[] = allIdObjects.map(
+        (element: { person_id: number }) => element.person_id
       );
-      const missingIds = allIds.filter((individualId) =>
-        idLows.includes(individualId)
-      );
-      console.log(missingIds);
+      getAllIdLow(connection, table).then((idLowObjects) => {
+        connection.end();
+        const idLows: number[] = idLowObjects.map(
+          (element: { id_low: string }) => parseInt(element.id_low)
+        );
+        const missing: number[] = allIds.filter(
+          (individualId) => !idLows.includes(individualId)
+        );
+        if (missing.length > 1) {
+          const missingArray: number[][] = [];
+          missingArray.push([missing[missing.length - 1]]);
+          for (let i = 0; i < missing.length; i++) {
+            missingArray.push([...allIds.slice(i)]);
+          }
+          fs.writeFileSync("ids.json", JSON.stringify(missingArray));
+        }
+      });
     });
   });
-});
 
-// createConnection(credentials).then((connection) => {
-// getAllIds(connection).then((allIdObjects) => {
-// const allIds: number[] = allIdObjects.map(
-// (element: { person_id: number }) => element.person_id
-// );
-// const allidPairs: number[][] = allIds.map((e, i, array) => {
-// return [e, ...array.slice(i)];
-// });
-// getAllIdLowHighPairs(
-// connection,
-// "student_similarity_graph_birthrange"
-// ).then((idPairObjects) => {
-// console.log(idPairObjects);
-// });
-// });
-// });
+if (starter == 1)
+  createConnection(credentials).then((connection) => {
+    getAllIds(connection).then((allIdObjects) => {
+      const allIds: number[] = allIdObjects.map(
+        (element: { person_id: number }) => element.person_id
+      );
+      const allHighIds: number[][] = [];
+
+      for (let i = 0; i < allIds.length; i++) {
+        allHighIds.push([...allIds.slice(i)]);
+      }
+      const missingArray: number[][] = [];
+      missingArray.push([allIds[allIds.length - 1]]);
+      Promise.all(
+        allHighIds.map((currentHighIds) => {
+          return getIdHighFromIdLow(connection, table, currentHighIds[0]);
+        })
+      ).then((actualIdHighObjects) =>
+        allHighIds.forEach((currentHighIds) =>
+          actualIdHighObjects.forEach((actualIdHighObject) => {
+            const actualHighIds: number[] = actualIdHighObject.map(
+              (element: { id_high: string }): number => {
+                const idHigh: number = parseInt(element.id_high);
+                return idHigh;
+              }
+            );
+            const actualIdPairs = [currentHighIds[0], ...actualHighIds];
+            const missing = currentHighIds.filter(
+              (currentId) => !actualIdPairs.includes(currentId)
+            );
+            if (missing.length > 0) {
+              console.log(missing);
+              missingArray.push(missing);
+            }
+            fs.writeFileSync("ids.json", JSON.stringify(missingArray));
+            connection.end();
+          })
+        )
+      );
+    });
+  });
