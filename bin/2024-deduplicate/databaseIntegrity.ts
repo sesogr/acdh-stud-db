@@ -44,20 +44,18 @@ if (starter == 1)
       const allIds: number[] = allIdObjects.map(
         (element: { person_id: number }) => element.person_id
       );
+      fs.writeFileSync("ids.json", `[[${allIds[allIds.length - 1]}]]`, {
+        flag: "w",
+      });
       const allHighIds: number[][] = [];
 
       for (let i = 0; i < allIds.length; i++) {
         allHighIds.push([...allIds.slice(i)]);
       }
-      const missingArray: number[][] = [];
-      missingArray.push([allIds[allIds.length - 1]]);
-      Promise.all(
-        allHighIds.map((currentHighIds) => {
-          return getIdHighFromIdLow(connection, table, currentHighIds[0]);
-        })
-      ).then((actualIdHighObjects) =>
-        allHighIds.forEach((currentHighIds) =>
-          actualIdHighObjects.forEach((actualIdHighObject) => {
+
+      allHighIds.forEach((currentHighIds) =>
+        getIdHighFromIdLow(connection, table, currentHighIds[0]).then(
+          (actualIdHighObject) => {
             const actualHighIds: number[] = actualIdHighObject.map(
               (element: { id_high: string }): number => {
                 const idHigh: number = parseInt(element.id_high);
@@ -69,13 +67,20 @@ if (starter == 1)
               (currentId) => !actualIdPairs.includes(currentId)
             );
             if (missing.length > 0) {
-              console.log(missing);
-              missingArray.push(missing);
+              const missingArray = [currentHighIds[0], ...missing];
+              updateJSON(missingArray);
             }
-            fs.writeFileSync("ids.json", JSON.stringify(missingArray));
-            connection.end();
-          })
+          }
         )
       );
     });
   });
+
+function updateJSON(newArray: number[]) {
+  const file = fs.readFileSync("ids.json", "ascii");
+  let json: number[][] = JSON.parse(file);
+  json.push(newArray);
+  fs.writeFileSync("ids.json", JSON.stringify(json), {
+    flag: "w",
+  });
+}
