@@ -44,35 +44,41 @@ function createworker(workerpath: string = "./worker.js") {
   });
 }
 
+let start = 3; // 1 = similarity graph, 2= birthrange graph, 3= individual ids
 // remove the ids.json file if it exists for looping
-if (fs.existsSync(path)) {
+if (fs.existsSync(path) && start != 3) {
   fs.rmSync(path, { force: true });
 }
 
 // resize workercount to the number of available cores
 // resize batchsize to the a number that each worker takes a reasonable amount of time
-const workercount: number = 12;
+const workercount: number = 1;
 const batchsize: number = 1024;
 
-/* comment block for the main graph
-getbatches(credentials, workercount, batchsize, "student_similarity_graph")
-  .then(() => createworker("./worker.js"))
-  .catch((error) => {
-    console.log(error);
-    createworker();
-  });
-*/
+// comment block for the main graph
+if (start == 1)
+  getbatches(credentials, workercount, batchsize, "student_similarity_graph")
+    .then(() => createworker("./worker.js"))
+    .catch((error) => {
+      console.log(error);
+      createworker();
+    });
 
-/* comment block for the birthrange graph
-getbatches(credentials, workercount,batchsize, "student_similarity_graph_birthrange")
-  .then(() => createworker("./workerDateRange.js"))
-  .catch((error) => {
-    console.log(error);
-    createworker("./workerDateRange.js");
-  });
-*/
+//comment block for the birthrange graph
+if (start == 2)
+  getbatches(
+    credentials,
+    workercount,
+    batchsize,
+    "student_similarity_graph_birthrange"
+  )
+    .then(() => createworker("./workerDateRange.js"))
+    .catch((error) => {
+      console.log(error);
+      createworker("./workerDateRange.js");
+    });
 
 // run this if you want to setup specific ids in ids.json remember to disable the remove ids.json
 // the number of created workers will be the number of arrays in the ids.json file -1 because
 // zero index is an array with the highest possible id in the database
-// createworker("./workerDateRange.js");
+if (start == 3) createworker("./workerDateRange.js");
