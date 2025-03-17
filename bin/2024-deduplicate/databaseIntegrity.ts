@@ -89,7 +89,19 @@ async function loopingThroughAllLowIds(
 async function updateJSON(newArray: number[]) {
   const file = await fsPromises.readFile("ids.json", "ascii");
   let json: number[][] = JSON.parse(file);
-  json.push(newArray);
+  let batchSized: number[][] = [];
+  let temp: number[] = [];
+  for (let i = 0; i < newArray.length; i++) {
+    if (i % 1024 != 1023) {
+      temp.push(newArray[i]);
+    } else {
+      temp.push(newArray[i]);
+      batchSized.push(temp);
+      temp = [newArray[0]];
+    }
+  }
+
+  json = [...json, ...batchSized];
   await fsPromises.writeFile("ids.json", JSON.stringify(json, null, 2), {
     flag: "w",
   });
