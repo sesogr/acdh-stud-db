@@ -19,7 +19,7 @@ export function getbatches(
           const file = await fsPromises.readFile("ids.json", "utf-8");
           const idArray: number[][] = JSON.parse(file);
           const updated = [...idArray, ids];
-          fs.writeFileSync("ids.json", JSON.stringify(updated), {
+          fs.writeFileSync("ids.json", JSON.stringify(updated, null, 2), {
             flag: "w",
           });
         })
@@ -44,7 +44,7 @@ async function loopinggetnextavaialbleIds(
         await fsPromises.readFile("ids.json", "utf-8").then((file: string) => {
           const idArray: number[][] = JSON.parse(file);
           const updated = [...idArray, ids];
-          fs.writeFileSync("ids.json", JSON.stringify(updated), {
+          fs.writeFileSync("ids.json", JSON.stringify(updated, null, 2), {
             flag: "w",
           });
         });

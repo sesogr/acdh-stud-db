@@ -33,7 +33,7 @@ if (starter == 0)
           for (let i = 0; i < missing.length; i++) {
             missingArray.push([...allIds.slice(i)]);
           }
-          fs.writeFileSync("ids.json", JSON.stringify(missingArray));
+          fs.writeFileSync("ids.json", JSON.stringify(missingArray, null, 2));
         }
       });
     });
