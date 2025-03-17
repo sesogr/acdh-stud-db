@@ -64,7 +64,6 @@ async function loopingThroughAllLowIds(
   connection: Connection
 ) {
   for (let currentHighIds of allHighIds) {
-    if (currentHighIds[0] == 10) break;
     await getIdHighFromIdLow(connection, table, currentHighIds[0]).then(
       async (actualIdHighObject) => {
         const actualHighIds: number[] = actualIdHighObject.map(
