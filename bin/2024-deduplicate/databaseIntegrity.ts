@@ -1,6 +1,7 @@
 import { getAllIds, getAllIdLow, getIdHighFromIdLow } from "./database";
-import { createConnection } from "mariadb";
+import { Connection, createConnection } from "mariadb";
 import fs from "node:fs";
+import fsPromises from "node:fs/promises";
 let starter = 1;
 let table = "student_similarity_graph";
 const credentials = {
@@ -52,35 +53,45 @@ if (starter == 1)
       for (let i = 0; i < allIds.length; i++) {
         allHighIds.push([...allIds.slice(i)]);
       }
-
-      allHighIds.forEach((currentHighIds) =>
-        getIdHighFromIdLow(connection, table, currentHighIds[0]).then(
-          (actualIdHighObject) => {
-            const actualHighIds: number[] = actualIdHighObject.map(
-              (element: { id_high: string }): number => {
-                const idHigh: number = parseInt(element.id_high);
-                return idHigh;
-              }
-            );
-            const actualIdPairs = [currentHighIds[0], ...actualHighIds];
-            const missing = currentHighIds.filter(
-              (currentId) => !actualIdPairs.includes(currentId)
-            );
-            if (missing.length > 0) {
-              const missingArray = [currentHighIds[0], ...missing];
-              updateJSON(missingArray);
-            }
-          }
-        )
+      loopingThroughAllLowIds(allHighIds, connection).then(() =>
+        connection.end()
       );
     });
   });
 
-function updateJSON(newArray: number[]) {
-  const file = fs.readFileSync("ids.json", "ascii");
+async function loopingThroughAllLowIds(
+  allHighIds: number[][],
+  connection: Connection
+) {
+  for (let currentHighIds of allHighIds) {
+    if (currentHighIds[0] == 10) break;
+    await getIdHighFromIdLow(connection, table, currentHighIds[0]).then(
+      async (actualIdHighObject) => {
+        const actualHighIds: number[] = actualIdHighObject.map(
+          (element: { id_high: string }): number => {
+            const idHigh: number = parseInt(element.id_high);
+            return idHigh;
+          }
+        );
+        const actualIdPairs = [currentHighIds[0], ...actualHighIds];
+        const missing = currentHighIds.filter(
+          (currentId) => !actualIdPairs.includes(currentId)
+        );
+        if (missing.length > 0) {
+          const missingArray = [currentHighIds[0], ...missing];
+          await updateJSON(missingArray);
+        }
+      }
+    );
+  }
+  return Promise.resolve();
+}
+
+async function updateJSON(newArray: number[]) {
+  const file = await fsPromises.readFile("ids.json", "ascii");
   let json: number[][] = JSON.parse(file);
   json.push(newArray);
-  fs.writeFileSync("ids.json", JSON.stringify(json), {
+  await fsPromises.writeFile("ids.json", JSON.stringify(json, null, 2), {
     flag: "w",
   });
 }
