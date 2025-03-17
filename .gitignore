@@ -7,3 +7,4 @@ bin/2024-deduplicate/ids.json
 bin/node_modules/
 .*
 !.gitignore
+sql/03-additions-2023/dump/20250310-student-similarity-graph.csv
