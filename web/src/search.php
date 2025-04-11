@@ -74,7 +74,13 @@ AND (:country = '*' OR :country = ifnull(bp.birth_country_historic, '') OR :coun
 AND (:language = '*' OR :language = ifnull(l.language, ''))
 AND (:religion = '*' OR :religion = ifnull(r.religion, '') or r.religion like concat(:religion, '%%'))
 AND (:lecturer = '*' OR :lecturer = ifnull(a.ascii_lecturer, '') or a.ascii_lecturer like concat(:lecturer, '%%'))
-AND REGEXP_SUBSTR(semester_abs, '[0-9]{4}') + if(a.semester_abs like 'W %%', 0.5, 0.0) BETWEEN :begin and :end
+AND (REGEXP_SUBSTR(semester_abs, '[0-9]{4}') + if(semester_abs like 'W%%', 0.5, 0.0) BETWEEN :begin and :end
+OR REGEXP_SUBSTR(semester_rel,'[0-9]+') + i.year_min - 1 BETWEEN :begin and :end
+OR i.year_min BETWEEN :begin and :end
+OR i.year_max BETWEEN :begin and :end
+OR i.year_min is null and i.year_max is null
+)
+
 GROUP BY i.person_id
 ORDER BY %s %s
 limit %d offset %d
