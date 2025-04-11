@@ -18,19 +18,21 @@ EOD
     $listLecturers = $pdo->query('SELECT DISTINCT `lecturer` FROM `student_attendance` ORDER BY `ascii_lecturer`');
     $listNames = $pdo->query('SELECT DISTINCT `last_name` FROM `student_last_name_value` ORDER BY `ascii_last_name`');
     $listReligions = $pdo->query('SELECT DISTINCT `religion` FROM `student_religion_value` ORDER BY `religion`');
-    $listSemesters = $pdo->query('SELECT DISTINCT `semester_abs` FROM `student_attendance` ORDER BY substring(`semester_abs` FROM 3), substring_index(`semester_abs`, \' \', 1)');
+    $listSemesters = $pdo->query('SELECT DISTINCT `semester_abs` FROM `student_attendance` ORDER BY REGEXP_SUBSTR(semester_abs, "[0-9]{4}"), substring_index(`semester_abs`, \' \', 1)');
     $loadYearRange = $pdo->query('SELECT min(`year_min`), max(`year_max`) FROM `student_identity`');
     $loadSemesterRange = $pdo->query(
-        "SELECT 
+        <<<'EOD'
+        SELECT 
             MIN(CAST(REGEXP_SUBSTR(semester_abs, '[0-9]{4}') AS UNSIGNED)) AS semester_begin,
             MAX(
-                IF(semester_abs REGEXP '^(W|w|WiSe|wise)', 1, 0) +
+                if(semester_abs like 'W%%', 1, 0) +
                 CAST(REGEXP_SUBSTR(semester_abs, '[0-9]{4}') AS UNSIGNED)
             ) AS semester_end
         FROM student_attendance
         WHERE 
-            REGEXP_SUBSTR(semester_abs, '[0-9]{4}') IS NOT NULL
-            AND REGEXP_SUBSTR(semester_abs, '[0-9]{4}') != ''"
+            semester_abs IS NOT NULL
+            AND REGEXP_SUBSTR(semester_abs, '[0-9]{4}') != ''
+        EOD
     );
     
     $listCountries->setFetchMode(PDO::FETCH_COLUMN, 0);
@@ -100,19 +102,19 @@ EOD
     <div>
         <label for="1b3abf22-fd48-4376-b9a3-499a92ec73af">Zeitraum von</label>
         <select name="1b3abf22[<?php echo uniqid() ?>]" id="1b3abf22-fd48-4376-b9a3-499a92ec73af">
-            <option selected="selected" value="<?php printf('%04d.0', $minSemesterYear) ?>">S <?php printf('%04d', $minSemesterYear) ?></option>
-            <?php for ($year = $minSemesterYear; $year < $maxSemesterYear; $year++): ?>
+            <option selected="selected" value="<?php printf('%04d.0', $minYear) ?>">S <?php printf('%04d', $minYear) ?></option>
+            <?php for ($year = $minYear; $year < $maxYear; $year++): ?>
                 <option value="<?php printf('%04d.5', $year) ?>">W <?php printf('%04d/%02d', $year, ($year + 1) % 100) ?></option>
                 <option value="<?php printf('%04d.0', $year + 1) ?>">S <?php printf('%04d', $year + 1) ?></option>
             <?php endfor ?>
         </select>
         <label for="5807411e-d767-4f59-84be-d94f1f14b214">bis</label>
         <select name="5807411e[<?php echo uniqid() ?>]" id="5807411e-d767-4f59-84be-d94f1f14b214">
-            <?php for ($year = $minSemesterYear; $year < $maxSemesterYear; $year++): ?>
+            <?php for ($year = $minYear; $year < $maxYear; $year++): ?>
                 <option value="<?php printf('%04d.0', $year) ?>">S <?php printf('%04d', $year) ?></option>
                 <option value="<?php printf('%04d.5', $year) ?>">W <?php printf('%04d/%02d', $year, ($year + 1) % 100) ?></option>
             <?php endfor ?>
-            <option selected="selected" value="<?php printf('%04d.0', $maxSemesterYear) ?>">S <?php printf('%04d', $maxSemesterYear) ?></option>
+            <option selected="selected" value="<?php printf('%04d.0', $maxYear) ?>">S <?php printf('%04d', $maxYear) ?></option>
         </select>
     </div>
     <div>
