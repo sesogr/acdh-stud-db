@@ -8,7 +8,7 @@
     $pdo->exec('SET NAMES utf8');
     $sumPropertyWeights = $pdo->query('select sum(weight) from student_similarity_weight', PDO::FETCH_COLUMN, 0)->fetch();
     $listProperties = $pdo->prepare("SELECT * FROM `v_student_complete` WHERE ? like concat_ws(',', '%', `person_id`, '%')");
-    $listLectures = $pdo->prepare("SELECT * FROM `student_attendance` WHERE ? like concat_ws(',', '%', `person_id`, '%') ORDER BY substr(`semester_abs` FROM 4), `lecturer`");
+    $listLectures = $pdo->prepare("SELECT * FROM `student_attendance` WHERE ? like concat_ws(',', '%', `person_id`, '%') ORDER BY substr(`semester_abs` FROM 4), `semester_rel`");
     $listSimilarStudents = $pdo->prepare(<<<'EOD'
         select
             if(id_low = ?, id_high, id_low) other_id,
