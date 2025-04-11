@@ -120,7 +120,15 @@
                                 <span class="<?php out(chr(97 + $index_ID)) ?>"><?php out(chr(65 + $index_ID)) ?></span>
                             </td>
                         <?php endif ?>
-                        <td><?php out($value['value'], $value['doubtful']) ?></td>
+                        <td>
+                            <?php 
+                                if ($field == "birth_date") {
+                                    if (preg_match('/00:/', $value['value'])) {
+                                        out(substr($value['value'], 0, -8), $value['doubtful']);
+                                    } else out($value['value'], $value['doubtful']);
+                                }else out($value['value'], $value['doubtful']) 
+                            ?>
+                        </td>
                         <?php if ($hasTimes): ?>
                             <td><?php out($value['time']) ?></td>
                         <?php endif ?>

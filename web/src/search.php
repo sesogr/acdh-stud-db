@@ -123,7 +123,13 @@ EOD;
                             $student['name_doubtful']
                         ) ?></td>
                     <td<?php echo $student['is_from_supplemental_data_source'] ? ' title="Aus zusätzlichen Quellen ergänzt"' : ''
-                        ?>><?php out($student['birth_date'], $student['birth_date_doubtful'])
+                        ?>><?php
+                            $date = $student['birth_date'];
+                            $doubtful = $student['birth_date_doubtful'];
+                            if (preg_match('/00:/', $date)) {
+                                $date = substr($date, 0, -8);
+                            }
+                            out($date, $doubtful);
                         ?></td>
                     <td><?php out($student['birth_place'], $student['birth_place_doubtful']) ?></td>
                     <td><?php out($student['birth_country_historic'], $student['birth_place_doubtful']) ?></td>
