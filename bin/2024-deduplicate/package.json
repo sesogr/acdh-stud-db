@@ -4,7 +4,6 @@
   "main": "main.ts",
   "scripts": {
     "build-and-run": "tsc && node main.js",
-    "convertBirthRangeSqlDumpToBase36DataFile": "tsc && node convertBirthRangeSqlDumpToBase36DataFile.js",
     "datecalc": "tsc && node datecalculations.js",
     "test": "jest"
   },
