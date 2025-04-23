@@ -1,17 +1,16 @@
 import { Connection, UpsertResult } from "mariadb";
-import { Comparison, PropRecord, DateRangeComparison } from "./types";
+import { Comparison, DateRangeComparison, PropRecord } from "./types";
 import fs from "node:fs";
-import { connect } from "node:http2";
 
 type FindBatchIds = (
   connection: Connection,
   highestAvailableIds: [number, number, number],
-  maxSize: number
+  maxSize: number,
 ) => Promise<number[]>;
 export const findBatchIds: FindBatchIds = (
   connection,
   highestAvailableIds,
-  maxSize
+  maxSize,
 ) => {
   const [left, right, max] = highestAvailableIds;
   if (!fs.existsSync("ids.json")) {
@@ -32,13 +31,13 @@ export const findBatchIds: FindBatchIds = (
         left + (right === max ? 1 : 0),
         right === max ? left + 1 : right,
         maxSize,
-      ]
+      ],
     )
     .then((result) => result.flat())
     .then((result) => {
       if (result.length < 2)
         throw new Error(
-          "No more records after " + highestAvailableIds.join(":")
+          "No more records after " + highestAvailableIds.join(":"),
         );
       else return result;
     });
@@ -46,11 +45,11 @@ export const findBatchIds: FindBatchIds = (
 
 type GetHighestAvailableIds = (
   connection: Connection,
-  table?: string
+  table?: string,
 ) => Promise<[number, number, number]>;
 export const getHighestAvailableIds: GetHighestAvailableIds = (
   connection,
-  table = "student_similarity_graph"
+  table = "student_similarity_graph",
 ) =>
   connection
     .query({
@@ -73,16 +72,16 @@ export const getHighestAvailableIds: GetHighestAvailableIds = (
           number,
           number,
           number,
-        ]
+        ],
     );
 
 type LoadBatchOfPropertyRecords = (
   connection: Connection,
-  ids: number[]
+  ids: number[],
 ) => Promise<PropRecord[]>;
 export const loadBatchOfPropertyRecords: LoadBatchOfPropertyRecords = (
   connection,
-  ids
+  ids,
 ) =>
   connection.query(
     // language=MariaDB
@@ -97,16 +96,16 @@ export const loadBatchOfPropertyRecords: LoadBatchOfPropertyRecords = (
       "from v_most_precise_birth_date " +
       "where (person_id = ? or person_id between ? and ?) " +
       ") order by person_id, property, year_min, year_max",
-    [ids[0], ids[1], ids[ids.length - 1], ids[0], ids[1], ids[ids.length - 1]]
+    [ids[0], ids[1], ids[ids.length - 1], ids[0], ids[1], ids[ids.length - 1]],
   );
 
 type WriteComparisonBatch = (
   connection: Connection,
-  data: Comparison[]
+  data: Comparison[],
 ) => Promise<UpsertResult> | undefined;
 export const writeComparisonBatch: WriteComparisonBatch = (
   connection,
-  data
+  data,
 ) => {
   const paramMap = data.flatMap((c) =>
     Object.entries(c.stats).map(([k, v]) => [
@@ -114,7 +113,7 @@ export const writeComparisonBatch: WriteComparisonBatch = (
       c.idHigh,
       k,
       ...v.map((n) => n.toFixed(5)),
-    ])
+    ]),
   );
   if (paramMap.length > 0) {
     return connection.batch(
@@ -124,18 +123,18 @@ export const writeComparisonBatch: WriteComparisonBatch = (
           "insert into student_similarity_graph (id_low, id_high, property, mean, median, min, max, count) " +
           "values (?, ?, ?, ?, ?, ?, ?, ?)",
       },
-      paramMap
+      paramMap,
     );
   }
 };
 
 type WriteComparisonBatchBirthrange = (
   connection: Connection,
-  data: DateRangeComparison[]
+  data: DateRangeComparison[],
 ) => Promise<UpsertResult> | undefined;
 export const writeComparisonBatchBirthrange: WriteComparisonBatchBirthrange = (
   connection,
-  data
+  data,
 ) => {
   const paramMap = data.map((c) => [
     c.idLow,
@@ -147,41 +146,46 @@ export const writeComparisonBatchBirthrange: WriteComparisonBatchBirthrange = (
       {
         // language=MariaDB
         sql:
-          "insert into student_similarity_birthrange (id_low, id_high, property, mean, median, min, max, count) " +
+          "insert into student_similarity_graph_birthrange (id_low, id_high, property, mean, median, min, max, count) " +
           "values (?, ?, 'birthrange', ?, ?, ?, ?, ?)",
       },
-      paramMap
+      paramMap,
     );
   }
 };
 
 export const loadBirthRangeProperties = (
   connection: Connection,
-  ids: number[]
+  ids: number[],
 ) =>
   connection.query(
     // language=MariaDB
     "select person_id, id, born_on_or_after, born_on_or_before from student_birth_date_value where (person_id = ? or person_id between ? and ?) order by person_id",
-    [ids[0], ids[1], ids[ids.length - 1]]
+    [ids[0], ids[1], ids[ids.length - 1]],
   );
 
 export const getAllIds = (connection: Connection) => {
   return connection.query(
     // language=MariaDB
-    "select distinct person_id from v_student_complete order by person_id"
+    "select distinct person_id from v_student_complete order by person_id",
   );
 };
 export const getAllIdLow = (connection: Connection, table: string) => {
   return connection.query(
     // language=MariaDB
-    `select distinct id_low from ${table} force index (id_low) order by id_low`
+    `select distinct id_low
+         from ${table} force index (id_low)
+         order by id_low`,
   );
 };
 export const getIdHighFromIdLow = (
   connection: Connection,
   table: string,
-  idLow: number
+  idLow: number,
 ) => {
   return connection.query(`
-    select distinct id_high from ${table} force index (id_low_2) where id_low = ${idLow} order by id_high `);
+        select distinct id_high
+        from ${table} force index (id_low_2)
+        where id_low = ${idLow}
+        order by id_high `);
 };

@@ -2,6 +2,7 @@ import { getbatches } from "./createbatches";
 import fs from "node:fs";
 import { promiseWorker } from "./mainWorker";
 import { ComparisonWorkers } from "./types";
+
 const path = "ids.json";
 const credentials = {
   host: "localhost",
@@ -21,13 +22,13 @@ function createworker(workerpath: string = "./worker.js") {
   for (let i = 1; i < workerLimit; i++) {
     const ids = id[i];
     workers.push(
-      promiseWorker<ComparisonWorkers>(ids, credentials, workerpath)
+      promiseWorker<ComparisonWorkers>(ids, credentials, workerpath),
     );
   }
   fs.writeFileSync(
     "ids.json",
     JSON.stringify([id[0], ...id.slice(workerLimit)], null, 2),
-    { flag: "w" }
+    { flag: "w" },
   );
   Promise.allSettled(workers).then((workerResults) => {
     workerResults.forEach((e) => {
@@ -43,14 +44,14 @@ function createworker(workerpath: string = "./worker.js") {
           e.value.value.ids[e.value.value.ids.length - 1],
           "done in",
           e.value.time,
-          "seconds"
+          "seconds",
         );
       }
     });
   });
 }
 
-let start = 3; // 1 = similarity graph, 2= birthrange graph, 3= individual ids
+let start = 2; // 1 = similarity graph, 2= birthrange graph, 3= individual ids
 // remove the ids.json file if it exists for looping
 if (fs.existsSync(path) && start != 3) {
   fs.rmSync(path, { force: true });
@@ -76,7 +77,7 @@ if (start == 2)
     credentials,
     workercount,
     batchsize,
-    "student_similarity_graph_birthrange"
+    "student_similarity_graph_birthrange",
   )
     .then(() => createworker("./workerDateRange.js"))
     .catch((error) => {
