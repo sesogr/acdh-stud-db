@@ -22,5 +22,6 @@ services:
     volumes:
       # SQL files present in this directory will initialise the DB if it is empty on container start
       - ./sql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./.mariadb-data:/var/lib/mysql:Z
     ports:
       - "13006:3306"

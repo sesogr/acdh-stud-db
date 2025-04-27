@@ -16,7 +16,7 @@
 3. [ ] 03-create-similarity-graph.sql
 4. [ ] 04-create-property-weights.sql
 5. [ ] 05-fill-property-weights.sql
-6. [ ] 06-create-similarity-graph-birthrange
+6. [ ] 06-create-similarity-graph-birth-range
 
 ## installing and starting deduplication processes
 

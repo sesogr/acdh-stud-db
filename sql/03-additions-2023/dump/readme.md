@@ -14,7 +14,7 @@ select lower(
                                conv(
                                        find_in_set(
                                                property,
-                                               'birth_place,father,given_names,graduation,guardian,last_name,last_school,studying_address,birth_date,birthrange'
+                                               'birth_place,father,given_names,graduation,guardian,last_name,last_school,studying_address,birth_date,birth_range'
                                        ) - 1 + 10 * count,
                                        10,
                                        36
@@ -67,7 +67,7 @@ load data local infile './20250310-student-similarity-graph.csv'
         id_high = conv(replace(replace(substr(@record, 4, 3), '@', ''), '-', ''), 36, 10),
         property = elt(conv(replace(substr(@record, 7, 2), '@', ''), 36, 10) % 10 + 1, 'birth_place', 'father',
                        'given_names', 'graduation', 'guardian', 'last_name', 'last_school', 'studying_address',
-                       'birth_date', 'birthrange'),
+                       'birth_date', 'birth_range'),
         count = floor(conv(replace(substr(@record, 7, 2), '@', ''), 36, 10) / 10),
         min = conv(replace(replace(substr(@record, 9, 3), '@', ''), '-', ''), 36, 10) / 46655,
         mean = conv(replace(replace(substr(@record, if(length(@record) > 18, 12, 9), 3), '@', ''), '-', ''), 36, 10) /

@@ -1,9 +1,20 @@
-DROP TABLE IF EXISTS student_similarity_graph_birthrange;
-CREATE TABLE student_similarity_graph_birthrange
+drop table if exists student_similarity_graph;
+create table student_similarity_graph
 (
     id_low   bigint unsigned not null,
     id_high  bigint unsigned not null,
-    property varchar(16)    not null,
+    property enum (
+        'birth_place',
+        'father',
+        'given_names',
+        'graduation',
+        'guardian',
+        'last_name',
+        'last_school',
+        'studying_address',
+        'birth_date',
+        'birth_range'
+        )                    not null,
     mean     double unsigned not null default 0,
     median   double unsigned not null default 0,
     min      double unsigned not null default 0,
@@ -11,5 +22,6 @@ CREATE TABLE student_similarity_graph_birthrange
     count    int unsigned    not null default 0,
     key (id_low),
     key (id_high),
+    key (property),
     unique key (id_low, id_high, property)
 )

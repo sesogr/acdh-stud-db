@@ -51,7 +51,7 @@ function createworker(workerpath: string = "./worker.js") {
   });
 }
 
-let start = 2; // 1 = similarity graph, 2= birthrange graph, 3= individual ids
+let start = 2; // 1 = similarity graph, 2= birth_range graph, 3= individual ids
 // remove the ids.json file if it exists for looping
 if (fs.existsSync(path) && start != 3) {
   fs.rmSync(path, { force: true });
@@ -71,13 +71,13 @@ if (start == 1)
       createworker();
     });
 
-//comment block for the birthrange graph
+//comment block for the birth_range graph
 if (start == 2)
   getbatches(
     credentials,
     workercount,
     batchsize,
-    "student_similarity_graph_birthrange",
+    "student_similarity_graph_birth_range",
   )
     .then(() => createworker("./workerDateRange.js"))
     .catch((error) => {

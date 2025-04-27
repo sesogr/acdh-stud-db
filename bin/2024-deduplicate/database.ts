@@ -146,8 +146,8 @@ export const writeComparisonBatchBirthrange: WriteComparisonBatchBirthrange = (
       {
         // language=MariaDB
         sql:
-          "insert into student_similarity_graph_birthrange (id_low, id_high, property, mean, median, min, max, count) " +
-          "values (?, ?, 'birthrange', ?, ?, ?, ?, ?)",
+          "insert into student_similarity_graph_birth_range (id_low, id_high, property, mean, median, min, max, count) " +
+          "values (?, ?, 'birth_range', ?, ?, ?, ?, ?)",
       },
       paramMap,
     );

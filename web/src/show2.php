@@ -17,7 +17,7 @@
             min min,
             max max,
             count count
-        from `student_similarity_graph_birthrange`
+        from `student_similarity_graph_birth_range`
         where (`id_low` = ? or `id_high` = ?)
             and min > 0
             and max > 0.5
