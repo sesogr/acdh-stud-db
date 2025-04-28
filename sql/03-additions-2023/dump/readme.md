@@ -2,7 +2,7 @@
 
 ## Export
 
-The file [20250310-student-similarity-graph.csv](20250310-student-similarity-graph.csv) was created by exporting the
+The file [20250428-student-similarity-graph.csv](20250428-student-similarity-graph.csv) was created by exporting the
 result of the following query into a CSV file.
 
 ```MariaDB
@@ -53,7 +53,7 @@ A 1.5 GiB file exceeds the maximum file size allowed for Github repos, so we use
 to chop it down into 19 files of 80MiB and committed those. To restore the original file, you can use
 
 ```bash
-cat 20250310-student-similarity-graph-* > 20250310-student-similarity-graph.csv
+cat *-student-similarity-graph-* > 20250428-student-similarity-graph.csv
 ```
 
 ## Import
@@ -61,7 +61,7 @@ cat 20250310-student-similarity-graph-* > 20250310-student-similarity-graph.csv
 With the indices and the unique key removed, the import with the following statement took 13 minutes.
 
 ```MariaDB
-load data local infile './20250310-student-similarity-graph.csv'
+load data local infile './20250428-student-similarity-graph.csv'
     into table student_similarity_graph (@record) set
         id_low = conv(replace(replace(substr(@record, 1, 3), '@', ''), '-', ''), 36, 10),
         id_high = conv(replace(replace(substr(@record, 4, 3), '@', ''), '-', ''), 36, 10),

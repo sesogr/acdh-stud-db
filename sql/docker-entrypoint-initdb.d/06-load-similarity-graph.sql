@@ -1,4 +1,4 @@
-load data infile '/docker-entrypoint-initdb.d/20250310-student-similarity-graph.csv'
+load data infile '/docker-entrypoint-initdb.d/20250428-student-similarity-graph.csv'
     into table student_similarity_graph (@record) set
         id_low = conv(replace(replace(substr(@record, 1, 3), '@', ''), '-', ''), 36, 10),
         id_high = conv(replace(replace(substr(@record, 4, 3), '@', ''), '-', ''), 36, 10),
