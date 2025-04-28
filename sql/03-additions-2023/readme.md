@@ -2,8 +2,8 @@
 
 ## Export
 
-The file [20250428-student-similarity-graph.csv](20250428-student-similarity-graph.csv) was created by exporting the
-result of the following query into a CSV file.
+A file `20250310-student-similarity-graph.csv` was created by exporting the result of the following query into a CSV
+file.
 
 ```MariaDB
 select lower(
