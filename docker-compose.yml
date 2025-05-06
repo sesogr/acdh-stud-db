@@ -5,6 +5,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      DB_HOST: mariadb
+      DB_NAME_2: rksd
+      DB_USER: rksd
+      DB_PASSWORD: nJkyj2pOsfUi
     volumes:
       - ./web:/var/www/html
     ports:
