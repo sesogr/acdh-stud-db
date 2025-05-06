@@ -105,7 +105,7 @@
         <?php endforeach ?>
     </ul>
 <?php endif ?>
-<table class="data-table">
+<table class="data-table<?php echo $showDupes ? " with-dupes" : "" ?>">
     <tbody>
     <?php foreach ($fields as $field => $title): ?>
         <?php if (isset($student[$field])): ?>
@@ -150,7 +150,7 @@
     <?php endforeach ?>
     </tbody>
 </table>
-<table class="data-table">
+<table class="data-table<?php echo $showDupes ? " with-dupes" : "" ?>">
     <thead>
     <tr>
         <?php if ($showDupes): ?>
