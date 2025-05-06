@@ -8,7 +8,7 @@
     $pdo->exec('SET NAMES utf8');
     $sumPropertyWeights = $pdo->query('select sum(weight) from student_similarity_weight', PDO::FETCH_COLUMN, 0)->fetch();
     $listProperties = $pdo->prepare("SELECT * FROM `v_student_complete` WHERE ? like concat_ws(',', '%', `person_id`, '%')");
-    $listLectures = $pdo->prepare("SELECT * FROM `student_attendance` WHERE ? like concat_ws(',', '%', `person_id`, '%') ORDER BY substr(`semester_abs` FROM 4), `semester_rel`");
+    $listLectures = $pdo->prepare("SELECT * FROM `student_attendance` WHERE ? like concat_ws(',', '%', `person_id`, '%') ORDER BY `semester_abs` = '', substr(`semester_abs` FROM 4), `semester_rel`");
     $listSimilarStudents = $pdo->prepare(<<<'EOD'
         select
             if(id_low = ?, id_high, id_low) other_id,
@@ -22,7 +22,7 @@
         where (`id_low` = ? or `id_high` = ?)
             and `max` > .5
         group by other_id
-        having `weighted_mean` > .3
+        having `weighted_mean` > .33
         order by weighted_mean desc
     EOD
     );
@@ -60,7 +60,6 @@
         );
     }
     $lecturefields = array(
-        'person_id' => '  ',
         'semester_abs' => 'Semester',
         'semester_rel' => 'ordinal',
         'faculty' => 'Fakultät',
@@ -150,6 +149,9 @@
 <table>
     <thead>
         <tr>
+            <?php if ($showDupes): ?>
+                <th></th>
+            <?php endif ?>
             <?php foreach ($lecturefields as $field => $title ): ?>
                 <th><?php out($title)?></th>
             <?php endforeach ?>
@@ -159,9 +161,11 @@
         <?php /** @var array $lecture */ foreach ($listLectures as $lecture): ?>
             <?php $index_Lecture = array_search($lecture['person_id'], $similarIds) ?>
             <tr class="<?php out(chr(97 + $index_Lecture))?>" >
-                <td>
-                    <span class="<?php out(chr(97 + $index_Lecture)) ?>"><?php out(chr(65 + $index_Lecture)) ?></span>
-                </td>
+                <?php if ($showDupes): ?>
+                    <td>
+                        <span class="<?php out(chr(97 + $index_Lecture)) ?>"><?php out(chr(65 + $index_Lecture)) ?></span>
+                    </td>
+                <?php endif ?>
                 <td><?php out($lecture['semester_abs']) ?></td>
                 <td><?php out($lecture['semester_rel']) ?></td>
                 <td><?php out($lecture['faculty']) ?></td>
