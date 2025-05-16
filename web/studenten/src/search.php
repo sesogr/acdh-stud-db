@@ -31,6 +31,23 @@
                 $_POST[$index] = array($asciiName);
             }
         }
+        $loadSemesterRange = $pdo->query(
+        <<<'EOD'
+        SELECT
+            MIN(CAST(REGEXP_SUBSTR(semester_abs, '[0-9]{4}') AS UNSIGNED)) AS semester_begin,
+            MAX(
+                if(semester_abs like 'W%%', 1, 0) +
+                CAST(REGEXP_SUBSTR(semester_abs, '[0-9]{4}') AS UNSIGNED)
+            ) AS semester_end
+        FROM student_attendance
+        WHERE
+            semester_abs IS NOT NULL
+            AND REGEXP_SUBSTR(semester_abs, '[0-9]{4}') != ''
+        EOD
+    );
+        list($minSemesterYear, $maxSemesterYear) = $loadSemesterRange->fetch(PDO::FETCH_NUM);
+        $params['globalMaxYear'] = $maxSemesterYear;
+        $params['globalMinYear'] = $minSemesterYear;
         $params['name'] = isset($_POST['ce133f40']) ? reset($_POST['ce133f40']) : '*';
         $params['country'] = isset($_POST['e95c7283']) ? reset($_POST['e95c7283']) : '*';
         $params['language'] = isset($_POST['8cd799d0']) ? reset($_POST['8cd799d0']) : '*';
@@ -78,7 +95,7 @@ AND (REGEXP_SUBSTR(semester_abs, '[0-9]{4}') + if(semester_abs like 'W%%', 0.5, 
 OR REGEXP_SUBSTR(semester_rel,'[0-9]+') + i.year_min - 1 BETWEEN :begin and :end
 OR i.year_min BETWEEN :begin and :end
 OR i.year_max BETWEEN :begin and :end
-OR i.year_min is null and i.year_max is null
+OR ((:globalMinYear = :begin and :globalMaxYear = :end) and i.year_min is null and i.year_max is null)
 )
 
 GROUP BY i.person_id
